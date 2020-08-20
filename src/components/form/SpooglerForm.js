@@ -14,11 +14,14 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 100,
     },
   },
-  input: {
-    margin: 8,
+
+  button: {
     backgroundColor: '#457b9d',
-    color: '#a8dadc',
-  }
+    color: '#ffffff',
+    '&:hover': {
+      background: '#1d3557',
+    },
+  },
 }));
 
 export default function SpooglerForm(props) {
@@ -32,25 +35,29 @@ export default function SpooglerForm(props) {
 
   const [partnersMailTextField, setPartnersMailTextField] = useState(null);
 
+  // function: String => Value => ()
   const changePartnerState = (property) => {
     return (newValue) => {
-      const partnerStateCopy = partnerState;
-      partnerStateCopy[property] = newValue;
-      setPartnerState(partnerStateCopy);
+      partnerState[property] = newValue;
+      setPartnerState(partnerState);
     };
   };
 
-  const changeIsGoogler = (state) => {
-    changePartnerState('isGoogler')(state);
-    if (partnerState['isGoogler']) {
+  // function: () => JSX
+  const generatePartnersTextField = (data, dataLabel) => {
+    return (
+        <PartnerDataTextField
+            propagateData={changePartnerState(data)}
+            label={dataLabel}/>
+    );
+  };
+
+  // function: Bool => ()
+  const changeIsGoogler = (isGoogler) => {
+    changePartnerState('isGoogler')(isGoogler);
+    if (isGoogler) {
       setPartnersMailTextField(
-          <Grid item xs={10}>
-            <PartnerDataTextField
-                propagateData={
-                  changePartnerState('email')
-                }
-                label="Your partner's @google address"/>
-          </Grid>,
+          generatePartnersTextField('email', 'Your partner\'s @google address'),
       );
     } else {
       changePartnerState('email')('');
@@ -70,11 +77,11 @@ export default function SpooglerForm(props) {
                 propagateGooglerState={changeIsGoogler}/>
           </Grid>
           <Grid item xs={10}>
-            <PartnerDataTextField
-                propagateData={changePartnerState('name')}
-                label="Your partner's full name"/>
+            {generatePartnersTextField('name', 'Your partner\'s full name')}
           </Grid>
-          {partnersMailTextField}
+          <Grid item xs={10}>
+            {partnersMailTextField}
+          </Grid>
           <Grid item xs={10}>
             <Button
                 fullWidth
@@ -83,7 +90,7 @@ export default function SpooglerForm(props) {
                   props.propagateNewSpooglerForm(partnerState);
                 }}
                 variant="outlined"
-                className={classes.input}>
+                className={classes.button}>
               Submit!
             </Button>
           </Grid>

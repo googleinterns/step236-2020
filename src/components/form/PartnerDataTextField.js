@@ -6,40 +6,42 @@ const useStyles = makeStyles(() => ({
   textField: {
     backgroundColor: '#ffffff',
     width: '100%',
-    margin: 8,
   },
 
   cssLabel: {
-    color: '#577399',
+    color: '#1d3557',
+    '&$cssFocused': {
+      color: '#1d3557',
+    },
   },
 
   cssOutlinedInput: {
     '&$cssFocused $notchedOutline': {
-      color: '#a8dadc',
-      textColor: `#577399`,
-      borderColor: `#577399`,
+      color: '#1d3557',
+      textColor: `#1d3557`,
+      borderColor: `#1d3557`,
     },
-    color: '#a8dadc'
+    color: '#1d3557',
   },
 
   cssFocused: {
-    color: '#a8dadc'
+    color: '#1d3557',
   },
 
   notchedOutline: {
     borderWidth: '1px',
-    borderColor: '#577399',
-    textColor: '#577399'
+    borderColor: '#1d3557',
+    textColor: '#1d3557',
   },
-
 }));
 
 export default function GooglerDataTextField(props) {
   const classes = useStyles();
   const [data, setData] = useState('');
 
-  const handleChange = (newData) => {
-    setData(newData.target.value);
+  // function: Event => ()
+  const handleChange = (event) => {
+    setData(event.target.value);
     props.propagateData(data);
   };
 
@@ -69,4 +71,3 @@ export default function GooglerDataTextField(props) {
       </form>
   );
 }
-

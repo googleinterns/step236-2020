@@ -7,11 +7,23 @@ import Select from '@material-ui/core/Select';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    width: '100%',
     backgroundColor: '#ffffff',
+    color: '#457b9d',
+    minWidth: 120,
+    textAlign: 'left',
+    width: '100%',
   },
+
+  input: {
+    color: '#1d3557',
+    '&:before': {
+      color: '#1d3557',
+    },
+    '&:after': {
+      color: '#1d3557',
+    },
+  },
+
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
@@ -21,6 +33,7 @@ export default function PartnerGoogleAccountSelect(props) {
   const classes = useStyles();
   const [googlerState, setGooglerState] = React.useState(true);
 
+  // function: Event => ()
   const handleChange = (event) => {
     setGooglerState(event.target.value);
     props.propagateGooglerState(googlerState);
@@ -28,11 +41,10 @@ export default function PartnerGoogleAccountSelect(props) {
 
   return (
       <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Is your partner a
+        <InputLabel className={classes.input}>Is your partner a
           Googler?</InputLabel>
         <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            className={classes.input}
             value={googlerState}
             onChange={handleChange}
             required
@@ -41,5 +53,4 @@ export default function PartnerGoogleAccountSelect(props) {
           <MenuItem value={false}>Googler</MenuItem>
         </Select>
       </FormControl>);
-
 }
