@@ -15,16 +15,21 @@ const useStyles = makeStyles(() => ({
 
   cssOutlinedInput: {
     '&$cssFocused $notchedOutline': {
+      color: '#a8dadc',
       textColor: `#577399`,
-      borderColor: `#a8dadc`,
+      borderColor: `#577399`,
     },
+    color: '#a8dadc'
   },
 
-  cssFocused: {},
+  cssFocused: {
+    color: '#a8dadc'
+  },
 
   notchedOutline: {
     borderWidth: '1px',
-    borderColor: '#a8dadc',
+    borderColor: '#577399',
+    textColor: '#577399'
   },
 
 }));
@@ -34,7 +39,7 @@ export default function GooglerDataTextField(props) {
   const [data, setData] = useState('');
 
   const handleChange = (newData) => {
-    setData(newData);
+    setData(newData.target.value);
     props.propagateData(data);
   };
 
@@ -60,7 +65,6 @@ export default function GooglerDataTextField(props) {
                 notchedOutline: classes.notchedOutline,
               },
             }}
-            margin="normal"
         />
       </form>
   );
