@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Form(props) {
+export default function SpooglerForm(props) {
   const classes = useStyles();
 
   const [partnerState, setPartnerState] = useState({
