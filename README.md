@@ -37,6 +37,21 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+# Firebase setup
+
+### `firebase login`
+
+Use it when you want to access the firebase for the first time. Later, you will be logged in automatically. Log in with an account assiociated with the project you are developing.
+
+### `firebase init`
+
+Initialise new Github project on firebase. If you are using react, remember to change directory from `public` (default) to `build` in this step.
+If you forget to change directory -- don't worry, you'll be able to change it in `firebase.json` file.
+
+### `firebase deploy`
+
+Use it to deploy your project. Remember to log in, init and build the project before deploying.
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
