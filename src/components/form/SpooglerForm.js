@@ -33,36 +33,20 @@ export default function SpooglerForm(props) {
     isGoogler: false,
   });
 
-  const [partnersMailTextField, setPartnersMailTextField] = useState(null);
-
-  // function: String => Value => ()
-  const changePartnerState = (property) => {
+  // function: String => (Value => ())
+  const changePartnerState = (key) => {
     return (newValue) => {
-      partnerState[property] = newValue;
-      setPartnerState(partnerState);
+      setPartnerState({...partnerState, [key]: newValue});
     };
   };
 
-  // function: () => JSX
-  const generatePartnersTextField = (data, dataLabel) => {
+  // function: (String, String) => JSX
+  const generatePartnersTextField = (dataType, dataLabel) => {
     return (
         <PartnerDataTextField
-            propagateData={changePartnerState(data)}
+            propagateData={changePartnerState(dataType)}
             label={dataLabel}/>
     );
-  };
-
-  // function: Bool => ()
-  const changeIsGoogler = (isGoogler) => {
-    changePartnerState('isGoogler')(isGoogler);
-    if (isGoogler) {
-      setPartnersMailTextField(
-          generatePartnersTextField('email', 'Your partner\'s @google address'),
-      );
-    } else {
-      changePartnerState('email')('');
-      setPartnersMailTextField(null);
-    }
   };
 
   return (
@@ -74,13 +58,15 @@ export default function SpooglerForm(props) {
               className={classes.root}>
           <Grid item xs={10}>
             <PartnerGoogleAccountSelect
-                propagateGooglerState={changeIsGoogler}/>
+                propagateGooglerState={changePartnerState('isGoogler')}/>
           </Grid>
           <Grid item xs={10}>
             {generatePartnersTextField('name', 'Your partner\'s full name')}
           </Grid>
           <Grid item xs={10}>
-            {partnersMailTextField}
+            {partnerState['isGoogler'] &&
+            generatePartnersTextField('email',
+                'Your partner\'s @google address')}
           </Grid>
           <Grid item xs={10}>
             <Button
