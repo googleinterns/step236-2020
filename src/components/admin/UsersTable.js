@@ -16,6 +16,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import styles from './admin.module.css';
+import { Typography } from '@material-ui/core';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -107,6 +108,7 @@ export default function UsersTable() {
     <TableContainer component={Paper}>
       <Table aria-label="Active members">
         <TableHead>
+          <Typography variant="h6">Active members</Typography>
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Email</TableCell>
@@ -114,7 +116,7 @@ export default function UsersTable() {
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
-        
+
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

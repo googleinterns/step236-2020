@@ -17,6 +17,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import styles from './admin.module.css';
+import { Typography } from '@material-ui/core';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -103,6 +104,7 @@ export default function PendingTable() {
     <TableContainer component={Paper}>
       <Table aria-label="Pending memberships">
         <TableHead>
+          <Typography variant="h6">Pending memberships</Typography>
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Email</TableCell>
@@ -127,7 +129,7 @@ export default function PendingTable() {
             </TableRow>
           )}
         </TableBody>
-        
+
         <TableFooter className={styles.footer}>
           <TableRow>
             <TablePagination

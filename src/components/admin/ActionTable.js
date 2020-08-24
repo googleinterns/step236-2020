@@ -18,6 +18,7 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import styles from './admin.module.css';
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import { Typography } from '@material-ui/core';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -105,13 +106,14 @@ export default function ActionTable() {
     <TableContainer component={Paper}>
       <Table aria-label="Immediate actions">
         <TableHead>
+          <Typography variant="h6">Immediate action required</Typography>
           <TableRow>
             <TableCell>Date</TableCell>
             <TableCell>Message</TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
-        
+
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
