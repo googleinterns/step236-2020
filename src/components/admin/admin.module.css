@@ -1,7 +1,7 @@
 .adminLayout {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
 .tableContainer {
@@ -23,4 +23,8 @@
 .header {
   flex-grow: 1;
   text-align: left;
+}
+
+.footer {
+  flex-shrink: 0;
 }
