@@ -29,28 +29,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PartnerGoogleAccountSelect(props) {
+export default function InviterSelect(props) {
   const classes = useStyles();
-  const [googlerState, setGooglerState] = React.useState(true);
+  const [inviterState, setInviterState] = React.useState(false);
 
   // function: Event => ()
   const handleChange = (event) => {
-    setGooglerState(event.target.value);
-    props.propagateGooglerState(googlerState);
+    setInviterState(event.target.value);
+    props.propagateInviterState(event.target.value);
   };
 
   return (
       <FormControl className={classes.formControl}>
-        <InputLabel className={classes.input}>Is your partner a
-          Googler?</InputLabel>
+        <InputLabel className={classes.input}>{props.label}</InputLabel>
         <Select
             className={classes.input}
-            value={googlerState}
+            value={inviterState}
             onChange={handleChange}
             required
         >
-          <MenuItem value={true}>Noogler</MenuItem>
-          <MenuItem value={false}>Googler</MenuItem>
+          <MenuItem value={true}>{props.labelTrue}</MenuItem>
+          <MenuItem value={false}>{props.labelFalse}</MenuItem>
         </Select>
       </FormControl>);
 }

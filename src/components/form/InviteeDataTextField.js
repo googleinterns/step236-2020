@@ -35,14 +35,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function GooglerDataTextField(props) {
+export default function InviteeDataTextField(props) {
   const classes = useStyles();
   const [data, setData] = useState('');
 
   // function: Event => ()
   const handleChange = (event) => {
     setData(event.target.value);
-    props.propagateData(data);
+    props.propagateData(event.target.value);
   };
 
   return (
@@ -67,7 +67,7 @@ export default function GooglerDataTextField(props) {
                 notchedOutline: classes.notchedOutline,
               },
             }}
-        />
+        >{data}</TextField>
       </form>
   );
 }

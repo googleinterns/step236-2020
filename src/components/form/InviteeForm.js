@@ -3,8 +3,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import PartnerDataTextField from './PartnerDataTextField';
-import PartnerGoogleAccountSelect from './PartnerGoogleAccountSelect';
+import PartnerDataTextField from './InviteeDataTextField';
+import InviterSelect from './InviterSelect';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SpooglerForm(props) {
+export default function InviteeForm(props) {
   const classes = useStyles();
 
   const [partnerState, setPartnerState] = useState({
@@ -57,8 +57,12 @@ export default function SpooglerForm(props) {
               alignItems="center"
               className={classes.root}>
           <Grid item xs={10}>
-            <PartnerGoogleAccountSelect
-                propagateGooglerState={changePartnerState('isGoogler')}/>
+            <InviterSelect
+                propagateInviterState={changePartnerState('isGoogler')}
+                label={'Is your partner a Googler?'}
+                labelTrue={'Googler'}
+                labelFalse={'Noogler'}
+            />
           </Grid>
           <Grid item xs={10}>
             {generatePartnersTextField('name', 'Your partner\'s full name')}
@@ -73,7 +77,7 @@ export default function SpooglerForm(props) {
                 fullWidth
                 margin="normal"
                 onClick={() => {
-                  props.propagateNewSpooglerForm(partnerState);
+                  props.propagateNewInviteeForm(partnerState);
                 }}
                 variant="outlined"
                 className={classes.button}>
