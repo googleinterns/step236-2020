@@ -28,8 +28,7 @@ function App() {
           </Route>
 
           <Route path="/admin">
-            {/*TO DO: ADD ADMIN COMPONENT HERE [BEHIND A SIGN IN PAGE]. */}
-            <h1>This is the route to the admin page.</h1>
+            <AdminFrontPage />
           </Route>
 
           <Route path="/">
