@@ -36,7 +36,11 @@ export default function InviteeForm(props) {
   // function: String => (Value => ())
   const changePartnerState = (key) => {
     return (newValue) => {
-      setPartnerState({...partnerState, [key]: newValue});
+      if (key in partnerState) {
+        setPartnerState({...partnerState, [key]: newValue});
+      } else {
+        throw "Key is unknown.";
+      }
     };
   };
 

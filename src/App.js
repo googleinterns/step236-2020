@@ -1,5 +1,6 @@
 import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import InviteeForm from './components/form/InviteeForm';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/form">
             {/* TO DO: ADD FORM COMPONENT HERE [BEHIND A SIGN IN PAGE].*/}
             <h1>This is the route to membership form.</h1>
+            <InviteeForm propagateNewInviteeForm={(form) => {console.log(form);}}></InviteeForm>
           </Route>
 
           <Route path="/admin">
