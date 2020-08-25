@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import PartnerDataTextField from './InviteeDataTextField';
 import InviterSelect from './InviterSelect';
+import InviteeFormDatePicker from './InviteeFormDatePicker';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +37,7 @@ export default function InviteeForm(props: PropsType) {
     name: '',
     email: '',
     isGoogler: false,
+    startDate: new Date(),
   });
 
   const changePartnerState = (key: string) => {
@@ -74,9 +76,12 @@ export default function InviteeForm(props: PropsType) {
             {generatePartnersTextField('name', 'Your partner\'s full name')}
           </Grid>
           <Grid item xs={10}>
-            {partnerState['isGoogler'] &&
-            generatePartnersTextField('email',
-                'Your partner\'s @google address')}
+            {partnerState['isGoogler'] ?
+                generatePartnersTextField('email',
+                    'Your partner\'s @google address') :
+                <InviteeFormDatePicker
+                    label={'When is your partner going to join Google?'}
+                    propagateNewData={changePartnerState('startDate')}/>}
           </Grid>
           <Grid item xs={10}>
             <Button
