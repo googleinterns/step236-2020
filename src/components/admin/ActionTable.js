@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useTheme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
+import Toolbar from '@material-ui/core/Toolbar';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
@@ -103,54 +104,60 @@ export default function ActionTable() {
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="Immediate actions">
-        <TableHead>
-          <Typography variant="h6">Immediate action required</Typography>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Message</TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date.toDateString()}</TableCell>
-              <TableCell>{row.message}</TableCell>
-              <TableCell><MoreHorizIcon /></TableCell>
+    <Paper>
+      <Toolbar className={styles.titleActionBar} variant="dense">
+        <Typography className={styles.titleText} variant="h6">
+          Immediate action required
+        </Typography>
+      </Toolbar>
+      <TableContainer>
+        <Table aria-label="Immediate actions" size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell>Message</TableCell>
+              <TableCell></TableCell>
             </TableRow>
-          ))}
+          </TableHead>
 
-          {emptyRows > 0 && (
-            <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={4} />
+          <TableBody>
+            {(rowsPerPage > 0
+              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : rows
+            ).map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.date.toDateString()}</TableCell>
+                <TableCell>{row.message}</TableCell>
+                <TableCell><MoreHorizIcon /></TableCell>
+              </TableRow>
+            ))}
+
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={4} />
+              </TableRow>
+            )}
+          </TableBody>
+
+          <TableFooter className={styles.footer}>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                SelectProps={{
+                  inputProps: { 'aria-label': 'rows per page' },
+                  native: true,
+                }}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
             </TableRow>
-          )}
-        </TableBody>
-
-        <TableFooter className={styles.footer}>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: { 'aria-label': 'rows per page' },
-                native: true,
-              }}
-              onChangePage={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 }

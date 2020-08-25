@@ -10,7 +10,7 @@ import styles from './admin.module.css';
 
 export default function AdminFrontPage() {
   return (
-    <div>
+    <div className={styles.background}>
       <AdminTopBar />
       <div className={styles.adminLayout}>
         <div className={styles.tableContainer}>
