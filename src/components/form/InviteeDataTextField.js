@@ -36,16 +36,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 type PropsType = {
-  propagateData : any,
-  label : string
+  propagateData: any,
+  label: string
 }
 
-export default function InviteeDataTextField(props : PropsType) {
+export default function InviteeDataTextField(props: PropsType) {
   const classes = useStyles();
   const [data, setData] = useState('');
 
   // function: Event => ()
-  const handleChange = (event : SyntheticInputEvent<>) => {
+  const handleChange = (event: SyntheticInputEvent<>) => {
     setData(event.target.value);
     props.propagateData(event.target.value);
   };

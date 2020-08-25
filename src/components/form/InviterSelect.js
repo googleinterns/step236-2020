@@ -14,52 +14,52 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputLabel: {
-    color: "#1d3557",
-    "&.Mui-focused": {
-      color: "#1d3557"
-    }
+    color: '#1d3557',
+    '&.Mui-focused': {
+      color: '#1d3557',
+    },
   },
 
   select: {
     backgroundColor: '#ffffff',
-    color: "#1d3557",
-    "&:before": {
-      borderColor: "#1d3557"
+    color: '#1d3557',
+    '&:before': {
+      borderColor: '#1d3557',
     },
-    "&:after": {
-      borderColor: "#1d3557"
-    }
-  }
+    '&:after': {
+      borderColor: '#1d3557',
+    },
+  },
 }));
 
 type PropsType = {
-  label : string,
-  labelTrue : string,
-  labelFalse : string,
-  propagateInviterState : any
+  label: string,
+  labelTrue: string,
+  labelFalse: string,
+  propagateInviterState: any
 }
 
-export default function InviterSelect(props : PropsType) {
+export default function InviterSelect(props: PropsType) {
   const classes = useStyles();
   const [inviterState, setInviterState] = React.useState(false);
 
-  const handleChange = (event : SyntheticInputEvent<>) => {
+  const handleChange = (event: SyntheticInputEvent<>) => {
     setInviterState(event.target.value);
     props.propagateInviterState(event.target.value);
   };
 
   return (
       <FormControl className={classes.formControl}>
-          <InputLabel className={classes.inputLabel}>{props.label}</InputLabel>
-          <Select
-              className={classes.select}
-              value={inviterState}
-              onChange={handleChange}
-              required
-          >
-            <MenuItem value={true}>{props.labelTrue}</MenuItem>
-            <MenuItem value={false}>{props.labelFalse}</MenuItem>
-          </Select>
+        <InputLabel className={classes.inputLabel}>{props.label}</InputLabel>
+        <Select
+            className={classes.select}
+            value={inviterState}
+            onChange={handleChange}
+            required
+        >
+          <MenuItem value={true}>{props.labelTrue}</MenuItem>
+          <MenuItem value={false}>{props.labelFalse}</MenuItem>
+        </Select>
       </FormControl>
-);
+  );
 }

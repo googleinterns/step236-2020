@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type PropsType = {
-  propagateNewInviteeForm : any
+  propagateNewInviteeForm: any
 }
 
-export default function InviteeForm(props : PropsType) {
+export default function InviteeForm(props: PropsType) {
   const classes = useStyles();
 
   const [partnerState, setPartnerState] = useState({
@@ -38,8 +38,8 @@ export default function InviteeForm(props : PropsType) {
     isGoogler: false,
   });
 
-  const changePartnerState = (key : string) => {
-    return (newValue : any) => {
+  const changePartnerState = (key: string) => {
+    return (newValue: any) => {
       if (!(key in partnerState)) {
         throw new Error(`Key "${key}" is unknown for partner state.`);
       }
@@ -47,7 +47,7 @@ export default function InviteeForm(props : PropsType) {
     };
   };
 
-  const generatePartnersTextField = (dataType : string, dataLabel : string) => {
+  const generatePartnersTextField = (dataType: string, dataLabel: string) => {
     return (
         <PartnerDataTextField
             propagateData={changePartnerState(dataType)}
