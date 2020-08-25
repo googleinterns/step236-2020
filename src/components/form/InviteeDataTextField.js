@@ -21,7 +21,6 @@ const useStyles = makeStyles(() => ({
       textColor: `#1d3557`,
       borderColor: `#1d3557`,
     },
-    color: '#1d3557',
   },
 
   cssFocused: {

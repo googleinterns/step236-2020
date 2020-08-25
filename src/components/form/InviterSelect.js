@@ -7,26 +7,28 @@ import Select from '@material-ui/core/Select';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
-    backgroundColor: '#ffffff',
-    color: '#457b9d',
     minWidth: 120,
     textAlign: 'left',
     width: '100%',
   },
 
-  input: {
-    color: '#1d3557',
-    '&:before': {
-      color: '#1d3557',
-    },
-    '&:after': {
-      color: '#1d3557',
-    },
+  inputLabel: {
+    color: "#1d3557",
+    "&.Mui-focused": {
+      color: "#1d3557"
+    }
   },
 
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
+  select: {
+    backgroundColor: '#ffffff',
+    color: "#1d3557",
+    "&:before": {
+      borderColor: "#1d3557"
+    },
+    "&:after": {
+      borderColor: "#1d3557"
+    }
+  }
 }));
 
 export default function InviterSelect(props) {
@@ -41,15 +43,16 @@ export default function InviterSelect(props) {
 
   return (
       <FormControl className={classes.formControl}>
-        <InputLabel className={classes.input}>{props.label}</InputLabel>
-        <Select
-            className={classes.input}
-            value={inviterState}
-            onChange={handleChange}
-            required
-        >
-          <MenuItem value={true}>{props.labelTrue}</MenuItem>
-          <MenuItem value={false}>{props.labelFalse}</MenuItem>
-        </Select>
-      </FormControl>);
+          <InputLabel className={classes.inputLabel}>{props.label}</InputLabel>
+          <Select
+              className={classes.select}
+              value={inviterState}
+              onChange={handleChange}
+              required
+          >
+            <MenuItem value={true}>{props.labelTrue}</MenuItem>
+            <MenuItem value={false}>{props.labelFalse}</MenuItem>
+          </Select>
+      </FormControl>
+);
 }
