@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 import AdminFrontPage from './components/admin/Admin';
 
@@ -7,20 +7,6 @@ function App() {
   return (
     <Router>
       <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/form">Membership form</Link>
-            </li>
-            <li>
-              <Link to="/admin">Admin page</Link>
-            </li>
-          </ul>
-        </nav>
-
         <Switch>
           <Route path="/form">
             {/* TO DO: ADD FORM COMPONENT HERE [BEHIND A SIGN IN PAGE].*/}

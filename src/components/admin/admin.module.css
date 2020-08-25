@@ -40,6 +40,12 @@
 
 .titleText {
   color: white;
+  flex: 1;
+}
+
+.titleUsersText {
+  color: black;
+  flex: 1;
 }
 
 .titlePendingBar {
@@ -47,5 +53,17 @@
 }
 
 .titleUsersBar {
-  background-color: #457b9d;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+}
+
+.searchField {
+  margin: 10px;
+  align-self: flex-end;
+  color: white;
+}
+
+.form {
+  margin: 5px;
 }

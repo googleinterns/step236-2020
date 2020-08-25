@@ -5,9 +5,11 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
+import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -21,7 +23,43 @@ import { Typography } from '@material-ui/core';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import SearchIcon from '@material-ui/icons/Search';
 
+function createData(id, name, email) {
+  return { id, name, email };
+}
+
+const rows = [
+  createData("1", "John Dowe", "johndowe@gmail.com"),
+  createData("2", "Marcus Lee", "m.lee@gmail.com"),
+  createData("3", "Lucy Swift", "swift_lucy@gmail.com"),
+];
+
+function EnhancedToolbar() {
+  const handleOnSubmit = () => console.log("User has pressed search.");
+
+  return (
+    <Toolbar variant="dense" className={styles.titleUsersBar}>
+      <Typography variant="h6" className={styles.titleUsersText}>Active members</Typography>
+      <form onSubmit={handleOnSubmit}>
+        <TextField
+          id="outlined-margin-dense"
+          placeholder="Search users..."
+          margin="dense"
+          variant="outlined"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            }}
+        />
+      </form>
+    </Toolbar>
+  );
+
+}
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onChangePage } = props;
@@ -80,15 +118,6 @@ TablePaginationActions.propTypes = {
 };
 
 
-function createData(id, name, email) {
-  return { id, name, email };
-}
-
-const rows = [
-  createData("1", "John Dowe", "johndowe@gmail.com"),
-  createData("2", "Marcus Lee", "m.lee@gmail.com"),
-  createData("3", "Lucy Swift", "swift_lucy@gmail.com"),
-];
 
 export default function UsersTable() {
   const [page, setPage] = React.useState(0);
@@ -107,9 +136,7 @@ export default function UsersTable() {
 
   return (
     <Paper>
-      <Toolbar variant="dense" className={styles.titleUsersBar}>
-        <Typography variant="h6" className={styles.titleText}>Active members</Typography>
-      </Toolbar>
+      <EnhancedToolbar />
       <TableContainer>
         <Table aria-label="Active members" size="small">
           <TableHead>
