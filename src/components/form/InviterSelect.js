@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -31,12 +32,18 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function InviterSelect(props) {
+type PropsType = {
+  label : string,
+  labelTrue : string,
+  labelFalse : string,
+  propagateInviterState : any
+}
+
+export default function InviterSelect(props : PropsType) {
   const classes = useStyles();
   const [inviterState, setInviterState] = React.useState(false);
 
-  // function: Event => ()
-  const handleChange = (event) => {
+  const handleChange = (event : SyntheticInputEvent<>) => {
     setInviterState(event.target.value);
     props.propagateInviterState(event.target.value);
   };

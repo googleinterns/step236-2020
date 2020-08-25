@@ -1,3 +1,4 @@
+// @flow
 import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -24,7 +25,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function InviteeForm(props) {
+type PropsType = {
+  propagateNewInviteeForm : any
+}
+
+export default function InviteeForm(props : PropsType) {
   const classes = useStyles();
 
   const [partnerState, setPartnerState] = useState({
@@ -33,18 +38,16 @@ export default function InviteeForm(props) {
     isGoogler: false,
   });
 
-  // function: String => (Value => ())
-  const changePartnerState = (key) => {
-    return (newValue) => {
+  const changePartnerState = (key : string) => {
+    return (newValue : any) => {
       if (!(key in partnerState)) {
-        throw 'Key "${key}" is unknown for partner state.';
+        throw new Error(`Key "${key}" is unknown for partner state.`);
       }
       setPartnerState({...partnerState, [key]: newValue});
     };
   };
 
-  // function: (String, String) => JSX
-  const generatePartnersTextField = (dataType, dataLabel) => {
+  const generatePartnersTextField = (dataType : string, dataLabel : string) => {
     return (
         <PartnerDataTextField
             propagateData={changePartnerState(dataType)}

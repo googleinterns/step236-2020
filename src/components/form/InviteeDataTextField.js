@@ -1,3 +1,4 @@
+// @flow
 import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -34,12 +35,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function InviteeDataTextField(props) {
+type PropsType = {
+  propagateData : any,
+  label : string
+}
+
+export default function InviteeDataTextField(props : PropsType) {
   const classes = useStyles();
   const [data, setData] = useState('');
 
   // function: Event => ()
-  const handleChange = (event) => {
+  const handleChange = (event : SyntheticInputEvent<>) => {
     setData(event.target.value);
     props.propagateData(event.target.value);
   };
