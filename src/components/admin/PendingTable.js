@@ -76,7 +76,7 @@ export default function PendingTable() {
             ))}
 
             {emptyRows > 0 && (
-              <TableRow style={{height: 53 * emptyRows}}>
+              <TableRow style={{height: 42.4 * emptyRows}}>
                 <TableCell colSpan={4} />
               </TableRow>
             )}
