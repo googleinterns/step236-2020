@@ -22,7 +22,7 @@ import TablePaginationActions from './TablePaginationActions';
 const rows = Array.from(Array(30), (x, index) => ({
   id: index,
   name: 'John Dowe',
-  email: 'johndowe@gmail.com'
+  email: 'johndowe@gmail.com',
 }));
 
 function EnhancedToolbar() {
@@ -52,12 +52,22 @@ function EnhancedToolbar() {
   );
 }
 
+function computeEmptyRows(rowsPerPage, page) {
+  return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+}
+
+function computeRows(page, rows, rowsPerPage) {
+  if (rowsPerPage > 0) {
+    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }
+  return rows;
+}
+
 export default function UsersTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const emptyRows = rowsPerPage -
-      Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const emptyRows = computeEmptyRows(rowsPerPage, page);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -83,10 +93,7 @@ export default function UsersTable() {
           </TableHead>
 
           <TableBody>
-            {(rowsPerPage > 0 ?
-              rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) :
-              rows
-            ).map((row) => (
+            {computeRows(page, rows, rowsPerPage).map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.email}</TableCell>
