@@ -23,7 +23,7 @@ const rows = Array.from(Array(30), (x, index) => ({
   id: index,
   name: 'John Dowe',
   email: 'johndowe@gmail.com'
-});
+}));
 
 function EnhancedToolbar() {
   const handleOnSubmit = () => console.log('User has pressed search.');
