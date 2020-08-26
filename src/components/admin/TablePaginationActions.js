@@ -9,24 +9,24 @@ import styles from './admin.module.css';
 
 
 function TablePaginationActions(props) {
-  const { count, page, rowsPerPage, onChangePage } = props;
-  
+  const {count, page, rowsPerPage, onChangePage} = props;
+
   const handleFirstPageButtonClick = (event) => {
     onChangePage(event, 0);
   };
-  
+
   const handleBackButtonClick = (event) => {
     onChangePage(event, page - 1);
   };
-  
+
   const handleNextButtonClick = (event) => {
     onChangePage(event, page + 1);
   };
-  
+
   const handleLastPageButtonClick = (event) => {
     onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
-  
+
   return (
     <div className={styles.footer}>
       <IconButton
@@ -35,9 +35,9 @@ function TablePaginationActions(props) {
         aria-label="first page">
         <FirstPageIcon />
       </IconButton>
-      <IconButton 
-        onClick={handleBackButtonClick} 
-        disabled={page === 0} 
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
         aria-label="previous page">
         <KeyboardArrowLeft />
       </IconButton>
@@ -45,18 +45,18 @@ function TablePaginationActions(props) {
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page">
-          <KeyboardArrowRight />
+        <KeyboardArrowRight />
       </IconButton>
       <IconButton
-          onClick={handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="last page">
-          <LastPageIcon />
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page">
+        <LastPageIcon />
       </IconButton>
     </div>
   );
 }
-  
+
 TablePaginationActions.propTypes = {
   count: PropTypes.number.isRequired,
   onChangePage: PropTypes.func.isRequired,

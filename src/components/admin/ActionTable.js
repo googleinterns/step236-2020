@@ -14,23 +14,27 @@ import styles from './admin.module.css';
 import TablePaginationActions from './TablePaginationActions';
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import { Typography } from '@material-ui/core';
+import {Typography} from '@material-ui/core';
 
 function createData(id, date, message) {
-  return { id, date, message };
+  return {id, date, message};
 }
 
 const rows = [
-  createData("1", new Date(), "[NOOGLER CHECK 1]: A partner of a noogler requires access"),
-  createData("2", new Date(), "[DATABASE]: A new member could not be added to the database."),
-  createData("3", new Date(), "[NOOGLER CHECK 2]: A partner of a noogler requires access"),
+  createData('1', new Date(),
+      '[NOOGLER CHECK 1]: A partner of a noogler requires access'),
+  createData('2', new Date(),
+      '[DATABASE]: A new member could not be added to the database.'),
+  createData('3', new Date(),
+      '[NOOGLER CHECK 2]: A partner of a noogler requires access'),
 ];
 
 export default function ActionTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage,
+      rows.length - page * rowsPerPage);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -43,13 +47,13 @@ export default function ActionTable() {
 
   return (
     <Paper>
-      <Toolbar className={styles.titleActionBar} variant="dense">
-        <Typography className={styles.titleText} variant="h6">
+      <Toolbar className={styles.titleActionBar} variant='dense'>
+        <Typography className={styles.titleText} variant='h6'>
           Immediate action required
         </Typography>
       </Toolbar>
       <TableContainer>
-        <Table aria-label="Immediate actions" size="small">
+        <Table aria-label='Immediate actions' size='small'>
           <TableHead>
             <TableRow>
               <TableCell>Date</TableCell>
@@ -59,9 +63,9 @@ export default function ActionTable() {
           </TableHead>
 
           <TableBody>
-            {(rowsPerPage > 0
-              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : rows
+            {(rowsPerPage > 0 ?
+              rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) :
+              rows
             ).map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.date.toDateString()}</TableCell>
@@ -71,7 +75,7 @@ export default function ActionTable() {
             ))}
 
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{height: 53 * emptyRows}}>
                 <TableCell colSpan={4} />
               </TableRow>
             )}
@@ -80,12 +84,12 @@ export default function ActionTable() {
           <TableFooter className={styles.footer}>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                rowsPerPageOptions={[5, 10, 25, {label: 'All', value: -1}]}
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 SelectProps={{
-                  inputProps: { 'aria-label': 'rows per page' },
+                  inputProps: {'aria-label': 'rows per page'},
                   native: true,
                 }}
                 onChangePage={handleChangePage}

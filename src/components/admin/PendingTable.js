@@ -11,24 +11,25 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import styles from './admin.module.css';
-import { Typography } from '@material-ui/core';
+import {Typography} from '@material-ui/core';
 
 import TablePaginationActions from './TablePaginationActions';
 
 function createData(id, name, email) {
-  return { id, name, email };
+  return {id, name, email};
 }
 
 const rows = [
-  createData("1", "Alice Joy", "alicee@gmail.com"),
-  createData("2", "David Toms", "dt@yahoo.com"),
+  createData('1', 'Alice Joy', 'alicee@gmail.com'),
+  createData('2', 'David Toms', 'dt@yahoo.com'),
 ];
 
 export default function PendingTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage,
+      rows.length - page * rowsPerPage);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -41,13 +42,13 @@ export default function PendingTable() {
 
   return (
     <Paper>
-      <Toolbar className={styles.titlePendingBar} variant="dense">
-        <Typography variant="h6">
+      <Toolbar className={styles.titlePendingBar} variant='dense'>
+        <Typography variant='h6'>
           Pending requests
         </Typography>
       </Toolbar>
       <TableContainer>
-        <Table aria-label="Pending memberships" size="small">
+        <Table aria-label='Pending memberships' size='small'>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -56,9 +57,9 @@ export default function PendingTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(rowsPerPage > 0
-              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : rows
+            {(rowsPerPage > 0 ?
+            rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) :
+                rows
             ).map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.name}</TableCell>
@@ -68,7 +69,7 @@ export default function PendingTable() {
             ))}
 
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{height: 53 * emptyRows}}>
                 <TableCell colSpan={4} />
               </TableRow>
             )}
@@ -77,12 +78,12 @@ export default function PendingTable() {
           <TableFooter className={styles.footer}>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                rowsPerPageOptions={[5, 10, 25, {label: 'All', value: -1}]}
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 SelectProps={{
-                  inputProps: { 'aria-label': 'rows per page' },
+                  inputProps: {'aria-label': 'rows per page'},
                   native: true,
                 }}
                 onChangePage={handleChangePage}

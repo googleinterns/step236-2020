@@ -5,9 +5,6 @@ import PendingTable from './PendingTable';
 import AdminTopBar from './AdminTopBar';
 import styles from './admin.module.css';
 
-
-//class that handles the front page of the admin interface
-
 export default function AdminFrontPage() {
   return (
     <div className={styles.background}>
