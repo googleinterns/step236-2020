@@ -19,15 +19,11 @@ import SearchIcon from '@material-ui/icons/Search';
 
 import TablePaginationActions from './TablePaginationActions';
 
-function createData(id, name, email) {
-  return {id, name, email};
-}
-
-const rows = [];
-
-for (let i = 1; i < 30; i++) {
-  rows.push(createData(i.toString(), 'John Dowe', 'johndowe@gmail.com'));
-}
+const rows = Array.from(Array(30), (x, index) => ({
+  id: index,
+  name: 'John Dowe',
+  email: 'johndowe@gmail.com'
+});
 
 function EnhancedToolbar() {
   const handleOnSubmit = () => console.log('User has pressed search.');
