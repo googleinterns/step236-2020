@@ -12,7 +12,8 @@ import TablePagination from '@material-ui/core/TablePagination';
 
 import styles from './admin.module.css';
 import {TablePaginationActions,
-  computeEmptyRows} from './TablePaginationActions';
+  computeEmptyRows,
+  computeRows} from './TablePaginationActions';
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
@@ -26,13 +27,6 @@ const rows = Array.from([
   message,
   date: new Date(),
 }));
-
-function computeRows(page, rows, rowsPerPage) {
-  if (rowsPerPage > 0) {
-    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }
-  return rows;
-}
 
 export default function ActionTable() {
   const [page, setPage] = React.useState(0);

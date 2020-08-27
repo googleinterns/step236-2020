@@ -18,7 +18,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import SearchIcon from '@material-ui/icons/Search';
 
 import {TablePaginationActions,
-  computeEmptyRows} from './TablePaginationActions';
+  computeEmptyRows,
+  computeRows} from './TablePaginationActions';
 
 const rows = Array.from(Array(30), (x, index) => ({
   id: index,
@@ -51,13 +52,6 @@ function EnhancedToolbar() {
       </form>
     </Toolbar>
   );
-}
-
-function computeRows(page, rows, rowsPerPage) {
-  if (rowsPerPage > 0) {
-    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }
-  return rows;
 }
 
 export default function UsersTable() {

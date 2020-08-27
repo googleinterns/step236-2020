@@ -14,7 +14,8 @@ import styles from './admin.module.css';
 import {Typography} from '@material-ui/core';
 
 import {TablePaginationActions,
-  computeEmptyRows} from './TablePaginationActions';
+  computeEmptyRows,
+  computeRows} from './TablePaginationActions';
 
 function createData(id, name, email) {
   return {id, name, email};
@@ -24,13 +25,6 @@ const rows = [
   createData('1', 'Alice Joy', 'alicee@gmail.com'),
   createData('2', 'David Toms', 'dt@yahoo.com'),
 ];
-
-function computeRows(page, rows, rowsPerPage) {
-  if (rowsPerPage > 0) {
-    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }
-  return rows;
-}
 
 export default function PendingTable() {
   const [page, setPage] = React.useState(0);

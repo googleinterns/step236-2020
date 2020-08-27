@@ -69,4 +69,12 @@ function computeEmptyRows(rowsPerPage, page, rows) {
   return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 }
 
-export {TablePaginationActions, computeEmptyRows};
+
+function computeRows(page, rows, rowsPerPage) {
+  if (rowsPerPage > 0) {
+    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }
+  return rows;
+}
+
+export {TablePaginationActions, computeEmptyRows, computeRows};
