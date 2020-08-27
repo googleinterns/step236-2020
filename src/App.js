@@ -30,9 +30,7 @@ function App() {
             <PrivateRoute
                 path="/"
                 exact
-                authFunction={() => {
-                  return (!mockAuth.isUser());
-                }}
+                authFunction={() => !mockAuth.isUser()}
                 component={<StartingPage/>}
                 redirectPath={'/landing-page'}>
             </PrivateRoute>
