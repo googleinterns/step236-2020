@@ -41,8 +41,6 @@ export default function ActionTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const emptyRows = computeEmptyRows(rowsPerPage, page);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -78,8 +76,9 @@ export default function ActionTable() {
               </TableRow>
             ))}
 
-            {emptyRows > 0 && (
-              <TableRow style={{height: 42.4 * emptyRows}}>
+            {computeEmptyRows(rowsPerPage, page) > 0 && (
+              <TableRow style={{height: 42.4 *
+                computeEmptyRows(rowsPerPage, page)}}>
                 <TableCell colSpan={4} />
               </TableRow>
             )}
