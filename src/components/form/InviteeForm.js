@@ -1,30 +1,12 @@
 // @flow
 import React, {useState} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import PartnerDataTextField from './InviteeDataTextField';
 import InviterSelect from './InviterSelect';
 import InviteeFormDatePicker from './InviteeFormDatePicker';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-      width: '100%',
-      minWidth: 100,
-    },
-  },
-
-  button: {
-    backgroundColor: '#457b9d',
-    color: '#ffffff',
-    '&:hover': {
-      background: '#1d3557',
-    },
-  },
-}));
+import {useStyles} from '../LayoutStyles';
 
 type PropsType = {
   propagateNewInviteeForm: any
@@ -58,13 +40,14 @@ export default function InviteeForm(props: PropsType) {
   };
 
   return (
-      <Paper>
+      <Paper
+          className={classes.paper}>
         <Grid container
               direction="column"
-              justify="center"
-              alignItems="center"
+              justify="flex-start"
+              alignItems="stretch"
               className={classes.root}>
-          <Grid item xs={10}>
+          <Grid item>
             <InviterSelect
                 propagateInviterState={changePartnerState('isGoogler')}
                 label={'Is your partner a Googler?'}
@@ -72,10 +55,10 @@ export default function InviteeForm(props: PropsType) {
                 labelFalse={'Noogler'}
             />
           </Grid>
-          <Grid item xs={10}>
+          <Grid item>
             {generatePartnersTextField('name', 'Your partner\'s full name')}
           </Grid>
-          <Grid item xs={10}>
+          <Grid item>
             {partnerState['isGoogler'] ?
                 generatePartnersTextField('email',
                     'Your partner\'s @google address') :
@@ -83,7 +66,7 @@ export default function InviteeForm(props: PropsType) {
                     label={'When is your partner going to join Google?'}
                     propagateNewData={changePartnerState('startDate')}/>}
           </Grid>
-          <Grid item xs={10}>
+          <Grid item>
             <Button
                 fullWidth
                 margin="normal"
