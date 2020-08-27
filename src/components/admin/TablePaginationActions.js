@@ -64,4 +64,9 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-export default TablePaginationActions;
+
+function computeEmptyRows(rowsPerPage, page, rows) {
+  return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+}
+
+export {TablePaginationActions, computeEmptyRows};

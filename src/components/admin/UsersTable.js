@@ -17,7 +17,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import SearchIcon from '@material-ui/icons/Search';
 
-import TablePaginationActions from './TablePaginationActions';
+import {TablePaginationActions,
+  computeEmptyRows} from './TablePaginationActions';
 
 const rows = Array.from(Array(30), (x, index) => ({
   id: index,
@@ -50,10 +51,6 @@ function EnhancedToolbar() {
       </form>
     </Toolbar>
   );
-}
-
-function computeEmptyRows(rowsPerPage, page) {
-  return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 }
 
 function computeRows(page, rows, rowsPerPage) {
@@ -100,9 +97,9 @@ export default function UsersTable() {
               </TableRow>
             ))}
 
-            {computeEmptyRows(rowsPerPage, page) > 0 && (
+            {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
-                    computeEmptyRows(rowsPerPage, page)}}>
+                    computeEmptyRows(rowsPerPage, page, rows)}}>
                 <TableCell colSpan={4} />
               </TableRow>
             )}

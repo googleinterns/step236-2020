@@ -11,7 +11,8 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 
 import styles from './admin.module.css';
-import TablePaginationActions from './TablePaginationActions';
+import {TablePaginationActions,
+  computeEmptyRows} from './TablePaginationActions';
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
@@ -25,10 +26,6 @@ const rows = Array.from([
   message,
   date: new Date(),
 }));
-
-function computeEmptyRows(rowsPerPage, page) {
-  return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-}
 
 function computeRows(page, rows, rowsPerPage) {
   if (rowsPerPage > 0) {
@@ -76,9 +73,9 @@ export default function ActionTable() {
               </TableRow>
             ))}
 
-            {computeEmptyRows(rowsPerPage, page) > 0 && (
+            {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
-                computeEmptyRows(rowsPerPage, page)}}>
+                computeEmptyRows(rowsPerPage, page, rows)}}>
                 <TableCell colSpan={4} />
               </TableRow>
             )}
