@@ -21,6 +21,5 @@ const mockAuth = {
 };
 
 // TODO: Add firebase authentication.
-const scribaAuth = {};
 
 export default mockAuth;
