@@ -16,7 +16,7 @@ export default function LandingPage() {
   if (mockAuth.isAdmin()) {
     landingPageContent.push({to: '/admin', label: 'Admin panel'});
   }
-  /* End of part fetched from the server */
+  /* End of part to be fetched from the server */
 
   return (
       <Paper className={classes.paper}>

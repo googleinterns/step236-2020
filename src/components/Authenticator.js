@@ -2,13 +2,13 @@ import Cookies from 'js-cookie';
 
 const mockAuth = {
   isAdmin: function() {
-    let adminCookie = Cookies.get('admin');
+    const adminCookie = Cookies.get('admin');
     return (adminCookie !== undefined);
   },
 
   isUser: function() {
-    let adminCookie = Cookies.get('user');
-    return (adminCookie !== undefined);
+    const userCookie = Cookies.get('user');
+    return (userCookie !== undefined);
   },
 
   logIn: function() {
