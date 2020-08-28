@@ -11,6 +11,11 @@ const mockAuth = {
     return (userCookie !== undefined);
   },
 
+  isInviter: function() {
+    const inviterCookie = Cookies.get('inviter');
+    return (inviterCookie !== undefined);
+  },
+
   logIn: function() {
     Cookies.set('user', 'user');
   },
