@@ -1,10 +1,7 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import './App.css';
+import AdminFrontPage from './components/admin/Admin';
 import InviteeForm from './components/form/InviteeForm';
 import LandingPage from './components/landingPage/LandingPage';
 import mockAuth from './components/Authenticator';
