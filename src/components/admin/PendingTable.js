@@ -12,6 +12,7 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import styles from './admin.module.css';
 import {Typography} from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
 
 import {TablePaginationActions,
   computeEmptyRows,
@@ -60,7 +61,11 @@ export default function PendingTable() {
               <TableRow key={row.id}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell><MoreHorizIcon /></TableCell>
+                <TableCell>
+                  <IconButton>
+                    <MoreHorizIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
 

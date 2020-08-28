@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
+import IconButton from '@material-ui/core/IconButton';
 
 import styles from './admin.module.css';
 import {TablePaginationActions,
@@ -63,7 +64,11 @@ export default function ActionTable() {
               <TableRow key={row.id}>
                 <TableCell>{row.date.toDateString()}</TableCell>
                 <TableCell>{row.message}</TableCell>
-                <TableCell><MoreHorizIcon /></TableCell>
+                <TableCell>
+                  <IconButton>
+                    <MoreHorizIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
 

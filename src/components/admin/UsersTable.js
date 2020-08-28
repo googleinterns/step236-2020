@@ -14,12 +14,15 @@ import TablePagination from '@material-ui/core/TablePagination';
 import styles from './admin.module.css';
 import {Typography} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import SearchIcon from '@material-ui/icons/Search';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import IconButton from '@material-ui/core/IconButton';
 
 import {TablePaginationActions,
   computeEmptyRows,
   computeRows} from './TablePaginationActions';
+
+import UserInfo from './UserInfo';
 
 const rows = Array.from(Array(30), (x, index) => ({
   id: index,
@@ -57,6 +60,9 @@ function EnhancedToolbar() {
 export default function UsersTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedRow, setSelectedRow] = React.useState(-1);
+
+  const ref = React.useRef(null);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -65,6 +71,21 @@ export default function UsersTable() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleSelectedRow = (event, rowId) => {
+    console.log(rowId);
+    setSelectedRow(rowId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRow(-1);
+  };
+
+  const handleEntering = () => {
+    if (ref.current != null) {
+      ref.current.focus();
+    }
   };
 
   return (
@@ -83,14 +104,30 @@ export default function UsersTable() {
 
           <TableBody>
             {computeRows(page, rows, rowsPerPage).map((row) => (
-              <TableRow key={row.id}>
+              <TableRow
+                key={row.id} >
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell><EditIcon /></TableCell>
-                <TableCell><DeleteIcon/></TableCell>
+                <TableCell>
+                  <IconButton
+                    onClick={(event) => handleSelectedRow(event, row.id)}>
+                    <InfoOutlinedIcon/>
+                  </IconButton>
+                </TableCell>
+                <TableCell>
+                  <IconButton>
+                    <DeleteIcon/>
+                  </IconButton>
+                </TableCell>
+                <UserInfo
+                  user={row}
+                  ref={ref}
+                  open={selectedRow === row.id ? true : false}
+                  onClose={handleCloseModal}
+                  onEntering={handleEntering} >
+                </UserInfo>
               </TableRow>
             ))}
-
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
                     computeEmptyRows(rowsPerPage, page, rows)}}>
