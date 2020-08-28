@@ -28,6 +28,15 @@ const rows = Array.from(Array(30), (x, index) => ({
   id: index,
   name: 'John Dowe',
   email: 'johndowe@gmail.com',
+  joinDate: new Date(),
+  groups: [
+    {
+      name: 'Hiking amateurs',
+      description: 'A group to plan hikings between members.'},
+    {
+      name: 'Cooking advice',
+      description: 'A group to exchange cooking recepies',
+    }],
 }));
 
 function EnhancedToolbar() {
