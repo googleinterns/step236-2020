@@ -9,7 +9,8 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
-  DialogTitle} from '@material-ui/core';
+  DialogTitle,
+} from '@material-ui/core';
 import {
   Table,
   TableContainer,

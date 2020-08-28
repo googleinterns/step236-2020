@@ -17,6 +17,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
+import DeleteDialog from './DeleteDialog';
 
 import {TablePaginationActions,
   computeEmptyRows,
@@ -71,6 +72,7 @@ export default function UsersTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
+  const [openDelete, setOpenDelete] = React.useState(false);
 
   const ref = React.useRef(null);
 
@@ -96,6 +98,14 @@ export default function UsersTable() {
     if (ref.current != null) {
       ref.current.focus();
     }
+  };
+
+  const handleOpenDialog = (event) => {
+    setOpenDelete(true);
+  };
+
+  const handleCloseDialog = (event) => {
+    setOpenDelete(false);
   };
 
   return (
@@ -125,10 +135,15 @@ export default function UsersTable() {
                   </IconButton>
                 </TableCell>
                 <TableCell>
-                  <IconButton>
+                  <IconButton
+                    onClick={(event) => handleOpenDialog(event, row)}>
                     <DeleteIcon/>
                   </IconButton>
                 </TableCell>
+                <DeleteDialog
+                  ref={ref}
+                  open={openDelete}
+                  onClose={(event) => handleCloseDialog(event)} />
                 <UserInfo
                   user={row}
                   ref={ref}
