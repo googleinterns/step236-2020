@@ -1,24 +1,23 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
+import {BrowserRouter as Router,
   Switch,
-} from 'react-router-dom';
+  Route,
+  Redirect} from 'react-router-dom';
+import './App.css';
+import AdminFrontPage from './components/admin/Admin';
 import InviteeForm from './components/form/InviteeForm';
 import LandingPage from './components/landingPage/LandingPage';
 import mockAuth from './components/Authenticator';
 import StartingPage from './components/StartingPage';
 
 const PrivateRoute = ({authFunction, component, redirectPath}) => (
-    <Route
-        render={() => {
-          if (authFunction()) {
-            return component;
-          }
-          return (<Redirect to={redirectPath}/>);
-        }}
-    />
+  <Route
+    render={() => {
+      if (authFunction()) {
+        return component;
+      }
+      return (<Redirect to={redirectPath}/>);
+    }} />
 );
 
 function App() {
@@ -47,7 +46,7 @@ function App() {
             <PrivateRoute
                 path="/admin"
                 authFunction={mockAuth.isAdmin}
-                component={<h1>Admin panel</h1>}
+                component={<AdminFrontPage />}
                 redirectPath={'/'}>
             </PrivateRoute>
 
