@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import {Typography, Grid} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
+import styles from './admin.module.css';
+import ReportIcon from '@material-ui/icons/Report';
 import {
   Dialog,
   DialogContent,
@@ -37,38 +39,53 @@ const UserInfo = React.forwardRef((props, ref) => {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Grid>
-          <Typography variant='h6'>
-            {user.name}
-          </Typography>
-          <p>
-            Email: {user.email}
-          </p>
-          <p>
-            Date when joined: {user.joinDate.toDateString()}
-          </p>
-        </Grid>
-        <Grid>
-          <Paper>
-            <TableContainer>
-              <Table aria-label='mailing groups' size='small'>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Group name</TableCell>
-                    <TableCell>Description</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {user.groups.map((group) => (
-                    <TableRow key={group.name}>
-                      <TableCell>{group.name}</TableCell>
-                      <TableCell>{group.description}</TableCell>
+        <Typography variant='h6'>
+          {user.name}
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item>
+            <Paper className={styles.note}>
+              <p>
+                Email: {user.email}
+              </p>
+              <p>
+                Date when joined: {user.joinDate.toDateString()}
+              </p>
+            </Paper>
+          </Grid>
+          <Grid item>
+            <Paper className={styles.note}>
+              <p className={styles.adminNote}>
+                Admin note
+                <IconButton>
+                  <ReportIcon />
+                </IconButton>
+              </p>
+              <p className={styles.adminText}>{user.note}</p>
+            </Paper>
+          </Grid>
+          <Grid item>
+            <Paper>
+              <TableContainer>
+                <Table aria-label='mailing groups' size='small'>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Group name</TableCell>
+                      <TableCell>Description</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                  </TableHead>
+                  <TableBody>
+                    {user.groups.map((group) => (
+                      <TableRow key={group.name}>
+                        <TableCell>{group.name}</TableCell>
+                        <TableCell>{group.description}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>

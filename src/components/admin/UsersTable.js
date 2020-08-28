@@ -28,6 +28,7 @@ const rows = Array.from(Array(30), (x, index) => ({
   id: index,
   name: 'John Dowe',
   email: 'johndowe@gmail.com',
+  note: 'Need to check for their partner\'s new google email',
   joinDate: new Date(),
   groups: [
     {

@@ -67,3 +67,22 @@
 .form {
   margin: 5px;
 }
+
+.adminNote {
+  font-size: 16px;
+  margin: 10px;
+  color: #e63946;
+}
+
+.adminText {
+  margin: 10px;
+  font-size: 14px;
+}
+
+.note {
+  padding: 10px;
+}
+
+.grid {
+  margin: 5px;
+}
