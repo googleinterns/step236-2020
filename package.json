@@ -24,7 +24,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "flow": "flow"
+    "flow": "flow",
+    "eslint:github-action": "eslint src/"
   },
   "eslintConfig": {
     "extends": "react-app"
