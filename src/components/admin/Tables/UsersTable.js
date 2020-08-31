@@ -12,19 +12,19 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
-import styles from './admin.module.css';
+import styles from '../admin.module.css';
 import {Typography} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteDialog from './DeleteDialog';
+import DeleteDialog from '../Dialogs/DeleteDialog';
 
 import {TablePaginationActions,
   computeEmptyRows,
-  computeRows} from './TablePaginationActions';
+  computeRows} from '../TablePaginationActions';
 
-import UserInfo from './UserInfo';
+import UserInfo from '../Dialogs/UserInfo';
 
 const rows = Array.from(Array(30), (x: any, index: number): any => ({
   id: index,

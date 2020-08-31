@@ -3,7 +3,7 @@ import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import {Typography, Grid} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import styles from './admin.module.css';
+import styles from '../admin.module.css';
 import ReportIcon from '@material-ui/icons/Report';
 import {
   Dialog,

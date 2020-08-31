@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import UsersTable from './UsersTable';
-import ActionTable from './ActionTable';
-import PendingTable from './PendingTable';
+import UsersTable from './Tables/UsersTable';
+import ActionTable from './Tables/ActionTable';
+import PendingTable from './Tables/PendingTable';
 import AdminTopBar from './AdminTopBar';
 import styles from './admin.module.css';
 
