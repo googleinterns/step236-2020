@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import InviteeDataTextField from '../form/InviteeDataTextField';
 import Grid from '@material-ui/core/Grid';

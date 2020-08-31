@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -29,7 +30,7 @@ function createData(
   };
 }
 
-function Row(props: { row: ReturnType<typeof createData> }) {
+function Row(props) {
   const classes = useStyles();
   const {row} = props;
   const [open, setOpen] = React.useState(false);
