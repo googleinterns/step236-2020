@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,24 +19,25 @@ import {TablePaginationActions,
   computeEmptyRows,
   computeRows} from './TablePaginationActions';
 
-function createData(id, name, email) {
+function createData(id: number, name: string,
+    email: string): {id: number, name: string, email: string} {
   return {id, name, email};
 }
 
 const rows = [
-  createData('1', 'Alice Joy', 'alicee@gmail.com'),
-  createData('2', 'David Toms', 'dt@yahoo.com'),
+  createData(1, 'Alice Joy', 'alicee@gmail.com'),
+  createData(2, 'David Toms', 'dt@yahoo.com'),
 ];
 
-export default function PendingTable() {
+export default function PendingTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (event: any, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event: any) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -57,17 +59,18 @@ export default function PendingTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {computeRows(page, rows, rowsPerPage).map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>
-                  <IconButton>
-                    <MoreHorizIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+            {computeRows(page, rows, rowsPerPage)
+                .map((row: any): React.Node => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      <IconButton>
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
 
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *

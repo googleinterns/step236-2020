@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -21,45 +22,37 @@ import {Typography} from '@material-ui/core';
 
 import ActionInfo from './ActionInfo';
 
-const rows = Array.from([
+const rows: Array<any> = Array.from([
   '[NOOGLER CHECK 1]: A partner of a noogler requires access',
   '[DATABASE]: A new member could not be added to the database.',
   '[NOOGLER CHECK 2]: A partner of a noogler requires access',
-], (message, id) => ({
+], (message: string, id: number): {id: number, message: string, date: any} => ({
   id,
   message,
   date: new Date(),
 }));
 
-export default function ActionTable() {
+export default function ActionTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
 
-  const ref = React.useRef(null);
-
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (event: any, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event: any) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleSelectedRow = (event, rowId) => {
+  const handleSelectedRow = (event: any, rowId: number) => {
     console.log(rowId);
     setSelectedRow(rowId);
   };
 
   const handleCloseModal = () => {
     setSelectedRow(-1);
-  };
-
-  const handleEntering = () => {
-    if (ref.current != null) {
-      ref.current.focus();
-    }
   };
 
   return (
@@ -80,25 +73,25 @@ export default function ActionTable() {
           </TableHead>
 
           <TableBody>
-            {computeRows(page, rows, rowsPerPage).map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.date.toDateString()}</TableCell>
-                <TableCell>{row.message}</TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={(event) => handleSelectedRow(event, row.id)}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                </TableCell>
-                <ActionInfo
-                  action={row}
-                  ref={ref}
-                  open={selectedRow === row.id}
-                  onClose={handleCloseModal}
-                  onEntering={handleEntering}>
-                </ActionInfo>
-              </TableRow>
-            ))}
+            {computeRows(page, rows, rowsPerPage)
+                .map((row: any): React.Node => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.date.toDateString()}</TableCell>
+                    <TableCell>{row.message}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event: any): void =>
+                          handleSelectedRow(event, row.id)}>
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </TableCell>
+                    <ActionInfo
+                      action={row}
+                      open={selectedRow === row.id}
+                      onClose={handleCloseModal} >
+                    </ActionInfo>
+                  </TableRow>
+                ))}
 
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *

@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -25,7 +26,7 @@ import {TablePaginationActions,
 
 import UserInfo from './UserInfo';
 
-const rows = Array.from(Array(30), (x, index) => ({
+const rows = Array.from(Array(30), (x: any, index: number): any => ({
   id: index,
   name: 'John Dowe',
   email: 'johndowe@gmail.com',
@@ -41,8 +42,8 @@ const rows = Array.from(Array(30), (x, index) => ({
     }],
 }));
 
-function EnhancedToolbar() {
-  const handleOnSubmit = () => console.log('User has pressed search.');
+function EnhancedToolbar(): React.Node {
+  const handleOnSubmit = (): void => console.log('User has pressed search.');
 
   return (
     <Toolbar variant='dense' className={styles.titleUsersBar}>
@@ -68,24 +69,22 @@ function EnhancedToolbar() {
   );
 }
 
-export default function UsersTable() {
+export default function UsersTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
-  const [openDelete, setOpenDelete] = React.useState(false);
+  const [selectedDelete, setSelectedDelete] = React.useState(null);
 
-  const ref = React.useRef(null);
-
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (event: any, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event: any) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleSelectedRow = (event, rowId) => {
+  const handleSelectedRow = (event: any, rowId: number) => {
     console.log(rowId);
     setSelectedRow(rowId);
   };
@@ -94,18 +93,12 @@ export default function UsersTable() {
     setSelectedRow(-1);
   };
 
-  const handleEntering = () => {
-    if (ref.current != null) {
-      ref.current.focus();
-    }
+  const handleOpenDialog = (event: any, rowId: number) => {
+    setSelectedDelete(rowId);
   };
 
-  const handleOpenDialog = (event) => {
-    setOpenDelete(true);
-  };
-
-  const handleCloseDialog = (event) => {
-    setOpenDelete(false);
+  const handleCloseDialog = (event: any) => {
+    setSelectedDelete(null);
   };
 
   return (
@@ -123,36 +116,38 @@ export default function UsersTable() {
           </TableHead>
 
           <TableBody>
-            {computeRows(page, rows, rowsPerPage).map((row) => (
-              <TableRow
-                key={row.id} >
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={(event) => handleSelectedRow(event, row.id)}>
-                    <InfoOutlinedIcon/>
-                  </IconButton>
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={(event) => handleOpenDialog(event, row)}>
-                    <DeleteIcon/>
-                  </IconButton>
-                </TableCell>
-                <DeleteDialog
-                  ref={ref}
-                  open={openDelete}
-                  onClose={(event) => handleCloseDialog(event)} />
-                <UserInfo
-                  user={row}
-                  ref={ref}
-                  open={selectedRow === row.id}
-                  onClose={handleCloseModal}
-                  onEntering={handleEntering} >
-                </UserInfo>
-              </TableRow>
-            ))}
+            {computeRows(page, rows, rowsPerPage)
+                .map((row: any): React.Node => (
+                  <TableRow
+                    key={row.id} >
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event: any): void =>
+                          handleSelectedRow(event, row.id)}>
+                        <InfoOutlinedIcon/>
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event: any): void =>
+                          handleOpenDialog(event, row.id)}>
+                        <DeleteIcon/>
+                      </IconButton>
+                    </TableCell>
+                    <DeleteDialog
+                      user={row}
+                      open={selectedDelete === row.id}
+                      onClose={(event: any): void =>
+                        handleCloseDialog(event)} />
+                    <UserInfo
+                      user={row}
+                      open={selectedRow === row.id}
+                      onClose={handleCloseModal} >
+                    </UserInfo>
+                  </TableRow>
+                ))}
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
                     computeEmptyRows(rowsPerPage, page, rows)}}>

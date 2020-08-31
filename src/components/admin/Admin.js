@@ -1,11 +1,12 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import UsersTable from './UsersTable';
 import ActionTable from './ActionTable';
 import PendingTable from './PendingTable';
 import AdminTopBar from './AdminTopBar';
 import styles from './admin.module.css';
 
-export default function AdminFrontPage() {
+export default function AdminFrontPage(): React.Node {
   return (
     <div className={styles.background}>
       <AdminTopBar />

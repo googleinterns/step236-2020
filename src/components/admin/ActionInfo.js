@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import {Typography} from '@material-ui/core';
 import {
@@ -10,16 +10,19 @@ import {
   DialogTitle,
 } from '@material-ui/core';
 
-// eslint-disable-next-line react/display-name
-const ActionInfo = React.forwardRef((props, ref) => {
-  const {action, open, onClose, onEntering} = props;
+type PropsType = {
+  action: any,
+  open: boolean,
+  onClose: any
+};
+
+const ActionInfo = (props: PropsType): React.Node => {
+  const {action, open, onClose} = props;
 
   return (
     <Dialog
-      ref={ref}
       open={open}
       onClose={onClose}
-      onEntering={onEntering}
       scroll={'paper'}>
       <DialogTitle>
         Action details
@@ -38,13 +41,6 @@ const ActionInfo = React.forwardRef((props, ref) => {
       </DialogActions>
     </Dialog>
   );
-});
-
-ActionInfo.propTypes = {
-  action: PropTypes.object.isRequired,
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onEntering: PropTypes.func.isRequired,
 };
 
 export default ActionInfo;

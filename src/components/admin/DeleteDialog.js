@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -9,39 +9,38 @@ import {
   Button,
 } from '@material-ui/core';
 
-// eslint-disable-next-line react/display-name
-const DeleteDialog = React.forwardRef((props, ref) => {
-  const {open, onClose} = props;
+type PropsType = {
+  user: any,
+  open: boolean,
+  onClose: any
+};
+
+const DeleteDialog = (props: PropsType): React.Node => {
+  const {user, open, onClose} = props;
 
   return (
     <Dialog
-      ref={ref}
       open={open}
       onClose={onClose} >
       <DialogTitle>
-        {`Revoke this user's membership?`}
+        Revoke {user.name}&apos;s membership?
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {`This action revokes a user's membership permanently 
-          and is irreversible.`}
+          This action revokes a user&apos;s membership permanently
+          and is irreversible.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>
-          {`Cancel`}
+          Cancel
         </Button>
         <Button onClick={onClose}>
-          {`Delete`}
+          Delete
         </Button>
       </DialogActions>
     </Dialog>
   );
-});
-
-DeleteDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
 };
 
 export default DeleteDialog;

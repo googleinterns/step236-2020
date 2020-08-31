@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import {Typography, Grid} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
@@ -22,16 +22,19 @@ import {
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
-// eslint-disable-next-line react/display-name
-const UserInfo = React.forwardRef((props, ref) => {
-  const {user, open, onClose, onEntering} = props;
+type PropsType = {
+  user: any,
+  open: boolean,
+  onClose: any
+};
+
+const UserInfo = (props: PropsType): React.Node => {
+  const {user, open, onClose} = props;
 
   return (
     <Dialog
-      ref={ref}
       open={open}
       onClose={onClose}
-      onEntering={onEntering}
       scroll={'paper'} >
       <DialogTitle>
         Membership information
@@ -76,7 +79,7 @@ const UserInfo = React.forwardRef((props, ref) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {user.groups.map((group) => (
+                    {user.groups.map((group: any): React.Node => (
                       <TableRow key={group.name}>
                         <TableCell>{group.name}</TableCell>
                         <TableCell>{group.description}</TableCell>
@@ -94,13 +97,6 @@ const UserInfo = React.forwardRef((props, ref) => {
       </DialogActions>
     </Dialog>
   );
-});
-
-UserInfo.propTypes = {
-  user: PropTypes.object.isRequired,
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onEntering: PropTypes.func.isRequired,
 };
 
 export default UserInfo;

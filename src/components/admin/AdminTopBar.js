@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -17,7 +18,7 @@ const theme = createMuiTheme({
   },
 });
 
-export default function AdminTopBar() {
+export default function AdminTopBar(): React.Node {
   return (
     <ThemeProvider theme={theme}>
       <AppBar className={styles.topBar} position='static'>

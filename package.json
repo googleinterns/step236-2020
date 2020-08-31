@@ -42,10 +42,13 @@
     ]
   },
   "devDependencies": {
+    "@material-ui/core": "^4.11.0",
+    "babel-eslint": "^10.1.0",
     "eslint": "^6.6.0",
     "eslint-config-google": "^0.14.0",
+    "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-react": "^7.20.6",
-    "@material-ui/core": "^4.11.0",
-    "flow-bin": "^0.132.0"
+    "flow-bin": "^0.132.0",
+    "flow-remove-types": "^2.132.0"
   }
 }

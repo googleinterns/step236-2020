@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
@@ -7,23 +7,29 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import styles from './admin.module.css';
 
+type PropsType = {
+  count: number,
+  page: number,
+  rowsPerPage: number,
+  onChangePage: any
+};
 
-function TablePaginationActions(props) {
+function TablePaginationActions(props: PropsType): React.Node {
   const {count, page, rowsPerPage, onChangePage} = props;
 
-  const handleFirstPageButtonClick = (event) => {
+  const handleFirstPageButtonClick = (event: any) => {
     onChangePage(event, 0);
   };
 
-  const handleBackButtonClick = (event) => {
+  const handleBackButtonClick = (event: any) => {
     onChangePage(event, page - 1);
   };
 
-  const handleNextButtonClick = (event) => {
+  const handleNextButtonClick = (event: any) => {
     onChangePage(event, page + 1);
   };
 
-  const handleLastPageButtonClick = (event) => {
+  const handleLastPageButtonClick = (event: any) => {
     onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
@@ -57,20 +63,14 @@ function TablePaginationActions(props) {
   );
 }
 
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-
-function computeEmptyRows(rowsPerPage, page, rows) {
+function computeEmptyRows(rowsPerPage: number,
+    page: number, rows: Array<any>): number {
   return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 }
 
 
-function computeRows(page, rows, rowsPerPage) {
+function computeRows(page: number,
+    rows: Array<any>, rowsPerPage: number): Array<any> {
   if (rowsPerPage > 0) {
     return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }
