@@ -19,19 +19,23 @@ import {TablePaginationActions,
   computeEmptyRows,
   computeRows} from './TablePaginationActions';
 
+import PendingInfo from './PendingInfo';
+
 function createData(id: number, name: string,
-    email: string): {id: number, name: string, email: string} {
-  return {id, name, email};
+    email: string, date: any): {id: number, name: string,
+    email: string, date: any} {
+  return {id, name, email, date};
 }
 
 const rows = [
-  createData(1, 'Alice Joy', 'alicee@gmail.com'),
-  createData(2, 'David Toms', 'dt@yahoo.com'),
+  createData(1, 'Alice Joy', 'alicee@gmail.com', new Date()),
+  createData(2, 'David Toms', 'dt@yahoo.com', new Date()),
 ];
 
 export default function PendingTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedPending, setSelectedPending] = React.useState(-1);
 
   const handleChangePage = (event: any, newPage: number) => {
     setPage(newPage);
@@ -40,6 +44,14 @@ export default function PendingTable(): React.Node {
   const handleChangeRowsPerPage = (event: any) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleOpenDialog = (event: any, rowId: number) => {
+    setSelectedPending(rowId);
+  };
+
+  const handleCloseDialog = (event: any) => {
+    setSelectedPending(-1);
   };
 
   return (
@@ -65,10 +77,16 @@ export default function PendingTable(): React.Node {
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
-                      <IconButton>
-                        <MoreHorizIcon />
+                      <IconButton
+                        onClick={(event: any): void =>
+                          handleOpenDialog(event, row.id)}>
+                        <MoreHorizIcon/>
                       </IconButton>
                     </TableCell>
+                    <PendingInfo
+                      user={row}
+                      open={row.id === selectedPending}
+                      onClose={handleCloseDialog} />
                   </TableRow>
                 ))}
 

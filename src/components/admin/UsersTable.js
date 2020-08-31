@@ -73,7 +73,7 @@ export default function UsersTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
-  const [selectedDelete, setSelectedDelete] = React.useState(null);
+  const [selectedDelete, setSelectedDelete] = React.useState(-1);
 
   const handleChangePage = (event: any, newPage: number) => {
     setPage(newPage);
@@ -98,7 +98,7 @@ export default function UsersTable(): React.Node {
   };
 
   const handleCloseDialog = (event: any) => {
-    setSelectedDelete(null);
+    setSelectedDelete(-1);
   };
 
   return (
