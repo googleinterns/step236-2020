@@ -19,6 +19,8 @@ import {TablePaginationActions,
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
 
+import ActionInfo from './ActionInfo';
+
 const rows = Array.from([
   '[NOOGLER CHECK 1]: A partner of a noogler requires access',
   '[DATABASE]: A new member could not be added to the database.',
@@ -32,6 +34,9 @@ const rows = Array.from([
 export default function ActionTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedRow, setSelectedRow] = React.useState(-1);
+
+  const ref = React.useRef(null);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -40,6 +45,21 @@ export default function ActionTable() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleSelectedRow = (event, rowId) => {
+    console.log(rowId);
+    setSelectedRow(rowId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRow(-1);
+  };
+
+  const handleEntering = () => {
+    if (ref.current != null) {
+      ref.current.focus();
+    }
   };
 
   return (
@@ -65,10 +85,18 @@ export default function ActionTable() {
                 <TableCell>{row.date.toDateString()}</TableCell>
                 <TableCell>{row.message}</TableCell>
                 <TableCell>
-                  <IconButton>
+                  <IconButton
+                    onClick={(event) => handleSelectedRow(event, row.id)}>
                     <MoreHorizIcon />
                   </IconButton>
                 </TableCell>
+                <ActionInfo
+                  action={row}
+                  ref={ref}
+                  open={selectedRow === row.id}
+                  onClose={handleCloseModal}
+                  onEntering={handleEntering}>
+                </ActionInfo>
               </TableRow>
             ))}
 

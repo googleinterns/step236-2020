@@ -147,7 +147,7 @@ export default function UsersTable() {
                 <UserInfo
                   user={row}
                   ref={ref}
-                  open={selectedRow === row.id ? true : false}
+                  open={selectedRow === row.id}
                   onClose={handleCloseModal}
                   onEntering={handleEntering} >
                 </UserInfo>
