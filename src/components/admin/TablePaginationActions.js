@@ -11,7 +11,7 @@ type PropsType = {
   count: number,
   page: number,
   rowsPerPage: number,
-  onChangePage: any
+  onChangePage: (SyntheticEvent<>, number) => void
 };
 
 function TablePaginationActions(props: PropsType): React.Node {

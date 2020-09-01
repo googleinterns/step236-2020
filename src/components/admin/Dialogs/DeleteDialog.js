@@ -12,7 +12,7 @@ import {
 type PropsType = {
   user: any,
   open: boolean,
-  onClose: any
+  onClose: (SyntheticEvent<>) => void
 };
 
 const DeleteDialog = (props: PropsType): React.Node => {

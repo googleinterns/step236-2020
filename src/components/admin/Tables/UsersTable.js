@@ -85,7 +85,6 @@ export default function UsersTable(): React.Node {
   };
 
   const handleSelectedRow = (event: any, rowId: number) => {
-    console.log(rowId);
     setSelectedRow(rowId);
   };
 
@@ -139,8 +138,7 @@ export default function UsersTable(): React.Node {
                     <DeleteDialog
                       user={row}
                       open={selectedDelete === row.id}
-                      onClose={(event: any): void =>
-                        handleCloseDialog(event)} />
+                      onClose={handleCloseDialog} />
                     <UserInfo
                       user={row}
                       open={selectedRow === row.id}

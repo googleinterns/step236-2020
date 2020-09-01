@@ -47,7 +47,6 @@ export default function ActionTable(): React.Node {
   };
 
   const handleSelectedRow = (event: any, rowId: number) => {
-    console.log(rowId);
     setSelectedRow(rowId);
   };
 

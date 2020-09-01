@@ -13,7 +13,7 @@ import {
 type PropsType = {
   action: any,
   open: boolean,
-  onClose: any
+  onClose: (SyntheticEvent<>) => void
 };
 
 const ActionInfo = (props: PropsType): React.Node => {
