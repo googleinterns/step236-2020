@@ -25,7 +25,7 @@ import EditIcon from '@material-ui/icons/Edit';
 type PropsType = {
   user: any,
   open: boolean,
-  onClose: (SyntheticEvent<>) => void
+  onClose: () => void
 };
 
 const UserInfo = (props: PropsType): React.Node => {

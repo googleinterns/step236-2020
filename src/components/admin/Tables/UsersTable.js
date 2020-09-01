@@ -75,16 +75,16 @@ export default function UsersTable(): React.Node {
   const [selectedRow, setSelectedRow] = React.useState(-1);
   const [selectedDelete, setSelectedDelete] = React.useState(-1);
 
-  const handleChangePage = (event: any, newPage: number) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: any) => {
+  const handleChangeRowsPerPage = (event: SyntheticEvent<>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleSelectedRow = (event: any, rowId: number) => {
+  const handleSelectedRow = (rowId: number) => {
     setSelectedRow(rowId);
   };
 
@@ -92,11 +92,11 @@ export default function UsersTable(): React.Node {
     setSelectedRow(-1);
   };
 
-  const handleOpenDialog = (event: any, rowId: number) => {
+  const handleOpenDialog = (rowId: number) => {
     setSelectedDelete(rowId);
   };
 
-  const handleCloseDialog = (event: any) => {
+  const handleCloseDialog = () => {
     setSelectedDelete(-1);
   };
 
@@ -123,15 +123,15 @@ export default function UsersTable(): React.Node {
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={(event: any): void =>
-                          handleSelectedRow(event, row.id)}>
+                        onClick={(): void =>
+                          handleSelectedRow(row.id)}>
                         <InfoOutlinedIcon/>
                       </IconButton>
                     </TableCell>
                     <TableCell>
                       <IconButton
                         onClick={(event: any): void =>
-                          handleOpenDialog(event, row.id)}>
+                          handleOpenDialog(row.id)}>
                         <DeleteIcon/>
                       </IconButton>
                     </TableCell>

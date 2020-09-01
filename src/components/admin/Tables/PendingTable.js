@@ -37,20 +37,20 @@ export default function PendingTable(): React.Node {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedPending, setSelectedPending] = React.useState(-1);
 
-  const handleChangePage = (event: SyntheticEvent<>, newPage: number) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: SyntheticEvent<>) => {
-    setRowsPerPage(parseInt(event.currentTarget, 10));
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleOpenDialog = (event: SyntheticEvent<>, rowId: number) => {
+  const handleOpenDialog = (rowId: number) => {
     setSelectedPending(rowId);
   };
 
-  const handleCloseDialog = (event: SyntheticEvent<>) => {
+  const handleCloseDialog = () => {
     setSelectedPending(-1);
   };
 
@@ -78,8 +78,8 @@ export default function PendingTable(): React.Node {
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={(event: SyntheticEvent<>): void =>
-                          handleOpenDialog(event, row.id)}>
+                        onClick={(): void =>
+                          handleOpenDialog(row.id)}>
                         <MoreHorizIcon/>
                       </IconButton>
                     </TableCell>

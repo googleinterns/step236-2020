@@ -37,16 +37,16 @@ export default function ActionTable(): React.Node {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
 
-  const handleChangePage = (event: any, newPage: number) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: any) => {
+  const handleChangeRowsPerPage = (event: SyntheticEvent<>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleSelectedRow = (event: any, rowId: number) => {
+  const handleSelectedRow = (rowId: number) => {
     setSelectedRow(rowId);
   };
 
@@ -79,8 +79,8 @@ export default function ActionTable(): React.Node {
                     <TableCell>{row.message}</TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={(event: any): void =>
-                          handleSelectedRow(event, row.id)}>
+                        onClick={(): void =>
+                          handleSelectedRow(row.id)}>
                         <MoreHorizIcon />
                       </IconButton>
                     </TableCell>

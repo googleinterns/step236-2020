@@ -11,26 +11,26 @@ type PropsType = {
   count: number,
   page: number,
   rowsPerPage: number,
-  onChangePage: (SyntheticEvent<>, number) => void
+  onChangePage: number => void
 };
 
 function TablePaginationActions(props: PropsType): React.Node {
   const {count, page, rowsPerPage, onChangePage} = props;
 
-  const handleFirstPageButtonClick = (event: any) => {
-    onChangePage(event, 0);
+  const handleFirstPageButtonClick = () => {
+    onChangePage(0);
   };
 
-  const handleBackButtonClick = (event: any) => {
-    onChangePage(event, page - 1);
+  const handleBackButtonClick = () => {
+    onChangePage(page - 1);
   };
 
-  const handleNextButtonClick = (event: any) => {
-    onChangePage(event, page + 1);
+  const handleNextButtonClick = () => {
+    onChangePage(page + 1);
   };
 
-  const handleLastPageButtonClick = (event: any) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  const handleLastPageButtonClick = () => {
+    onChangePage(Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
