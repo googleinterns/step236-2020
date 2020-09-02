@@ -1,4 +1,6 @@
 import Cookies from 'js-cookie';
+import {auth, signInWithGoogle} from '../firebaseFeatures';
+import {useEffect, useState} from 'react';
 
 const mockAuth = {
   isAdmin: function() {
@@ -6,9 +8,8 @@ const mockAuth = {
     return (adminCookie !== undefined);
   },
 
-  isUser: function() {
-    const userCookie = Cookies.get('user');
-    return (userCookie !== undefined);
+  isUser: function(user) {
+    return user !== null;
   },
 
   isInviter: function() {
@@ -17,14 +18,30 @@ const mockAuth = {
   },
 
   logIn: function() {
-    Cookies.set('user', 'user');
+    return signInWithGoogle();
   },
 
   logOut: function() {
-    Cookies.remove('user');
+    auth.signOut().then(() => {console.log("User signed out.")});
   },
 };
 
-// TODO: Add firebase authentication.
+export const useFirebaseAuthentication = () => {
+  const [authUser, setAuthUser] = useState(null);
+
+  useEffect(() =>{
+    return auth.onAuthStateChanged(
+        (
+            newAuthUser => {
+          if (newAuthUser === authUser) {
+            return;
+          } else {
+            setAuthUser(newAuthUser);
+          }
+        })
+    );
+  });
+  return authUser;
+};
 
 export default mockAuth;

@@ -7,7 +7,7 @@ import './App.css';
 import AdminFrontPage from './components/admin/Admin';
 import InviteeForm from './components/form/InviteeForm';
 import LandingPage from './components/landingPage/LandingPage';
-import mockAuth from './components/Authenticator';
+import mockAuth, {useFirebaseAuthentication} from './components/Authenticator';
 import StartingPage from './components/StartingPage';
 import SelfServicePage from './components/selfServicePage/SelfServicePage';
 
@@ -22,15 +22,16 @@ const PrivateRoute = ({authFunction, component, redirectPath}) => (
 );
 
 function App() {
+  const authUser = useFirebaseAuthentication();
+
   return (
       <Router>
         <div>
           <Switch>
-
             <PrivateRoute
                 path="/"
                 exact
-                authFunction={() => !mockAuth.isUser()}
+                authFunction={() => !mockAuth.isUser(authUser)}
                 component={<StartingPage/>}
                 redirectPath={'/landing-page'}>
             </PrivateRoute>
@@ -53,21 +54,21 @@ function App() {
 
             <PrivateRoute
                 path="/landing-page"
-                authFunction={mockAuth.isUser}
+                authFunction={() => mockAuth.isUser(authUser)}
                 component={<LandingPage/>}
                 redirectPath={'/'}>
             </PrivateRoute>
 
             <PrivateRoute
                 path="/self-service"
-                authFunction={mockAuth.isUser}
+                authFunction={() => mockAuth.isUser(authUser)}
                 component={<SelfServicePage/>}
                 redirectPath={'/'}>
             </PrivateRoute>
 
             <PrivateRoute
                 path="/restricted-area"
-                authFunction={mockAuth.isUser}
+                authFunction={() => mockAuth.isUser(authUser)}
                 component={<h1>Restricted area (redirect?)</h1>}
                 redirectPath={'/'}
             />

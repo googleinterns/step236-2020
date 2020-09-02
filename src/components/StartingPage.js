@@ -10,9 +10,10 @@ export default function StartingPage() {
   const classes = useStyles();
 
   const logIn = () => {
-    mockAuth.logIn();
-    window.location.replace('/landing-page');
+    mockAuth.logIn().then(() => {
+        window.location.replace('/landing-page')});
   };
+
 
   return (
       <Paper className={classes.paper}>
