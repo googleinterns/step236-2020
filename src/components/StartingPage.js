@@ -11,7 +11,7 @@ export default function StartingPage() {
 
   const logIn = () => {
     mockAuth.logIn().then(() => {
-        window.location.replace('/landing-page')});
+        console.log('Logged in');});
   };
 
 
