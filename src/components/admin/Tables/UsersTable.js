@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,24 +12,38 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
-import styles from './admin.module.css';
+import styles from '../admin.module.css';
 import {Typography} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import SearchIcon from '@material-ui/icons/Search';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteDialog from '../Dialogs/DeleteDialog';
 
 import {TablePaginationActions,
   computeEmptyRows,
-  computeRows} from './TablePaginationActions';
+  computeRows} from '../TablePaginationActions';
 
-const rows = Array.from(Array(30), (x, index) => ({
+import UserInfo from '../Dialogs/UserInfo';
+
+const rows = Array.from(Array(30), (x: any, index: number): any => ({
   id: index,
   name: 'John Dowe',
   email: 'johndowe@gmail.com',
+  note: 'Need to check for their partner\'s new google email',
+  joinDate: new Date(),
+  groups: [
+    {
+      name: 'Hiking amateurs',
+      description: 'A group to plan hikings between members.'},
+    {
+      name: 'Cooking advice',
+      description: 'A group to exchange cooking recepies',
+    }],
 }));
 
-function EnhancedToolbar() {
-  const handleOnSubmit = () => console.log('User has pressed search.');
+function EnhancedToolbar(): React.Node {
+  const handleOnSubmit = (): void => console.log('User has pressed search.');
 
   return (
     <Toolbar variant='dense' className={styles.titleUsersBar}>
@@ -54,17 +69,35 @@ function EnhancedToolbar() {
   );
 }
 
-export default function UsersTable() {
+export default function UsersTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedRow, setSelectedRow] = React.useState(-1);
+  const [selectedDelete, setSelectedDelete] = React.useState(-1);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event: SyntheticEvent<>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleSelectedRow = (rowId: number) => {
+    setSelectedRow(rowId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRow(-1);
+  };
+
+  const handleOpenDialog = (rowId: number) => {
+    setSelectedDelete(rowId);
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedDelete(-1);
   };
 
   return (
@@ -82,15 +115,37 @@ export default function UsersTable() {
           </TableHead>
 
           <TableBody>
-            {computeRows(page, rows, rowsPerPage).map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell><EditIcon /></TableCell>
-                <TableCell><DeleteIcon/></TableCell>
-              </TableRow>
-            ))}
-
+            {computeRows(page, rows, rowsPerPage)
+                .map((row: any): React.Node => (
+                  <TableRow
+                    key={row.id} >
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(): void =>
+                          handleSelectedRow(row.id)}>
+                        <InfoOutlinedIcon/>
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event: any): void =>
+                          handleOpenDialog(row.id)}>
+                        <DeleteIcon/>
+                      </IconButton>
+                    </TableCell>
+                    <DeleteDialog
+                      user={row}
+                      open={selectedDelete === row.id}
+                      onClose={handleCloseDialog} />
+                    <UserInfo
+                      user={row}
+                      open={selectedRow === row.id}
+                      onClose={handleCloseModal} >
+                    </UserInfo>
+                  </TableRow>
+                ))}
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
                     computeEmptyRows(rowsPerPage, page, rows)}}>

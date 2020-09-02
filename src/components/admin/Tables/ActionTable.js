@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,36 +10,48 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
+import IconButton from '@material-ui/core/IconButton';
 
-import styles from './admin.module.css';
+import styles from '../admin.module.css';
 import {TablePaginationActions,
   computeEmptyRows,
-  computeRows} from './TablePaginationActions';
+  computeRows} from '../TablePaginationActions';
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
 
-const rows = Array.from([
+import ActionInfo from '../Dialogs/ActionInfo';
+
+const rows: Array<any> = Array.from([
   '[NOOGLER CHECK 1]: A partner of a noogler requires access',
   '[DATABASE]: A new member could not be added to the database.',
   '[NOOGLER CHECK 2]: A partner of a noogler requires access',
-], (message, id) => ({
+], (message: string, id: number): {id: number, message: string, date: any} => ({
   id,
   message,
   date: new Date(),
 }));
 
-export default function ActionTable() {
+export default function ActionTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [selectedRow, setSelectedRow] = React.useState(-1);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event: SyntheticEvent<>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleSelectedRow = (rowId: number) => {
+    setSelectedRow(rowId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRow(-1);
   };
 
   return (
@@ -59,13 +72,25 @@ export default function ActionTable() {
           </TableHead>
 
           <TableBody>
-            {computeRows(page, rows, rowsPerPage).map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.date.toDateString()}</TableCell>
-                <TableCell>{row.message}</TableCell>
-                <TableCell><MoreHorizIcon /></TableCell>
-              </TableRow>
-            ))}
+            {computeRows(page, rows, rowsPerPage)
+                .map((row: any): React.Node => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.date.toDateString()}</TableCell>
+                    <TableCell>{row.message}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(): void =>
+                          handleSelectedRow(row.id)}>
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </TableCell>
+                    <ActionInfo
+                      action={row}
+                      open={selectedRow === row.id}
+                      onClose={handleCloseModal} >
+                    </ActionInfo>
+                  </TableRow>
+                ))}
 
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
