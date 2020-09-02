@@ -23,24 +23,9 @@ import DeleteDialog from '../Dialogs/DeleteDialog';
 import {TablePaginationActions,
   computeEmptyRows,
   computeRows} from '../TablePaginationActions';
-
 import UserInfo from '../Dialogs/UserInfo';
 
-const rows = Array.from(Array(30), (x: any, index: number): any => ({
-  id: index,
-  name: 'John Dowe',
-  email: 'johndowe@gmail.com',
-  note: 'Need to check for their partner\'s new google email',
-  joinDate: new Date(),
-  groups: [
-    {
-      name: 'Hiking amateurs',
-      description: 'A group to plan hikings between members.'},
-    {
-      name: 'Cooking advice',
-      description: 'A group to exchange cooking recepies',
-    }],
-}));
+import {paginatedQuery} from '../../database/Queries.js';
 
 function EnhancedToolbar(): React.Node {
   const handleOnSubmit = (): void => console.log('User has pressed search.');
@@ -74,6 +59,18 @@ export default function UsersTable(): React.Node {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
   const [selectedDelete, setSelectedDelete] = React.useState(-1);
+  const [rows, setRows] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchRows = async () => {
+      const start = page * rowsPerPage + 1;
+      const newRows = await paginatedQuery('active-members',
+          start, rowsPerPage);
+      setRows(newRows);
+    };
+
+    fetchRows();
+  }, [page, rowsPerPage]);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);
@@ -118,30 +115,30 @@ export default function UsersTable(): React.Node {
             {computeRows(page, rows, rowsPerPage)
                 .map((row: any): React.Node => (
                   <TableRow
-                    key={row.id} >
+                    key={row.count} >
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
                       <IconButton
                         onClick={(): void =>
-                          handleSelectedRow(row.id)}>
+                          handleSelectedRow(row.count)}>
                         <InfoOutlinedIcon/>
                       </IconButton>
                     </TableCell>
                     <TableCell>
                       <IconButton
                         onClick={(event: any): void =>
-                          handleOpenDialog(row.id)}>
+                          handleOpenDialog(row.count)}>
                         <DeleteIcon/>
                       </IconButton>
                     </TableCell>
                     <DeleteDialog
                       user={row}
-                      open={selectedDelete === row.id}
+                      open={selectedDelete === row.count}
                       onClose={handleCloseDialog} />
                     <UserInfo
                       user={row}
-                      open={selectedRow === row.id}
+                      open={selectedRow === row.count}
                       onClose={handleCloseModal} >
                     </UserInfo>
                   </TableRow>
@@ -157,7 +154,7 @@ export default function UsersTable(): React.Node {
           <TableFooter className={styles.footer}>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, {label: 'All', value: -1}]}
+                rowsPerPageOptions={[5, 10, 25, 50]}
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}

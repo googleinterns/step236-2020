@@ -21,12 +21,23 @@ import {
   TableCell,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import type {UserType} from '../FlowTypes.js';
 
 type PropsType = {
-  user: any,
+  user: UserType,
   open: boolean,
   onClose: () => void
 };
+
+const groups = [
+  {
+    name: 'Hiking amateurs',
+    description: 'A group to plan hikings between members.'},
+  {
+    name: 'Cooking advice',
+    description: 'A group to exchange cooking recepies',
+  },
+];
 
 const UserInfo = (props: PropsType): React.Node => {
   const {user, open, onClose} = props;
@@ -53,7 +64,7 @@ const UserInfo = (props: PropsType): React.Node => {
                 Email: {user.email}
               </p>
               <p>
-                Date when joined: {user.joinDate.toDateString()}
+                Date when joined: {user.joinDate.toString()}
               </p>
             </Paper>
           </Grid>
@@ -65,7 +76,7 @@ const UserInfo = (props: PropsType): React.Node => {
                   <ReportIcon />
                 </IconButton>
               </p>
-              <p className={styles.adminText}>{user.note}</p>
+              <p className={styles.adminText}>{user.adminNote}</p>
             </Paper>
           </Grid>
           <Grid item>
@@ -79,7 +90,7 @@ const UserInfo = (props: PropsType): React.Node => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {user.groups.map((group: any): React.Node => (
+                    {groups.map((group: any): React.Node => (
                       <TableRow key={group.name}>
                         <TableCell>{group.name}</TableCell>
                         <TableCell>{group.description}</TableCell>
