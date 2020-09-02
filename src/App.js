@@ -9,6 +9,7 @@ import InviteeForm from './components/form/InviteeForm';
 import LandingPage from './components/landingPage/LandingPage';
 import mockAuth from './components/Authenticator';
 import StartingPage from './components/StartingPage';
+import SelfServicePage from './components/selfServicePage/SelfServicePage';
 
 const PrivateRoute = ({authFunction, component, redirectPath}) => (
   <Route
@@ -60,7 +61,7 @@ function App() {
             <PrivateRoute
                 path="/self-service"
                 authFunction={mockAuth.isUser}
-                component={<h1>Self service page</h1>}
+                component={<SelfServicePage/>}
                 redirectPath={'/'}>
             </PrivateRoute>
 
