@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import {auth, signInWithGoogle} from '../firebaseFeatures';
+import {auth, signInWithGoogle, signOutFromGoogle} from '../firebaseFeatures';
 import {useEffect, useState} from 'react';
 
 const mockAuth = {
@@ -18,27 +18,31 @@ const mockAuth = {
   },
 
   logIn: function() {
-    return signInWithGoogle();
+    signInWithGoogle().then(() => {
+      console.log('User logged in. Downloading their status from server...');
+    });
   },
 
   logOut: function() {
-    auth.signOut().then(() => {console.log("User signed out.")});
+    signOutFromGoogle().then(() => {
+      console.log('User logged out.');
+    });
   },
 };
 
 export const useFirebaseAuthentication = () => {
   const [authUser, setAuthUser] = useState(null);
 
-  useEffect(() =>{
+  useEffect(() => {
     return auth.onAuthStateChanged(
         (
             newAuthUser => {
-          if (newAuthUser === authUser) {
-            return;
-          } else {
-            setAuthUser(newAuthUser);
-          }
-        })
+              if (newAuthUser === authUser) {
+
+              } else {
+                setAuthUser(newAuthUser);
+              }
+            }),
     );
   });
   return authUser;

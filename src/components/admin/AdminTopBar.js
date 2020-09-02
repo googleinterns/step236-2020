@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import styles from './admin.module.css';
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import mockAuth from '../Authenticator';
 
 const theme = createMuiTheme({
   palette: {
@@ -26,7 +27,7 @@ export default function AdminTopBar(): React.Node {
           <Typography variant='h6' className={styles.header}>
             Spooglers.org admin
           </Typography>
-          <Button color='inherit'>Log out</Button>
+          <Button color='inherit' onClick={mockAuth.logOut}>Log out</Button>
         </Toolbar>
       </AppBar>
     </ThemeProvider>

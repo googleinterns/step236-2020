@@ -20,9 +20,19 @@ export default function SelfServicePage() {
             justify="flex-start"
             alignItems="stretch"
             className={classes.gridContainer}>
-          {mockAuth.isInviter() ? <InviterSelfService/> : <MemberSelfService/>}
-          <Button className={classes.button} component={Link}
-                  to={'/'}>Back</Button>
+          <Grid item className={classes.gridItem}>
+            <Button className={classes.button}
+                    component={Link}
+                    to={'/'}
+                    fullWidth>
+              Back
+            </Button>
+          </Grid>
+          <Grid item className={classes.gridItem}>
+            {mockAuth.isInviter() ?
+                <InviterSelfService/> :
+                <MemberSelfService/>}
+          </Grid>
         </Grid>
       </Paper>
   );

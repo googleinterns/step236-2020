@@ -10,10 +10,8 @@ export default function StartingPage() {
   const classes = useStyles();
 
   const logIn = () => {
-    mockAuth.logIn().then(() => {
-        console.log('Logged in');});
+    mockAuth.logIn();
   };
-
 
   return (
       <Paper className={classes.paper}>

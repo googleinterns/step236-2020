@@ -47,7 +47,8 @@ export default function LandingPage() {
                   return (
                       <Grid
                           item
-                          className={classes.gridItem}>
+                          className={classes.gridItem}
+                          key={element.label}>
                         <Button component={Link}
                                 to={element.to}
                                 variant="outlined"
