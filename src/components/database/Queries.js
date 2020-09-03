@@ -80,7 +80,8 @@ async function fieldQuery(collection: string, orderField: string, start: any,
   * created from the documents
  */
 async function findDocumentQuery(collection: string, field: string,
-    value: any): Promise<Array<UserType | ActionType | PendingType>> {
+    value: string | number | boolean): Promise<Array<UserType | ActionType |
+    PendingType>> {
   const collectionRef = database.collection(collection);
 
   try {
@@ -95,4 +96,22 @@ async function findDocumentQuery(collection: string, field: string,
   }
 }
 
-export {fieldQuery, findDocumentQuery};
+async function deleteDocument(collection: string, field: 'email' | 'count',
+    value: string | number) {
+  try {
+    await database.runTransaction(async (t: any) => {
+      const collectionRef = database.collection(collection);
+      const snapshot = await collectionRef
+          .where(field, '==', value)
+          .get();
+      const refs = snapshot.docs.map((doc: any): any => doc.ref);
+
+      await t.delete(refs[0]);
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('Delete unsuccesful.');
+  }
+}
+
+export {fieldQuery, findDocumentQuery, deleteDocument};
