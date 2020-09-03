@@ -15,7 +15,8 @@ export type UserType = {
 export type PendingType = {
   count: number,
   email: string,
-  partnerEmail: string
+  partnerEmail: string,
+  date: string
 };
 
 export type ActionType = {

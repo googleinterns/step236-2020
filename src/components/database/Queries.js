@@ -20,6 +20,7 @@ function sanitize(collection: string,
     return ({
       count: user.count,
       email: user.email,
+      date: user.date,
       partnerEmail: user.partnerEmail,
     }: PendingType);
   } else if (collection == 'actions') {

@@ -24,7 +24,7 @@ import {TablePaginationActions,
   computeEmptyRows,
   computeRows} from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
-
+import type {UserType} from '../FlowTypes.js';
 import {fieldQuery} from '../../database/Queries.js';
 
 function EnhancedToolbar(): React.Node {
@@ -113,7 +113,7 @@ export default function UsersTable(): React.Node {
 
           <TableBody>
             {computeRows(page, rows, rowsPerPage)
-                .map((row: any): React.Node => (
+                .map((row: UserType): React.Node => (
                   <TableRow
                     key={row.count} >
                     <TableCell>{row.name}</TableCell>

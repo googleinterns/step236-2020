@@ -8,9 +8,10 @@ import {
   DialogActions,
   DialogTitle,
 } from '@material-ui/core';
+import type {PendingType} from '../FlowTypes.js';
 
 type PropsType = {
-  user: any,
+  user: PendingType,
   open: boolean,
   onClose: () => void
 };
@@ -28,8 +29,8 @@ const PendingInfo = (props: PropsType): React.Node => {
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {user.name} ({user.email})
-          initiated a request on {user.date.toDateString()}
+          {user.email}
+          initiated a request on {user.date.toString()}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
