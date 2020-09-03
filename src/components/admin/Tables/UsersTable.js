@@ -25,7 +25,7 @@ import {TablePaginationActions,
   computeRows} from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
 
-import {paginatedQuery} from '../../database/Queries.js';
+import {fieldQuery} from '../../database/Queries.js';
 
 function EnhancedToolbar(): React.Node {
   const handleOnSubmit = (): void => console.log('User has pressed search.');
@@ -64,7 +64,7 @@ export default function UsersTable(): React.Node {
   React.useEffect(() => {
     const fetchRows = async () => {
       const start = page * rowsPerPage + 1;
-      const newRows = await paginatedQuery('active-members',
+      const newRows = await fieldQuery('active-members', 'count',
           start, rowsPerPage);
       setRows(newRows);
     };
