@@ -15,7 +15,7 @@ function createData(name, surname, key) {
   return {name, surname, key};
 }
 
-function PendingRequestsTable() {
+export function PendingRequestsTable() {
   const classes = useStyles();
 
   const defaultList = [
