@@ -19,23 +19,26 @@ import {TablePaginationActions,
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
-
+import type {ActionType} from '../FlowTypes.js';
+import {fieldQuery} from '../../database/Queries.js';
 import ActionInfo from '../Dialogs/ActionInfo';
-
-const rows: Array<any> = Array.from([
-  '[NOOGLER CHECK 1]: A partner of a noogler requires access',
-  '[DATABASE]: A new member could not be added to the database.',
-  '[NOOGLER CHECK 2]: A partner of a noogler requires access',
-], (message: string, id: number): {id: number, message: string, date: any} => ({
-  id,
-  message,
-  date: new Date(),
-}));
 
 export default function ActionTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
+  const [rows, setRows] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchRows = async () => {
+      const start = page * rowsPerPage + 1;
+      const newRows = await fieldQuery('actions', 'count',
+          start, rowsPerPage);
+      setRows(newRows);
+    };
+
+    fetchRows();
+  }, [page, rowsPerPage]);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);
@@ -73,20 +76,20 @@ export default function ActionTable(): React.Node {
 
           <TableBody>
             {computeRows(page, rows, rowsPerPage)
-                .map((row: any): React.Node => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.date.toDateString()}</TableCell>
+                .map((row: ActionType): React.Node => (
+                  <TableRow key={row.count}>
+                    <TableCell>{row.date.toString()}</TableCell>
                     <TableCell>{row.message}</TableCell>
                     <TableCell>
                       <IconButton
                         onClick={(): void =>
-                          handleSelectedRow(row.id)}>
+                          handleSelectedRow(row.count)}>
                         <MoreHorizIcon />
                       </IconButton>
                     </TableCell>
                     <ActionInfo
                       action={row}
-                      open={selectedRow === row.id}
+                      open={selectedRow === row.count}
                       onClose={handleCloseModal} >
                     </ActionInfo>
                   </TableRow>

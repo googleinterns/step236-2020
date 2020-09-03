@@ -9,9 +9,10 @@ import {
   DialogActions,
   DialogTitle,
 } from '@material-ui/core';
+import type {ActionType} from '../FlowTypes.js';
 
 type PropsType = {
-  action: any,
+  action: ActionType,
   open: boolean,
   onClose: () => void
 };

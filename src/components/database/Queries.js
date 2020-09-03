@@ -4,29 +4,29 @@ import type {UserType, PendingType, ActionType} from '../admin/FlowTypes.js';
 
 function sanitize(collection: string,
     user: any): UserType | ActionType | PendingType {
-  if (collection == 'active-members') {
+  if (collection === 'active-members') {
     return ({
       adminNote: user.adminNote,
       email: user.email,
       isAdmin: user.isAdmin,
-      joinDate: user.joinDate,
+      joinDate: user.joinDate.toDate().toLocaleString(),
       name: user.name,
       needsAttention: user.needsAttention,
       partnerEmail: user.partnerEmail,
       count: user.count,
       id: user.id,
     }: UserType);
-  } else if (collection == 'pending-members') {
+  } else if (collection === 'pending-members') {
     return ({
       count: user.count,
       email: user.email,
-      date: user.date,
+      date: user.date.toDate().toLocaleString(),
       partnerEmail: user.partnerEmail,
     }: PendingType);
-  } else if (collection == 'actions') {
+  } else if (collection === 'actions') {
     return ({
       count: user.count,
-      date: user.date,
+      date: user.date.toDate().toLocaleString(),
       message: user.message,
     }: ActionType);
   } else {
@@ -60,7 +60,7 @@ async function fieldQuery(collection: string, orderField: string, start: any,
   try {
     const data = await collectionRef
         .orderBy(orderField)
-        .start(start)
+        .startAt(start)
         .limit(limit)
         .get();
 
