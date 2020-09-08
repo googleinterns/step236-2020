@@ -4,14 +4,11 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import {useStyles} from './LayoutStyles';
 import {Link} from 'react-router-dom';
-import mockAuth from './Authenticator';
+import {useFirebase} from '../firebaseFeatures';
 
 export default function StartingPage() {
   const classes = useStyles();
-
-  const logIn = () => {
-    mockAuth.logIn();
-  };
+  const signInWithGoogle = useFirebase().signInWithGoogle;
 
   return (
       <Paper className={classes.paper}>
@@ -28,7 +25,7 @@ export default function StartingPage() {
                 variant="outlined"
                 fullWidth
                 className={classes.button}
-                onClick={logIn}>
+                onClick={signInWithGoogle}>
               Log in
             </Button>
           </Grid>

@@ -1,28 +1,40 @@
-import React from 'react';
-import {BrowserRouter as Router,
-  Switch,
+import React, {useEffect, useState} from 'react';
+import {
+  BrowserRouter as Router,
+  Redirect,
   Route,
-  Redirect} from 'react-router-dom';
+  Switch,
+} from 'react-router-dom';
 import './App.css';
 import AdminFrontPage from './components/admin/Admin';
 import InviteeForm from './components/form/InviteeForm';
 import LandingPage from './components/landingPage/LandingPage';
-import mockAuth, {useFirebaseAuthentication} from './components/Authenticator';
+import firebaseAuthenticator from './components/Authenticator';
 import StartingPage from './components/StartingPage';
 import SelfServicePage from './components/selfServicePage/SelfServicePage';
+import {useFirebase} from './firebaseFeatures';
 
-const PrivateRoute = ({authFunction, component, redirectPath}) => (
-  <Route
-    render={() => {
-      if (authFunction()) {
-        return component;
-      }
-      return (<Redirect to={redirectPath}/>);
-    }} />
-);
+function PrivateRoute({authFunction, component, redirectPath}) {
+  const [authorisationStatus, setAutorisationStatus] = useState(null);
+
+  useEffect(() => {
+    authFunction().then((newValue) => {
+      setAutorisationStatus(newValue);
+    });
+  });
+
+  if (authorisationStatus === null) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (authorisationStatus) {
+    return component;
+  }
+  return <Redirect exact key={redirectPath} to={redirectPath}/>;
+}
 
 function App() {
-  const authUser = useFirebaseAuthentication();
+  const authUser = useFirebase().authUser;
 
   return (
       <Router>
@@ -31,7 +43,13 @@ function App() {
             <PrivateRoute
                 path="/"
                 exact
-                authFunction={() => !mockAuth.isUser(authUser)}
+                key="/"
+                authFunction={() => {
+                  return firebaseAuthenticator.isUser(authUser)
+                      .then((result) => {
+                        return !result;
+                      });
+                }}
                 component={<StartingPage/>}
                 redirectPath={'/landing-page'}>
             </PrivateRoute>
@@ -47,28 +65,32 @@ function App() {
 
             <PrivateRoute
                 path="/admin"
-                authFunction={mockAuth.isAdmin}
-                component={<AdminFrontPage />}
+                key="/admin"
+                authFunction={() => firebaseAuthenticator.isAdmin(authUser)}
+                component={<AdminFrontPage/>}
                 redirectPath={'/'}>
             </PrivateRoute>
 
             <PrivateRoute
                 path="/landing-page"
-                authFunction={() => mockAuth.isUser(authUser)}
+                key="/landing-page"
+                authFunction={() => firebaseAuthenticator.isUser(authUser)}
                 component={<LandingPage/>}
                 redirectPath={'/'}>
             </PrivateRoute>
 
             <PrivateRoute
                 path="/self-service"
-                authFunction={() => mockAuth.isUser(authUser)}
+                key="/self-service"
+                authFunction={() => firebaseAuthenticator.isUser(authUser)}
                 component={<SelfServicePage/>}
                 redirectPath={'/'}>
             </PrivateRoute>
 
             <PrivateRoute
                 path="/restricted-area"
-                authFunction={() => mockAuth.isUser(authUser)}
+                key="/restricted-area"
+                authFunction={() => firebaseAuthenticator.isUser(authUser)}
                 component={<h1>Restricted area (redirect?)</h1>}
                 redirectPath={'/'}
             />

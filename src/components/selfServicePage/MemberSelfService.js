@@ -17,7 +17,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import mockAuth from '../Authenticator';
+import firebaseAuthenticator from '../Authenticator';
 
 function createData(
     name: string,
@@ -102,7 +102,7 @@ function ManageAccountMenu() {
         >
           <MenuItem onClick={handleClose}>Profile information</MenuItem>
           <MenuItem onClick={handleClose}>Leave community</MenuItem>
-          <MenuItem onClick={mockAuth.logOut}>Log out</MenuItem>
+          <MenuItem onClick={firebaseAuthenticator.logOut}>Log out</MenuItem>
         </Menu>
       </Grid>
   );

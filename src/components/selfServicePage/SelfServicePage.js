@@ -4,13 +4,15 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import {useStyles} from '../LayoutStyles';
-import mockAuth from '../Authenticator';
+import firebaseAuthenticator from '../Authenticator';
 import MemberSelfService from './MemberSelfService';
 import {Link} from 'react-router-dom';
 import InviterSelfService from './InviterSelfService';
+import {useFirebase} from '../../firebaseFeatures';
 
 export default function SelfServicePage() {
   const classes = useStyles();
+  const authUser = useFirebase().authUser;
 
   return (
       <Paper className={classes.paper}>
@@ -29,7 +31,7 @@ export default function SelfServicePage() {
             </Button>
           </Grid>
           <Grid item className={classes.gridItem}>
-            {mockAuth.isInviter() ?
+            {firebaseAuthenticator.isInviter(authUser) ?
                 <InviterSelfService/> :
                 <MemberSelfService/>}
           </Grid>

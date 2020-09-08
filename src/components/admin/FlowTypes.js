@@ -1,5 +1,10 @@
 // @flow
 
+export type OAuthUserType = {
+  email: string,
+
+}
+
 export type UserType = {
   adminNote: string,
   email: string,

@@ -2,6 +2,7 @@
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import {useCallback, useEffect, useState} from 'react';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyByClHaWsJw2jVjIlTQ2FIzaeI6hs0Y7tk',
@@ -14,12 +15,25 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: 'select_account'});
-const signInWithGoogle = () => auth.signInWithPopup(provider);
-
 const database = firebase.firestore();
-const signOutFromGoogle = () => auth.signOut();
-export {firebase, database, auth, signInWithGoogle, signOutFromGoogle};
+
+const useFirebase = () => {
+  const [authUser, setAuthUser] = useState(firebase.auth().currentUser);
+
+  useEffect(() => {
+    const unsubscribe = firebase.auth()
+        .onAuthStateChanged((user) => setAuthUser(user))
+    return () => {
+      unsubscribe()
+    };
+  }, []);
+
+  const signInWithGoogle = useCallback(() => firebase.auth().signInWithPopup(provider), []);
+  const signOutFromGoogle = useCallback(() => firebase.auth().signOut(), [])
+  return {signInWithGoogle, authUser, signOutFromGoogle}
+}
+
+export {firebase, database, useFirebase};
