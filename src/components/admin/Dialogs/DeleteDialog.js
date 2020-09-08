@@ -13,7 +13,7 @@ type PropsType = {
   user: any,
   open: boolean,
   onClose: () => void,
-  onConfirm: () => void
+  onConfirm: () => Promise<any>
 };
 
 const DeleteDialog = (props: PropsType): React.Node => {

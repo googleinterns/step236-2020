@@ -62,14 +62,12 @@ export default function UsersTable(): React.Node {
   const [rows, setRows] = React.useState([]);
 
   React.useEffect(() => {
-    const fetchRows = async () => {
+    (async () => {
       const start = page * rowsPerPage + 1;
       const newRows = await fieldQuery('active-members', 'count',
           start, rowsPerPage);
       setRows(newRows);
-    };
-
-    fetchRows();
+    })();
   }, [page, rowsPerPage, selectedDelete]);
 
   const handleChangePage = (newPage: number) => {

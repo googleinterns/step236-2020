@@ -30,14 +30,12 @@ export default function PendingTable(): React.Node {
   const [rows, setRows] = React.useState([]);
 
   React.useEffect(() => {
-    const fetchRows = async () => {
+    (async () => {
       const start = page * rowsPerPage + 1;
       const newRows = await fieldQuery('pending-members', 'count',
           start, rowsPerPage);
       setRows(newRows);
-    };
-
-    fetchRows();
+    })();
   }, [page, rowsPerPage]);
 
   const handleChangePage = (newPage: number) => {
