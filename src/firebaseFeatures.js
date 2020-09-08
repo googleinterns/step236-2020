@@ -22,5 +22,6 @@ provider.setCustomParameters({prompt: 'select_account'});
 const signInWithGoogle = (): void => auth.signInWithPopup(provider);
 
 const database = firebase.firestore();
+const fieldValue = firebase.firestore.FieldValue;
 
-export {firebase, auth, signInWithGoogle, database};
+export {firebase, auth, signInWithGoogle, database, fieldValue};

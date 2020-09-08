@@ -20,12 +20,18 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteDialog from '../Dialogs/DeleteDialog';
 
-import {TablePaginationActions,
+import {
+  TablePaginationActions,
   computeEmptyRows,
-  computeRows} from '../TablePaginationActions';
+  computeRows,
+} from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
 import type {UserType} from '../FlowTypes.js';
-import {fieldQuery, deleteDocument} from '../../database/Queries.js';
+import {
+  fieldQuery,
+  deleteDocument,
+  updateAdminNote,
+} from '../../database/Queries.js';
 
 function EnhancedToolbar(): React.Node {
   const handleOnSubmit = (): void => console.log('User has pressed search.');
@@ -104,6 +110,16 @@ export default function UsersTable(): React.Node {
     }
   };
 
+  const saveNote = async (user: UserType, note: string) => {
+    try {
+      await updateAdminNote('email', user.email, note);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      window.location.reload();
+    }
+  };
+
   return (
     <Paper>
       <EnhancedToolbar />
@@ -147,7 +163,8 @@ export default function UsersTable(): React.Node {
                     <UserInfo
                       user={row}
                       open={selectedRow === row.count}
-                      onClose={handleCloseModal} >
+                      onClose={handleCloseModal}
+                      saveNote={saveNote}>
                     </UserInfo>
                   </TableRow>
                 ))}

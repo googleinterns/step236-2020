@@ -1,5 +1,5 @@
 // @flow
-import {database} from '../../firebaseFeatures.js';
+import {database, fieldValue} from '../../firebaseFeatures.js';
 import type {UserType, PendingType, ActionType} from '../admin/FlowTypes.js';
 
 function sanitize(collection: string,
@@ -33,6 +33,16 @@ function sanitize(collection: string,
     default:
       throw Error('The collection you asked for doesn\'t exist.');
   }
+}
+
+function actionObject(count: number, user: UserType,
+    message: string): ActionType {
+  const actionMessage = `[${message}]: ${user.email}`;
+  return ({
+    date: fieldValue.serverTimestamp(),
+    count: count,
+    message: actionMessage,
+  });
 }
 
 /**
@@ -111,4 +121,36 @@ async function deleteDocument(collection: string, field: 'email' | 'count',
   }
 }
 
-export {fieldQuery, findDocumentQuery, deleteDocument};
+async function updateAdminNote(field: string,
+    value: string | number, newNote: string) {
+  try {
+    await database.runTransaction(async (t: any) => {
+      const membersRef = database.collection('active-members');
+      const snapshot = await membersRef
+          .where(field, '==', value)
+          .get();
+
+      const refs = snapshot.docs.map((doc: any): any => doc.ref);
+      const userData = snapshot.docs
+          .map((doc: any): any => doc.data())
+          .map((doc: any): UserType | PendingType | ActionType =>
+            sanitize('active-members', doc));
+
+      await t.update(refs[0], {'adminNote': newNote});
+
+      const counterRef = database.collection('counters').doc('actions');
+      const counterDoc = await counterRef.get();
+      const {counter} = counterDoc.data();
+      const actionRef = database.collection('actions');
+      const newActionRef = actionRef.doc();
+      await t.set(newActionRef,
+          actionObject(counter + 1, userData[0], 'NEEDS ATTENTION'));
+      await t.update(counterRef, {'counter': counter + 1});
+    });
+  } catch (error) {
+    console.log('Update unsuccesful');
+    throw new Error(error);
+  }
+}
+
+export {fieldQuery, findDocumentQuery, deleteDocument, updateAdminNote};
