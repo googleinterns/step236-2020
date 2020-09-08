@@ -103,6 +103,12 @@ async function findDocumentQuery(collection: string, field: string,
   }
 }
 
+/**
+  * deleteDocument deletes a document in a specified collection
+  * @param {string} collection defines the collection
+  * @param {'email' | 'count'} field specifies the search criteria for the doc
+  * @param {string | number} value specifies the value of the field
+ */
 async function deleteDocument(collection: string, field: 'email' | 'count',
     value: string | number) {
   try {
@@ -121,7 +127,13 @@ async function deleteDocument(collection: string, field: 'email' | 'count',
   }
 }
 
-async function updateAdminNote(field: string,
+/**
+  * updateAdminNote allows admins to add notes to active users
+  * @param {'email' | 'count'} field specifies the field to search for
+  * @param {string | number} value specifies the value of the field
+  * @param {string} newNote specifies the note to be added to the user
+ */
+async function updateAdminNote(field: 'email' | 'count',
     value: string | number, newNote: string) {
   try {
     await database.runTransaction(async (t: any) => {
