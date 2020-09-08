@@ -4,44 +4,35 @@ import type {UserType, PendingType, ActionType} from '../admin/FlowTypes.js';
 
 function sanitize(collection: string,
     user: any): UserType | ActionType | PendingType {
-  if (collection === 'active-members') {
-    return ({
-      adminNote: user.adminNote,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      joinDate: user.joinDate.toDate().toLocaleString(),
-      name: user.name,
-      needsAttention: user.needsAttention,
-      partnerEmail: user.partnerEmail,
-      count: user.count,
-      id: user.id,
-    }: UserType);
-  } else if (collection === 'pending-members') {
-    return ({
-      count: user.count,
-      email: user.email,
-      date: user.date.toDate().toLocaleString(),
-      partnerEmail: user.partnerEmail,
-    }: PendingType);
-  } else if (collection === 'actions') {
-    return ({
-      count: user.count,
-      date: user.date.toDate().toLocaleString(),
-      message: user.message,
-    }: ActionType);
-  } else {
-    throw Error('The collection you asked for doesn\'t exist.');
+  switch (collection) {
+    case 'active-members':
+      return ({
+        adminNote: user.adminNote,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        joinDate: user.joinDate.toDate().toLocaleString(),
+        name: user.name,
+        needsAttention: user.needsAttention,
+        partnerEmail: user.partnerEmail,
+        count: user.count,
+        id: user.id,
+      }: UserType);
+    case 'pending-members':
+      return ({
+        count: user.count,
+        email: user.email,
+        date: user.date.toDate().toLocaleString(),
+        partnerEmail: user.partnerEmail,
+      }: PendingType);
+    case 'actions':
+      return ({
+        count: user.count,
+        date: user.date.toDate().toLocaleString(),
+        message: user.message,
+      }: ActionType);
+    default:
+      throw Error('The collection you asked for doesn\'t exist.');
   }
-}
-
-function dataSanitization(data: any,
-    collection: string): Array<UserType | ActionType | PendingType> {
-  const result = [];
-  data.forEach((doc: any) => {
-    result.push(sanitize(collection, doc.data()));
-  });
-
-  return result;
 }
 
 /**
@@ -64,7 +55,10 @@ async function fieldQuery(collection: string, orderField: string, start: any,
         .limit(limit)
         .get();
 
-    return dataSanitization(data, collection);
+    return data.docs
+        .map((doc: any): any => doc.data())
+        .map((doc: any): UserType | ActionType | PendingType =>
+          sanitize(collection, doc));
   } catch (error) {
     console.log(error);
     return [];
@@ -88,7 +82,10 @@ async function findDocumentQuery(collection: string, field: string,
         .where(field, '==', value)
         .get();
 
-    return dataSanitization(data, collection);
+    return data.docs
+        .map((doc: any): any => doc.data())
+        .map((doc: any): UserType | ActionType | PendingType =>
+          sanitize(collection, doc));
   } catch (error) {
     console.log(error);
     return [];
