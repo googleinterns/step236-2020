@@ -13,12 +13,16 @@ import type {PendingType} from '../FlowTypes.js';
 type PropsType = {
   user: PendingType,
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  onConfirm: (PendingType) => Promise<>
 };
 
 const PendingInfo = (props: PropsType): React.Node => {
-  const {user, open, onClose} = props;
+  const {user, open, onClose, onConfirm} = props;
 
+  const handleConfirm = () => {
+    onConfirm(user);
+  };
   return (
     <Dialog
       open={open}
@@ -36,6 +40,9 @@ const PendingInfo = (props: PropsType): React.Node => {
       <DialogActions>
         <Button onClick={onClose}>
           Close
+        </Button>
+        <Button onClick={handleConfirm}>
+          Confirm membership
         </Button>
       </DialogActions>
     </Dialog>

@@ -22,6 +22,7 @@ import {TablePaginationActions,
 import PendingInfo from '../Dialogs/PendingInfo';
 import {fieldQuery} from '../../database/Queries.js';
 import type {PendingType} from '../FlowTypes.js';
+import {movePendingUser} from '../../database/Queries.js';
 
 export default function PendingTable(): React.Node {
   const [page, setPage] = React.useState(0);
@@ -55,6 +56,16 @@ export default function PendingTable(): React.Node {
     setSelectedPending(-1);
   };
 
+  const handleConfirmDialog = async (user: PendingType) => {
+    try {
+      await movePendingUser('email', user.email);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      window.location.reload();
+    }
+  };
+
   return (
     <Paper>
       <Toolbar className={styles.titlePendingBar} variant='dense'>
@@ -85,7 +96,8 @@ export default function PendingTable(): React.Node {
                     <PendingInfo
                       user={row}
                       open={row.count === selectedPending}
-                      onClose={handleCloseDialog} />
+                      onClose={handleCloseDialog}
+                      onConfirm={handleConfirmDialog} />
                   </TableRow>
                 ))}
 

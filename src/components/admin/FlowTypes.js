@@ -8,8 +8,7 @@ export type UserType = {
   name: string,
   needsAttention: false,
   partnerEmail: string,
-  count: number,
-  id: string
+  count: number
 };
 
 export type PendingType = {

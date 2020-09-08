@@ -15,7 +15,6 @@ function sanitize(collection: string,
         needsAttention: user.needsAttention,
         partnerEmail: user.partnerEmail,
         count: user.count,
-        id: user.id,
       }: UserType);
     case 'pending-members':
       return ({
@@ -45,6 +44,18 @@ function actionObject(count: number, user: UserType,
   });
 }
 
+function newUserObject(count: number, user: PendingType): UserType {
+  return ({
+    adminNote: '',
+    email: user.email,
+    isAdmin: false,
+    joinDate: fieldValue.serverTimestamp(),
+    name: '',
+    needsAttention: false,
+    partnerEmail: user.partnerEmail,
+    count: count,
+  }: UserType);
+}
 /**
   * fieldQuery returns a number of documents ordered by a field,
   * @param {string} collection specifies the collection in which we query
@@ -151,8 +162,7 @@ async function updateAdminNote(field: 'email' | 'count',
       await t.update(refs[0], {'adminNote': newNote});
 
       const counterRef = database.collection('counters').doc('actions');
-      const counterDoc = await counterRef.get();
-      const {counter} = counterDoc.data();
+      const {counter} = (await counterRef.get()).data();
       const actionRef = database.collection('actions');
       const newActionRef = actionRef.doc();
       await t.set(newActionRef,
@@ -165,4 +175,53 @@ async function updateAdminNote(field: 'email' | 'count',
   }
 }
 
-export {fieldQuery, findDocumentQuery, deleteDocument, updateAdminNote};
+/**
+  * movePendingUser confirms membership of a user and
+  * moves a user from the pending collection to the active collection
+  * @param {'email' | 'count'} field by which the user is looked up
+  * @param {string | number} value of the search field
+ */
+async function movePendingUser(field: 'email' | 'count',
+    value: string | number) {
+  try {
+    await database.runTransaction(async (t: any) => {
+      const pendingRef = database.collection('pending-members');
+      const activeRef = database.collection('active-members');
+
+      const snapshot = await pendingRef
+          .where(field, '==', value)
+          .get();
+
+      const userRef = snapshot.docs.map((doc: any): any => doc.ref)[0];
+      const userData = snapshot.docs
+          .map((doc: any): any => doc.data())
+          .map((doc: any): UserType | PendingType | ActionType =>
+            sanitize('pending-members', doc))[0];
+
+      const activeCount = database
+          .collection('counters')
+          .doc('activeMembers');
+      const pendingCount = database
+          .collection('counters')
+          .doc('pendingMembers');
+      const {counter} = (await activeCount.get()).data();
+
+      const newUserRef = activeRef.doc();
+      t.delete(userRef);
+      t.set(newUserRef, newUserObject(counter + 1, userData));
+      t.set(activeCount, {counter: counter + 1});
+      t.set(pendingCount, {counter: counter - 1});
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+export {
+  fieldQuery,
+  findDocumentQuery,
+  deleteDocument,
+  updateAdminNote,
+  movePendingUser,
+};
