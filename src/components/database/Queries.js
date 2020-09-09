@@ -10,7 +10,7 @@ function sanitize(collection: string,
         adminNote: user.adminNote,
         email: user.email,
         isAdmin: user.isAdmin,
-        joinDate: user.joinDate.toDate().toLocaleString(),
+        joinDate: user.joinDate,
         name: user.name,
         needsAttention: user.needsAttention,
         partnerEmail: user.partnerEmail,
@@ -20,19 +20,19 @@ function sanitize(collection: string,
       return ({
         count: user.count,
         email: user.email,
-        date: user.date.toDate().toLocaleString(),
+        date: user.date,
         partnerEmail: user.partnerEmail,
       }: PendingType);
     case 'actions':
       return ({
         count: user.count,
-        date: user.date.toDate().toLocaleString(),
+        date: user.date,
         message: user.message,
       }: ActionType);
     case 'solved-actions':
       return ({
         count: user.count,
-        date: user.date.toDate().toLocaleString(),
+        date: user.date,
         message: user.message,
       }: ActionType);
     default:
@@ -210,17 +210,57 @@ async function movePendingUser(field: 'email' | 'count',
       const pendingCount = database
           .collection('counters')
           .doc('pendingMembers');
-      const {counter} = (await activeCount.get()).data();
+      const counterActive = (await activeCount.get()).data().counter;
+      const counterPending = (await pendingCount.get()).data().counter;
 
       const newUserRef = activeRef.doc();
       t.delete(userRef);
-      t.set(newUserRef, newUserObject(counter + 1, userData));
-      t.set(activeCount, {counter: counter + 1});
-      t.set(pendingCount, {counter: counter - 1});
+      t.set(newUserRef, newUserObject(counterActive + 1, userData));
+      t.set(activeCount, {counter: counterActive + 1});
+      t.set(pendingCount, {counter: counterPending - 1});
     });
   } catch (error) {
     console.log(error);
     throw new Error(error);
+  }
+}
+
+async function moveSolvedAction(value: number) {
+  try {
+    await database.runTransaction(async (t: any) => {
+      const activeRef = database.collection('actions');
+      const solvedRef = database.collection('solved-actions');
+
+      const snapshot = await activeRef
+          .where('count', '==', value)
+          .get();
+
+      const actionRef = snapshot.docs.map((doc: any): any => doc.ref)[0];
+      const actionData = snapshot.docs
+          .map((doc: any): any => doc.data())
+          .map((doc: any): UserType | PendingType | ActionType =>
+            sanitize('actions', doc))[0];
+
+      const activeCount = database
+          .collection('counters')
+          .doc('actions');
+      const solvedCount = database
+          .collection('counters')
+          .doc('solvedActions');
+      const counterSolved = (await solvedCount.get()).data().counter;
+      const counterActive = (await activeCount.get()).data().counter;
+
+      const newSolvedRef = solvedRef.doc();
+      actionData.count = counterSolved + 1;
+      t.delete(actionRef);
+      t.set(newSolvedRef, actionData);
+
+      t.set(activeCount, {counter: counterActive - 1});
+      t.set(solvedCount, {counter: counterSolved + 1});
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('Unable to mark this action as solved.');
   }
 }
 
@@ -230,4 +270,5 @@ export {
   deleteDocument,
   updateAdminNote,
   movePendingUser,
+  moveSolvedAction,
 };

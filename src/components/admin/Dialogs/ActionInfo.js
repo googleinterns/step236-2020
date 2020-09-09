@@ -14,11 +14,16 @@ import type {ActionType} from '../FlowTypes.js';
 type PropsType = {
   action: ActionType,
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  onConfirm: (ActionType) => Promise<>
 };
 
 const ActionInfo = (props: PropsType): React.Node => {
-  const {action, open, onClose} = props;
+  const {action, open, onClose, onConfirm} = props;
+
+  const handleConfirm = () => {
+    onConfirm(action);
+  };
 
   return (
     <Dialog
@@ -38,7 +43,7 @@ const ActionInfo = (props: PropsType): React.Node => {
           Do you want to mark this action as resolved?
         </Typography>
         <Button onClick={onClose}>No</Button>
-        <Button onClick={onClose}>Yes</Button>
+        <Button onClick={handleConfirm}>Yes</Button>
       </DialogActions>
     </Dialog>
   );

@@ -75,7 +75,7 @@ const UserInfo = (props: PropsType): React.Node => {
                 Email: {user.email}
               </p>
               <p>
-                Date when joined: {user.joinDate.toString()}
+                Date when joined: {user.joinDate.toDate().toLocaleString()}
               </p>
             </Paper>
           </Grid>

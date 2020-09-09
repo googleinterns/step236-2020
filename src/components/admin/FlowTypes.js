@@ -4,7 +4,7 @@ export type UserType = {
   adminNote: string,
   email: string,
   isAdmin: boolean,
-  joinDate: string,
+  joinDate: any,
   name: string,
   needsAttention: false,
   partnerEmail: string,
@@ -15,11 +15,11 @@ export type PendingType = {
   count: number,
   email: string,
   partnerEmail: string,
-  date: string
+  date: any
 };
 
 export type ActionType = {
-  date: string,
+  date: any,
   message: string,
   count: number
 };

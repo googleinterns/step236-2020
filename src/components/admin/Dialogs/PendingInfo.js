@@ -34,7 +34,7 @@ const PendingInfo = (props: PropsType): React.Node => {
       <DialogContent>
         <DialogContentText>
           {user.email}
-          initiated a request on {user.date.toString()}
+          initiated a request on {user.date.toDate().toLocaleString()}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

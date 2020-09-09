@@ -23,5 +23,5 @@ const signInWithGoogle = (): void => auth.signInWithPopup(provider);
 
 const database = firebase.firestore();
 const fieldValue = firebase.firestore.FieldValue;
-
-export {firebase, auth, signInWithGoogle, database, fieldValue};
+const timestamp = firebase.Timestamp;
+export {firebase, auth, signInWithGoogle, database, fieldValue, timestamp};

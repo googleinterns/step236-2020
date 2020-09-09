@@ -26,7 +26,7 @@ import {TablePaginationActions,
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
 import type {ActionType} from '../FlowTypes.js';
-import {fieldQuery} from '../../database/Queries.js';
+import {fieldQuery, moveSolvedAction} from '../../database/Queries.js';
 import ActionInfo from '../Dialogs/ActionInfo';
 
 export default function ActionTable(): React.Node {
@@ -72,6 +72,16 @@ export default function ActionTable(): React.Node {
     setTab(newValue);
   };
 
+  const handleSolveAction = async (action: ActionType) => {
+    try {
+      await moveSolvedAction(action.count);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      window.location.reload();
+    }
+  };
+
   return (
     <Paper>
       <Toolbar className={styles.titleActionBar} variant='dense'>
@@ -99,7 +109,7 @@ export default function ActionTable(): React.Node {
             {computeRows(page, rows, rowsPerPage)
                 .map((row: ActionType): React.Node => (
                   <TableRow key={row.count}>
-                    <TableCell>{row.date.toString()}</TableCell>
+                    <TableCell>{row.date.toDate().toLocaleString()}</TableCell>
                     <TableCell>{row.message}</TableCell>
                     <TableCell>
                       <IconButton
@@ -111,7 +121,8 @@ export default function ActionTable(): React.Node {
                     <ActionInfo
                       action={row}
                       open={selectedRow === row.count}
-                      onClose={handleCloseModal} >
+                      onClose={handleCloseModal}
+                      onConfirm={handleSolveAction} >
                     </ActionInfo>
                   </TableRow>
                 ))}
