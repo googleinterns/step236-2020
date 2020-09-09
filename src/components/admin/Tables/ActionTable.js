@@ -12,6 +12,12 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import IconButton from '@material-ui/core/IconButton';
 
+import {
+  AppBar,
+  Tabs,
+  Tab,
+} from '@material-ui/core';
+
 import styles from '../admin.module.css';
 import {TablePaginationActions,
   computeEmptyRows,
@@ -28,15 +34,22 @@ export default function ActionTable(): React.Node {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
+  const [tab, setTab] = React.useState(0);
 
   React.useEffect(() => {
     (async () => {
-      const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('actions', 'count',
-          start, rowsPerPage);
+      let newRows = [];
+      if (tab === 0) {
+        const start = page * rowsPerPage + 1;
+        newRows = await fieldQuery('actions', 'count', start, rowsPerPage);
+      } else {
+        const start = page * rowsPerPage + 1;
+        newRows = await fieldQuery('solved-actions', 'count',
+            start, rowsPerPage);
+      }
       setRows(newRows);
     })();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, tab]);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);
@@ -55,6 +68,10 @@ export default function ActionTable(): React.Node {
     setSelectedRow(-1);
   };
 
+  const handleTabChange = (event: SyntheticEvent<>, newValue: number) => {
+    setTab(newValue);
+  };
+
   return (
     <Paper>
       <Toolbar className={styles.titleActionBar} variant='dense'>
@@ -62,6 +79,12 @@ export default function ActionTable(): React.Node {
           Immediate action required
         </Typography>
       </Toolbar>
+      <AppBar position='relative' color='inherit'>
+        <Tabs value={tab} onChange={handleTabChange}>
+          <Tab label='active' id={'tab-active'} />
+          <Tab label='solved' id={'tab-solved'} />
+        </Tabs>
+      </AppBar>
       <TableContainer>
         <Table aria-label='Immediate actions' size='small'>
           <TableHead>

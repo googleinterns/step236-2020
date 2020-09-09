@@ -29,6 +29,12 @@ function sanitize(collection: string,
         date: user.date.toDate().toLocaleString(),
         message: user.message,
       }: ActionType);
+    case 'solved-actions':
+      return ({
+        count: user.count,
+        date: user.date.toDate().toLocaleString(),
+        message: user.message,
+      }: ActionType);
     default:
       throw Error('The collection you asked for doesn\'t exist.');
   }
