@@ -122,7 +122,8 @@ export default function ActionTable(): React.Node {
                       action={row}
                       open={selectedRow === row.count}
                       onClose={handleCloseModal}
-                      onConfirm={handleSolveAction} >
+                      onConfirm={handleSolveAction}
+                      tab={tab} >
                     </ActionInfo>
                   </TableRow>
                 ))}
