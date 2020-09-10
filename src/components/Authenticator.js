@@ -10,25 +10,10 @@ const readUserDataFromDB = (user) => {
 
 const firebaseAuthenticator = {
   isAdmin: function(user: OAuthUserType): Promise<boolean> {
-    let userDataPromise = readUserDataFromDB(user);
-    if (userDataPromise) {
-      return userDataPromise.then(
-          (userData: Array<UserType>) =>
-              Promise.resolve(userData.length > 0 && userData[0].isAdmin)
-          );
-    } else {
-      return Promise.resolve(false);
-    }
-  },
-
-  isUser: function(user: OAuthUserType): Promise<boolean> {
-    let userDataPromise = readUserDataFromDB(user);
-    if (userDataPromise) {
-      return userDataPromise.then((userData: Array<UserType>) =>
-          userData.length > 0);
-    } else {
-      return Promise.resolve(false);
-    }
+    return readUserDataFromDB(user)
+        .then((userData: Array<UserType>) =>
+            Promise.resolve(userData.length > 0 && userData[0].isAdmin),
+        );
   },
 
   isInviter: function(user: OAuthUserType): boolean {
@@ -37,6 +22,17 @@ const firebaseAuthenticator = {
     }
     return user && user.email.split('@').pop() === 'google.com';
   },
+
+  isUser: function(user: OAuthUserType): Promise<boolean> {
+    // This is a special case for an inviter. They are not supposed to be
+    // stored in database.
+    if (this.isInviter(user)) {
+      return Promise.resolve(true);
+    }
+    return readUserDataFromDB(user)
+        .then((userData: Array<UserType>) => userData.length > 0);
+  },
+
 };
 
 export default firebaseAuthenticator;

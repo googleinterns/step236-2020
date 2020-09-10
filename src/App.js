@@ -46,9 +46,7 @@ function App() {
                 key="/"
                 authFunction={() => {
                   return firebaseAuthenticator.isUser(authUser)
-                      .then((result) => {
-                        return !result;
-                      });
+                      .then(result => !result);
                 }}
                 component={<StartingPage/>}
                 redirectPath={'/landing-page'}>
