@@ -18,9 +18,15 @@ function PrivateRoute({authFunction, component, redirectPath}) {
   const [authorisationStatus, setAutorisationStatus] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
     authFunction().then((newValue) => {
-      setAutorisationStatus(newValue);
+      if (!cancelled) {
+        setAutorisationStatus(newValue);
+      }
     });
+    return () => {
+      cancelled = true;
+    };
   });
 
   if (authorisationStatus === null) {
