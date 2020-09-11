@@ -9,7 +9,7 @@ import {
   DialogActions,
   DialogTitle,
 } from '@material-ui/core';
-import type {ActionType} from '../FlowTypes.js';
+import type {ActionType} from '../../../FlowTypes.js';
 
 type PropsType = {
   action: ActionType,

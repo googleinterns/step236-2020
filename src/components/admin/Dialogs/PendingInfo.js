@@ -8,7 +8,7 @@ import {
   DialogActions,
   DialogTitle,
 } from '@material-ui/core';
-import type {PendingType} from '../FlowTypes.js';
+import type {PendingType} from '../../../FlowTypes.js';
 
 type PropsType = {
   user: PendingType,

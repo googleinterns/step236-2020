@@ -24,8 +24,8 @@ import {TablePaginationActions,
   computeEmptyRows,
   computeRows} from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
-import type {UserType} from '../FlowTypes.js';
-import {fieldQuery} from '../../database/Queries.js';
+import type {UserType} from '../../../FlowTypes.js';
+import {getActiveMembers} from '../../database/Queries';
 
 function EnhancedToolbar(): React.Node {
   const handleOnSubmit = (): void => console.log('User has pressed search.');
@@ -64,8 +64,7 @@ export default function UsersTable(): React.Node {
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('active-members', 'count',
-          start, rowsPerPage);
+      const newRows = await getActiveMembers(start, rowsPerPage);
       setRows(newRows);
     })();
   }, [page, rowsPerPage]);

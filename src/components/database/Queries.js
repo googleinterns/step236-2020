@@ -1,95 +1,90 @@
 // @flow
 import {database} from '../../firebaseFeatures.js';
-import type {UserType, PendingType, ActionType} from '../admin/FlowTypes.js';
+import {
+  extractActionType,
+  extractPendingType,
+  extractUserType,
+} from '../../FlowTypes.js';
+import type {ActionType, PendingType, UserType} from '../../FlowTypes';
 
-function sanitize(collection: string,
-    user: any): UserType | ActionType | PendingType {
-  switch (collection) {
-    case 'active-members':
-      return ({
-        adminNote: user.adminNote,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        joinDate: user.joinDate.toDate().toLocaleString(),
-        name: user.name,
-        needsAttention: user.needsAttention,
-        partnerEmail: user.partnerEmail,
-        count: user.count,
-        id: user.id,
-      }: UserType);
-    case 'pending-members':
-      return ({
-        count: user.count,
-        email: user.email,
-        date: user.date.toDate().toLocaleString(),
-        partnerEmail: user.partnerEmail,
-      }: PendingType);
-    case 'actions':
-      return ({
-        count: user.count,
-        date: user.date.toDate().toLocaleString(),
-        message: user.message,
-      }: ActionType);
-    default:
-      throw Error('The collection you asked for doesn\'t exist.');
-  }
-}
+// Set of generic internal functions for database queries.
 
-/**
-  * fieldQuery returns a number of documents ordered by a field,
-  * @param {string} collection specifies the collection in which we query
-  * @param {string} orderField the field we order by
-  * @param {any} start first document in the order chosen
-  * @param {number} limit the number of documents to be retrieved
-  * @return {Array<UserType | PendingType | ActionType>} an array of the objects
-  * created from the documents
-  */
 async function fieldQuery(collection: string, orderField: string, start: any,
-    limit: number): Promise<Array<UserType | PendingType | ActionType>> {
+                          limit: number): Promise<any> {
   const collectionRef = database.collection(collection);
-
   try {
-    const data = await collectionRef
+    return collectionRef
         .orderBy(orderField)
         .startAt(start)
         .limit(limit)
         .get();
-
-    return data.docs
-        .map((doc: any): any => doc.data())
-        .map((doc: any): UserType | ActionType | PendingType =>
-          sanitize(collection, doc));
   } catch (error) {
     console.log(error);
-    return [];
+    return {docs: []};
   }
 }
 
-/**
-  * findDocumentQuery returns documents that match some value of a field
-  * @param {string} collection specifies the collection in which we query
-  * @param {string} field specifies the field we query by
-  * @param {any} value specifies the value of the field
-  * @return {Array<UserType | PendingType | ActionType>} an array of objects
-  * created from the documents
- */
-async function findDocumentQuery(collection: string, field: string,
-    value: any): Promise<Array<UserType | ActionType | PendingType>> {
+async function findDocumentQuery(
+    collection: string, field: string, value: any): Promise<any> {
   const collectionRef = database.collection(collection);
-
   try {
-    const data = await collectionRef
+    return collectionRef
         .where(field, '==', value)
         .get();
-
-    return data.docs
-        .map((doc: any): any => doc.data())
-        .map((doc: any): UserType | ActionType | PendingType =>
-          sanitize(collection, doc));
   } catch (error) {
     console.log(error);
-    return [];
+    return {docs: []};
   }
 }
 
-export {fieldQuery, findDocumentQuery};
+// Set of external functions available for front-end to communicate with database.
+
+async function getActiveMembers(
+    start: number,
+    limit: number): Promise<Array<UserType>> {
+  const activeMembersSnapshot = await fieldQuery('active-members', 'count',
+      start, limit);
+  return activeMembersSnapshot.docs
+      .map((doc: any): any => doc.data())
+      .map(extractUserType);
+}
+
+async function getPendingMembers(
+    start: number,
+    limit: number): Promise<Array<PendingType>> {
+  const pendingMembersSnapshot = await fieldQuery('pending-members', 'count',
+      start, limit);
+  return pendingMembersSnapshot.docs
+      .map((doc: any): any => doc.data())
+      .map(extractPendingType);
+}
+
+async function getActions(
+    start: any,
+    limit: number): Promise<Array<ActionType>> {
+  const actionsSnapshot = await fieldQuery('actions', 'count',
+      start, limit);
+  return actionsSnapshot.docs
+      .map((doc: any): any => doc.data())
+      .map(extractActionType);
+}
+
+async function findUserByEmailQuery(userEmail: string): Promise<UserType | null> {
+  try {
+    const data = await findDocumentQuery('active-members', 'email', userEmail);
+    const users = data.docs.map((doc: any): any => doc.data());
+    if (users.length === 0) {
+      return null;
+    } else if (users.length > 1) {
+      throw Error(
+          'Database query corrupted -- two users with same email address.');
+    } else {
+      return extractUserType(users[0]);
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export {findUserByEmailQuery, getActions, getActiveMembers, getPendingMembers};

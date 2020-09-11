@@ -1,18 +1,18 @@
-import {findDocumentQuery} from './database/Queries';
-import type {OAuthUserType, UserType} from './admin/FlowTypes';
+import {findUserByEmailQuery} from './database/Queries';
+import type {OAuthUserType, UserType} from '../FlowTypes';
 
 const readUserDataFromDB = (user) => {
   if (user === null) {
-    return Promise.resolve([]);
+    return Promise.resolve(null);
   }
-  return findDocumentQuery('active-members', 'email', user.email);
+  return findUserByEmailQuery(user.email);
 };
 
 const firebaseAuthenticator = {
   isAdmin: function(user: OAuthUserType): Promise<boolean> {
     return readUserDataFromDB(user)
-        .then((userData: Array<UserType>) =>
-            Promise.resolve(userData.length > 0 && userData[0].isAdmin),
+        .then((userData: UserType) =>
+            Promise.resolve(userData != null && userData.isAdmin),
         );
   },
 
@@ -30,7 +30,7 @@ const firebaseAuthenticator = {
       return Promise.resolve(true);
     }
     return readUserDataFromDB(user)
-        .then((userData: Array<UserType>) => userData.length > 0);
+        .then((userData: Array<UserType>) => userData != null);
   },
 
 };

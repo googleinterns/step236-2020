@@ -20,8 +20,8 @@ import {TablePaginationActions,
   computeRows} from '../TablePaginationActions';
 
 import PendingInfo from '../Dialogs/PendingInfo';
-import {fieldQuery} from '../../database/Queries.js';
-import type {PendingType} from '../FlowTypes.js';
+import type {PendingType} from '../../../FlowTypes.js';
+import {getPendingMembers} from '../../database/Queries';
 
 export default function PendingTable(): React.Node {
   const [page, setPage] = React.useState(0);
@@ -32,8 +32,7 @@ export default function PendingTable(): React.Node {
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('pending-members', 'count',
-          start, rowsPerPage);
+      const newRows = await getPendingMembers(start, rowsPerPage);
       setRows(newRows);
     })();
   }, [page, rowsPerPage]);

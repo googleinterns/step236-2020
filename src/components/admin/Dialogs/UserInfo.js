@@ -21,7 +21,7 @@ import {
   TableCell,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import type {UserType} from '../FlowTypes.js';
+import type {UserType} from '../../../FlowTypes.js';
 
 type PropsType = {
   user: UserType,

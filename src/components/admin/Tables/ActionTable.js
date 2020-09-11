@@ -19,9 +19,9 @@ import {TablePaginationActions,
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
-import type {ActionType} from '../FlowTypes.js';
-import {fieldQuery} from '../../database/Queries.js';
+import type {ActionType} from '../../../FlowTypes.js';
 import ActionInfo from '../Dialogs/ActionInfo';
+import {getActions} from '../../database/Queries';
 
 export default function ActionTable(): React.Node {
   const [page, setPage] = React.useState(0);
@@ -32,8 +32,7 @@ export default function ActionTable(): React.Node {
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('actions', 'count',
-          start, rowsPerPage);
+      const newRows = await getActions(start, rowsPerPage);
       setRows(newRows);
     })();
   }, [page, rowsPerPage]);
