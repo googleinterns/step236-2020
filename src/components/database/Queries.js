@@ -69,7 +69,7 @@ function newUserObject(count: number, user: PendingType): UserType {
   * @param {string} orderField the field we order by
   * @param {any} start first document in the order chosen
   * @param {number} limit the number of documents to be retrieved
-  * @return {Array<UserType | PendingType | ActionType>} an array of the objects
+  * @return {Array<any>} an array of the objects
   * created from the documents
   */
 async function fieldQuery(collection: string, orderField: string, start: any,
@@ -252,6 +252,10 @@ async function movePendingUser(field: 'email' | 'count',
   }
 }
 
+/**
+  * a function that moves an action from active to solved
+  * @param {number} value the index of the action
+ */
 async function moveSolvedAction(value: number) {
   try {
     await database.runTransaction(async (t: any) => {
@@ -304,6 +308,11 @@ function getDocumentRef(snapshot: any): Array<any> {
   return snapshot.docs.map((doc: any): any => doc.ref);
 }
 
+/**
+  function that finds active members by email
+  * @param {string} userEmail is the email of the user
+  * @return {Promise<any>} the found user or null otherwise
+ */
 async function findUserByEmailQuery(userEmail: string): Promise<any> {
   try {
     const users = await findDocumentQuery('active-members', 'email', userEmail);
