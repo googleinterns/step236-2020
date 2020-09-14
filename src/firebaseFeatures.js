@@ -1,5 +1,6 @@
 // @flow
 import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 import 'firebase/auth';
 
 const firebaseConfig = {
@@ -20,4 +21,7 @@ const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: 'select_account'});
 const signInWithGoogle = (): void => auth.signInWithPopup(provider);
 
-export {firebase, auth, signInWithGoogle};
+const database = firebase.firestore();
+const fieldValue = firebase.firestore.FieldValue;
+const timestamp = firebase.Timestamp;
+export {firebase, auth, signInWithGoogle, database, fieldValue, timestamp};

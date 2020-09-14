@@ -2,14 +2,14 @@
 import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import {Typography, Grid} from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
 import styles from '../admin.module.css';
-import ReportIcon from '@material-ui/icons/Report';
 import {
   Dialog,
   DialogContent,
   DialogActions,
   DialogTitle,
+  TextField,
+  Fab,
 } from '@material-ui/core';
 import {
   Table,
@@ -21,15 +21,41 @@ import {
   TableCell,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import type {UserType} from '../../types/FlowTypes.js';
 
 type PropsType = {
-  user: any,
+  user: UserType,
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  saveNote: (UserType, string) => Promise<any>
 };
 
+const groups = [
+  {
+    name: 'Hiking amateurs',
+    description: 'A group to plan hikings between members.',
+  },
+  {
+    name: 'Cooking advice',
+    description: 'A group to exchange cooking recepies',
+  },
+];
+
 const UserInfo = (props: PropsType): React.Node => {
-  const {user, open, onClose} = props;
+  const {user, open, onClose, saveNote} = props;
+  const [openForm, setOpenForm] = React.useState(false);
+  const [textValue, setTextValue] = React.useState('');
+
+  const handleInputChange = (event: any) => {
+    setTextValue(event.target.value);
+  };
+
+  const handleSaveNote = () => {
+    setOpenForm(false);
+    const aux = textValue;
+    setTextValue('');
+    saveNote(user, aux);
+  };
 
   return (
     <Dialog
@@ -38,9 +64,6 @@ const UserInfo = (props: PropsType): React.Node => {
       scroll={'paper'} >
       <DialogTitle>
         Membership information
-        <IconButton>
-          <EditIcon />
-        </IconButton>
       </DialogTitle>
       <DialogContent>
         <Typography variant='h6'>
@@ -53,7 +76,7 @@ const UserInfo = (props: PropsType): React.Node => {
                 Email: {user.email}
               </p>
               <p>
-                Date when joined: {user.joinDate.toDateString()}
+                Date when joined: {user.joinDate.toDate().toLocaleString()}
               </p>
             </Paper>
           </Grid>
@@ -61,11 +84,34 @@ const UserInfo = (props: PropsType): React.Node => {
             <Paper className={styles.note}>
               <p className={styles.adminNote}>
                 Admin note
-                <IconButton>
-                  <ReportIcon />
-                </IconButton>
               </p>
-              <p className={styles.adminText}>{user.note}</p>
+              <Fab
+                size='small'
+                color='primary'
+                onClick={(): void => setOpenForm(true)}>
+                <EditIcon />
+              </Fab>
+              <p className={styles.adminText}>{user.adminNote}</p>
+              {openForm &&
+              (<Grid>
+                <TextField
+                  disabled={!openForm}
+                  id="outlined-full-width"
+                  style={{margin: 8}}
+                  placeholder="Add a new admin note"
+                  fullWidth
+                  value={textValue}
+                  onChange={handleInputChange}
+                  margin="normal"
+                  variant="outlined"
+                />
+                <Button onClick={(): void => setOpenForm(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveNote}>
+                  Save
+                </Button>
+              </Grid>)}
             </Paper>
           </Grid>
           <Grid item>
@@ -79,7 +125,7 @@ const UserInfo = (props: PropsType): React.Node => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {user.groups.map((group: any): React.Node => (
+                    {groups.map((group: any): React.Node => (
                       <TableRow key={group.name}>
                         <TableCell>{group.name}</TableCell>
                         <TableCell>{group.description}</TableCell>

@@ -20,22 +20,23 @@ import {TablePaginationActions,
   computeRows} from '../TablePaginationActions';
 
 import PendingInfo from '../Dialogs/PendingInfo';
-
-function createData(id: number, name: string,
-    email: string, date: any): {id: number, name: string,
-    email: string, date: any} {
-  return {id, name, email, date};
-}
-
-const rows = [
-  createData(1, 'Alice Joy', 'alicee@gmail.com', new Date()),
-  createData(2, 'David Toms', 'dt@yahoo.com', new Date()),
-];
+import {getPendingMembers} from '../../database/Queries.js';
+import type {PendingType} from '../../types/FlowTypes.js';
+import {movePendingUser} from '../../database/Queries.js';
 
 export default function PendingTable(): React.Node {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedPending, setSelectedPending] = React.useState(-1);
+  const [rows, setRows] = React.useState([]);
+
+  React.useEffect(() => {
+    (async () => {
+      const start = page * rowsPerPage + 1;
+      const newRows = await getPendingMembers(start, rowsPerPage);
+      setRows(newRows);
+    })();
+  }, [page, rowsPerPage]);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);
@@ -54,6 +55,16 @@ export default function PendingTable(): React.Node {
     setSelectedPending(-1);
   };
 
+  const handleConfirmDialog = async (user: PendingType) => {
+    try {
+      await movePendingUser('email', user.email);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      window.location.reload();
+    }
+  };
+
   return (
     <Paper>
       <Toolbar className={styles.titlePendingBar} variant='dense'>
@@ -65,28 +76,27 @@ export default function PendingTable(): React.Node {
         <Table aria-label='Pending memberships' size='small'>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {computeRows(page, rows, rowsPerPage)
-                .map((row: any): React.Node => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.name}</TableCell>
+                .map((row: PendingType): React.Node => (
+                  <TableRow key={row.count}>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>
                       <IconButton
                         onClick={(): void =>
-                          handleOpenDialog(row.id)}>
+                          handleOpenDialog(row.count)}>
                         <MoreHorizIcon/>
                       </IconButton>
                     </TableCell>
                     <PendingInfo
                       user={row}
-                      open={row.id === selectedPending}
-                      onClose={handleCloseDialog} />
+                      open={row.count === selectedPending}
+                      onClose={handleCloseDialog}
+                      onConfirm={handleConfirmDialog} />
                   </TableRow>
                 ))}
 
