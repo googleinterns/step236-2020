@@ -38,13 +38,13 @@ export default function ActionTable(): React.Node {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
-  const [tab, setTab] = React.useState(0);
+  const [tab, setTab] = React.useState('active');
 
   React.useEffect(() => {
     (async () => {
       let newRows = [];
-      if (tab === 0) {
-        const start = page * rowsPerPage + 1;
+      const start = page * rowsPerPage + 1;
+      if (tab === 'active') {
         newRows = await getActions(start, rowsPerPage);
       } else {
         const start = page * rowsPerPage + 1;
@@ -71,7 +71,8 @@ export default function ActionTable(): React.Node {
     setSelectedRow(-1);
   };
 
-  const handleTabChange = (event: SyntheticEvent<>, newValue: number) => {
+  const handleTabChange = (event: SyntheticEvent<>,
+      newValue: 'active' | 'solved') => {
     setTab(newValue);
   };
 
@@ -94,8 +95,8 @@ export default function ActionTable(): React.Node {
       </Toolbar>
       <AppBar position='relative' color='inherit'>
         <Tabs value={tab} onChange={handleTabChange}>
-          <Tab label='active' id={'tab-active'} />
-          <Tab label='solved' id={'tab-solved'} />
+          <Tab label='active' id={'tab-active'} value='active' />
+          <Tab label='solved' id={'tab-solved'} value='solved' />
         </Tabs>
       </AppBar>
       <TableContainer>

@@ -16,7 +16,7 @@ type PropsType = {
   open: boolean,
   onClose: () => void,
   onConfirm: (ActionType) => Promise<>,
-  tab: number
+  tab: 'active' | 'solved'
 };
 
 const ActionInfo = (props: PropsType): React.Node => {
@@ -39,7 +39,7 @@ const ActionInfo = (props: PropsType): React.Node => {
           {action.message}
         </DialogContentText>
       </DialogContent>
-      {tab === 0 ?
+      {tab === 'active' ?
         <DialogActions>
           <Typography variant='h6'>
             Do you want to mark this action as resolved?
