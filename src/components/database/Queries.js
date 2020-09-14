@@ -161,15 +161,15 @@ async function findDocumentQuery(collection: string, field: string,
 async function deleteUser(field: 'email' | 'count',
     value: string | number) {
   try {
-    await database.runTransaction(async (t: any) => {
+    await database.runTransaction(async (transaction: any) => {
       const collectionRef = database.collection('active-members');
       const snapshot = await collectionRef
           .where(field, '==', value)
           .get();
       const refs = getDocumentRef(snapshot);
 
-      await t.delete(refs[0]);
-      await decrementCounter('activeMembers', t);
+      await transaction.delete(refs[0]);
+      await decrementCounter('activeMembers', transaction);
     });
   } catch (error) {
     console.log(error);
@@ -186,7 +186,7 @@ async function deleteUser(field: 'email' | 'count',
 async function updateAdminNote(field: 'email' | 'count',
     value: string | number, newNote: string) {
   try {
-    await database.runTransaction(async (t: any) => {
+    await database.runTransaction(async (transaction: any) => {
       const membersRef = database.collection('active-members');
       const snapshot = await membersRef
           .where(field, '==', value)
@@ -198,15 +198,15 @@ async function updateAdminNote(field: 'email' | 'count',
           .map((doc: any): UserType | PendingType | ActionType =>
             sanitize('active-members', doc));
 
-      await t.update(refs[0], {'adminNote': newNote});
+      await transaction.update(refs[0], {'adminNote': newNote});
 
       const counter = await getCounter('actions');
 
       const actionRef = database.collection('actions');
       const newActionRef = actionRef.doc();
-      await t.set(newActionRef,
+      await transaction.set(newActionRef,
           actionObject(counter + 1, userData[0], 'NEEDS ATTENTION'));
-      await incrementCounter('actions', t);
+      await incrementCounter('actions', transaction);
     });
   } catch (error) {
     console.log('Update unsuccesful');
@@ -223,7 +223,7 @@ async function updateAdminNote(field: 'email' | 'count',
 async function movePendingUser(field: 'email' | 'count',
     value: string | number) {
   try {
-    await database.runTransaction(async (t: any) => {
+    await database.runTransaction(async (transaction: any) => {
       const pendingRef = database.collection('pending-members');
       const activeRef = database.collection('active-members');
 
@@ -240,11 +240,11 @@ async function movePendingUser(field: 'email' | 'count',
       const newUserRef = activeRef.doc();
       const activeCount = await getCounter('activeMembers');
 
-      t.delete(userRef);
-      t.set(newUserRef, newUserObject(activeCount + 1, userData));
+      transaction.delete(userRef);
+      transaction.set(newUserRef, newUserObject(activeCount + 1, userData));
 
-      await incrementCounter('activeMembers', t);
-      await decrementCounter('pendingMembers', t);
+      await incrementCounter('activeMembers', transaction);
+      await decrementCounter('pendingMembers', transaction);
     });
   } catch (error) {
     console.log(error);
@@ -258,7 +258,7 @@ async function movePendingUser(field: 'email' | 'count',
  */
 async function moveSolvedAction(value: number) {
   try {
-    await database.runTransaction(async (t: any) => {
+    await database.runTransaction(async (transaction: any) => {
       const activeRef = database.collection('actions');
       const solvedRef = database.collection('solved-actions');
 
@@ -276,11 +276,11 @@ async function moveSolvedAction(value: number) {
       const counter = await getCounter('solvedActions');
 
       actionData.count = counter + 1;
-      t.delete(actionRef);
-      t.set(newSolvedRef, actionData);
+      transaction.delete(actionRef);
+      transaction.set(newSolvedRef, actionData);
 
-      await decrementCounter('actions', t);
-      await incrementCounter('solvedActions', t);
+      await decrementCounter('actions', transaction);
+      await incrementCounter('solvedActions', transaction);
     });
   } catch (error) {
     console.log(error);
