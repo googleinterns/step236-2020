@@ -154,7 +154,7 @@ async function findDocumentQuery(collection: string, field: string,
 }
 
 /**
-  * deleteDocument deletes a user from active memberships
+  * deleteUser deletes a user from active memberships
   * @param {'email' | 'count'} field specifies the search criteria for the doc
   * @param {string | number} value specifies the value of the field
  */
@@ -166,7 +166,7 @@ async function deleteUser(field: 'email' | 'count',
       const snapshot = await collectionRef
           .where(field, '==', value)
           .get();
-      const refs = snapshot.docs.map((doc: any): any => doc.ref);
+      const refs = getDocumentRef(snapshot);
 
       await t.delete(refs[0]);
       await decrementCounter('activeMembers', t);
@@ -192,7 +192,7 @@ async function updateAdminNote(field: 'email' | 'count',
           .where(field, '==', value)
           .get();
 
-      const refs = snapshot.docs.map((doc: any): any => doc.ref);
+      const refs = getDocumentRef(snapshot);
       const userData = snapshot.docs
           .map((doc: any): any => doc.data())
           .map((doc: any): UserType | PendingType | ActionType =>
@@ -231,7 +231,7 @@ async function movePendingUser(field: 'email' | 'count',
           .where(field, '==', value)
           .get();
 
-      const userRef = snapshot.docs.map((doc: any): any => doc.ref)[0];
+      const userRef = getDocumentRef(snapshot)[0];
       const userData = snapshot.docs
           .map((doc: any): any => doc.data())
           .map((doc: any): UserType | PendingType | ActionType =>
@@ -262,7 +262,7 @@ async function moveSolvedAction(value: number) {
           .where('count', '==', value)
           .get();
 
-      const actionRef = snapshot.docs.map((doc: any): any => doc.ref)[0];
+      const actionRef = getDocumentRef(snapshot)[0];
       const actionData = snapshot.docs
           .map((doc: any): any => doc.data())
           .map((doc: any): UserType | PendingType | ActionType =>
@@ -299,12 +299,36 @@ async function decrementCounter(counter: string, transaction: any) {
   const crtCounter = (await counterDoc.get()).data().counter;
   transaction.set(counterDoc, {counter: crtCounter - 1});
 }
+
+function getDocumentRef(snapshot: any): Array<any> {
+  return snapshot.docs.map((doc: any): any => doc.ref);
+}
+
+async function findUserByEmailQuery(userEmail: string): Promise<any> {
+  try {
+    const users = await findDocumentQuery('active-members', 'email', userEmail);
+
+    if (users.length === 0) {
+      return null;
+    } else if (users.length > 1) {
+      throw Error(
+          'Database query corrupted -- two users with same email address.');
+    } else {
+      return users[0];
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
 export {
   getActions,
   getActiveMembers,
   getPendingMembers,
   getSolvedActions,
   findDocumentQuery,
+  findUserByEmailQuery,
   deleteUser,
   updateAdminNote,
   movePendingUser,
