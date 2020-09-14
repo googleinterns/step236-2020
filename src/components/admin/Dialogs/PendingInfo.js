@@ -14,7 +14,7 @@ type PropsType = {
   user: PendingType,
   open: boolean,
   onClose: () => void,
-  onConfirm: (PendingType) => Promise<>
+  onConfirm: (PendingType) => Promise<any>
 };
 
 const PendingInfo = (props: PropsType): React.Node => {

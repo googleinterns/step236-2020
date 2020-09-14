@@ -27,7 +27,7 @@ type PropsType = {
   user: UserType,
   open: boolean,
   onClose: () => void,
-  saveNote: (UserType, string) => Promise<>
+  saveNote: (UserType, string) => Promise<any>
 };
 
 const groups = [

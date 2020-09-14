@@ -15,7 +15,7 @@ type PropsType = {
   action: ActionType,
   open: boolean,
   onClose: () => void,
-  onConfirm: (ActionType) => Promise<>,
+  onConfirm: (ActionType) => Promise<any>,
   tab: 'active' | 'solved'
 };
 
