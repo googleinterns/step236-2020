@@ -29,7 +29,7 @@ import UserInfo from '../Dialogs/UserInfo';
 import type {UserType} from '../FlowTypes.js';
 import {
   getActiveMembers,
-  deleteDocument,
+  deleteUser,
   updateAdminNote,
 } from '../../database/Queries.js';
 
@@ -102,7 +102,7 @@ export default function UsersTable(): React.Node {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteDocument('active-members', 'count', selectedDelete);
+      await deleteUser('count', selectedDelete);
       setSelectedDelete(-1);
     } catch (error) {
       console.log(error);

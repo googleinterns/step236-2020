@@ -154,22 +154,22 @@ async function findDocumentQuery(collection: string, field: string,
 }
 
 /**
-  * deleteDocument deletes a document in a specified collection
-  * @param {string} collection defines the collection
+  * deleteDocument deletes a user from active memberships
   * @param {'email' | 'count'} field specifies the search criteria for the doc
   * @param {string | number} value specifies the value of the field
  */
-async function deleteDocument(collection: string, field: 'email' | 'count',
+async function deleteUser(field: 'email' | 'count',
     value: string | number) {
   try {
     await database.runTransaction(async (t: any) => {
-      const collectionRef = database.collection(collection);
+      const collectionRef = database.collection('active-members');
       const snapshot = await collectionRef
           .where(field, '==', value)
           .get();
       const refs = snapshot.docs.map((doc: any): any => doc.ref);
 
       await t.delete(refs[0]);
+      await decrementCounter('activeMembers', t);
     });
   } catch (error) {
     console.log(error);
@@ -200,13 +200,13 @@ async function updateAdminNote(field: 'email' | 'count',
 
       await t.update(refs[0], {'adminNote': newNote});
 
-      const counterRef = database.collection('counters').doc('actions');
-      const {counter} = (await counterRef.get()).data();
+      const counter = await getCounter('actions');
+
       const actionRef = database.collection('actions');
       const newActionRef = actionRef.doc();
       await t.set(newActionRef,
           actionObject(counter + 1, userData[0], 'NEEDS ATTENTION'));
-      await t.update(counterRef, {'counter': counter + 1});
+      await incrementCounter('actions', t);
     });
   } catch (error) {
     console.log('Update unsuccesful');
@@ -237,20 +237,14 @@ async function movePendingUser(field: 'email' | 'count',
           .map((doc: any): UserType | PendingType | ActionType =>
             sanitize('pending-members', doc))[0];
 
-      const activeCount = database
-          .collection('counters')
-          .doc('activeMembers');
-      const pendingCount = database
-          .collection('counters')
-          .doc('pendingMembers');
-      const counterActive = (await activeCount.get()).data().counter;
-      const counterPending = (await pendingCount.get()).data().counter;
-
       const newUserRef = activeRef.doc();
+      const activeCount = await getCounter('activeMembers');
+
       t.delete(userRef);
-      t.set(newUserRef, newUserObject(counterActive + 1, userData));
-      t.set(activeCount, {counter: counterActive + 1});
-      t.set(pendingCount, {counter: counterPending - 1});
+      t.set(newUserRef, newUserObject(activeCount + 1, userData));
+
+      await incrementCounter('activeMembers', t);
+      await decrementCounter('pendingMembers', t);
     });
   } catch (error) {
     console.log(error);
@@ -274,22 +268,15 @@ async function moveSolvedAction(value: number) {
           .map((doc: any): UserType | PendingType | ActionType =>
             sanitize('actions', doc))[0];
 
-      const activeCount = database
-          .collection('counters')
-          .doc('actions');
-      const solvedCount = database
-          .collection('counters')
-          .doc('solvedActions');
-      const counterSolved = (await solvedCount.get()).data().counter;
-      const counterActive = (await activeCount.get()).data().counter;
-
       const newSolvedRef = solvedRef.doc();
-      actionData.count = counterSolved + 1;
+      const counter = await getCounter('solvedActions');
+
+      actionData.count = counter + 1;
       t.delete(actionRef);
       t.set(newSolvedRef, actionData);
 
-      t.set(activeCount, {counter: counterActive - 1});
-      t.set(solvedCount, {counter: counterSolved + 1});
+      await decrementCounter('actions', t);
+      await incrementCounter('solvedActions', t);
     });
   } catch (error) {
     console.log(error);
@@ -297,13 +284,28 @@ async function moveSolvedAction(value: number) {
   }
 }
 
+async function getCounter(counter: string): any {
+  const document = database.collection('counters').doc(counter);
+  return (await document.get()).data().counter;
+}
+async function incrementCounter(counter: string, transaction: any) {
+  const counterDoc = database.collection('counters').doc(counter);
+  const crtCounter = (await counterDoc.get()).data().counter;
+  transaction.set(counterDoc, {counter: crtCounter + 1});
+}
+
+async function decrementCounter(counter: string, transaction: any) {
+  const counterDoc = database.collection('counters').doc(counter);
+  const crtCounter = (await counterDoc.get()).data().counter;
+  transaction.set(counterDoc, {counter: crtCounter - 1});
+}
 export {
   getActions,
   getActiveMembers,
   getPendingMembers,
   getSolvedActions,
   findDocumentQuery,
-  deleteDocument,
+  deleteUser,
   updateAdminNote,
   movePendingUser,
   moveSolvedAction,
