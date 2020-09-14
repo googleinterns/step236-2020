@@ -2,7 +2,9 @@
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import StartingPage from './components/StartingPage';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyByClHaWsJw2jVjIlTQ2FIzaeI6hs0Y7tk',
@@ -21,19 +23,38 @@ provider.setCustomParameters({prompt: 'select_account'});
 const database = firebase.firestore();
 
 const useFirebase = () => {
-  const [authUser, setAuthUser] = useState(firebase.auth().currentUser);
+  const [authUser, setAuthUser] = useState(undefined);
 
   useEffect(() => {
     const unsubscribe = firebase.auth()
-        .onAuthStateChanged((user) => setAuthUser(user))
+        .onAuthStateChanged((user) => setAuthUser(user));
     return () => {
-      unsubscribe()
+      unsubscribe();
     };
   }, []);
 
-  const signInWithGoogle = useCallback(() => firebase.auth().signInWithPopup(provider), []);
-  const signOutFromGoogle = useCallback(() => firebase.auth().signOut(), [])
-  return {signInWithGoogle, authUser, signOutFromGoogle}
-}
+  const signInWithGoogle = useCallback(
+      () => firebase.auth().signInWithPopup(provider), []);
+  const signOutFromGoogle = useCallback(() => firebase.auth().signOut(), []);
+  return {signInWithGoogle, authUser, signOutFromGoogle};
+};
 
 export {firebase, database, useFirebase};
+
+const MyUserContext = React.createContext(undefined);
+
+export function useAuthUser() {
+  return useContext(MyUserContext);
+}
+
+export function UserContext({children}) {
+  const authUser = useFirebase().authUser;
+
+  if (authUser === undefined) {
+    return (<h1>Loading...</h1>);
+  } else if (authUser === null) {
+    return (<Router><StartingPage/></Router>);
+  }
+  return <MyUserContext.Provider
+      value={authUser}>{children}</MyUserContext.Provider>;
+}

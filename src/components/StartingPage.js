@@ -37,7 +37,8 @@ export default function StartingPage() {
                 fullWidth
                 className={classes.button}
                 component={Link}
-                to="/form">
+                to="/form"
+                onClick={signInWithGoogle}>
               Join the community!
             </Button>
           </Grid>

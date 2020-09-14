@@ -1,5 +1,5 @@
 import {findDocumentQuery} from './database/Queries';
-import type {OAuthUserType, UserType} from './admin/FlowTypes';
+import type {OAuthUserType} from './admin/FlowTypes';
 
 const readUserDataFromDB = (user) => {
   if (user === null) {
@@ -9,30 +9,30 @@ const readUserDataFromDB = (user) => {
 };
 
 const firebaseAuthenticator = {
-  isAdmin: function(user: OAuthUserType): Promise<boolean> {
-    return readUserDataFromDB(user)
-        .then((userData: Array<UserType>) =>
-            Promise.resolve(userData.length > 0 && userData[0].isAdmin),
-        );
+  isAdmin: async function(user: OAuthUserType): boolean {
+    const userData = readUserDataFromDB(user);
+    return userData.length > 0 && userData[0].isAdmin;
   },
 
-  isInviter: function(user: OAuthUserType): boolean {
+  isInviter: async function(user: OAuthUserType): boolean {
     if (user === null) {
       return false;
     }
     return user && user.email.split('@').pop() === 'google.com';
   },
 
-  isUser: function(user: OAuthUserType): Promise<boolean> {
+  isUser: async function(user: OAuthUserType): boolean {
     // This is a special case for an inviter. They are not supposed to be
     // stored in database.
-    if (this.isInviter(user)) {
-      return Promise.resolve(true);
+    const isInviter = await this.isInviter(user);
+    if (isInviter) {
+      return true;
     }
-    return readUserDataFromDB(user)
-        .then((userData: Array<UserType>) => userData.length > 0);
+    const userData = await readUserDataFromDB(user);
+    return userData.length > 0;
   },
-
 };
 
 export default firebaseAuthenticator;
+
+//export function AuthUserContext = { }
