@@ -25,7 +25,7 @@ import {TablePaginationActions,
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
-import type {ActionType} from '../FlowTypes.js';
+import type {ActionType} from '../../types/FlowTypes.js';
 import {
   getActions,
   getSolvedActions,

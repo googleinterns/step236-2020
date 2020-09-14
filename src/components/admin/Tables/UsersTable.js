@@ -26,7 +26,7 @@ import {
   computeRows,
 } from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
-import type {UserType} from '../FlowTypes.js';
+import type {UserType} from '../../types/FlowTypes.js';
 import {
   getActiveMembers,
   deleteUser,

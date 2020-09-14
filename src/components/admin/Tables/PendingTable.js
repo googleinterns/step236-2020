@@ -21,7 +21,7 @@ import {TablePaginationActions,
 
 import PendingInfo from '../Dialogs/PendingInfo';
 import {getPendingMembers} from '../../database/Queries.js';
-import type {PendingType} from '../FlowTypes.js';
+import type {PendingType} from '../../types/FlowTypes.js';
 import {movePendingUser} from '../../database/Queries.js';
 
 export default function PendingTable(): React.Node {

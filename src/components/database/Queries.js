@@ -1,44 +1,7 @@
 // @flow
 import {database, fieldValue} from '../../firebaseFeatures.js';
-import type {UserType, PendingType, ActionType} from '../admin/FlowTypes.js';
-
-function sanitize(collection: string,
-    user: any): UserType | ActionType | PendingType {
-  switch (collection) {
-    case 'active-members':
-      return ({
-        adminNote: user.adminNote,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        joinDate: user.joinDate,
-        name: user.name,
-        needsAttention: user.needsAttention,
-        partnerEmail: user.partnerEmail,
-        count: user.count,
-      }: UserType);
-    case 'pending-members':
-      return ({
-        count: user.count,
-        email: user.email,
-        date: user.date,
-        partnerEmail: user.partnerEmail,
-      }: PendingType);
-    case 'actions':
-      return ({
-        count: user.count,
-        date: user.date,
-        message: user.message,
-      }: ActionType);
-    case 'solved-actions':
-      return ({
-        count: user.count,
-        date: user.date,
-        message: user.message,
-      }: ActionType);
-    default:
-      throw Error('The collection you asked for doesn\'t exist.');
-  }
-}
+import type {UserType, PendingType, ActionType} from '../types/FlowTypes.js';
+import {sanitize} from '../types/FlowTypes.js';
 
 function actionObject(count: number, user: UserType,
     message: string): ActionType {

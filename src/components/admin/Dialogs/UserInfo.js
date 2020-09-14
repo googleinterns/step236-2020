@@ -21,7 +21,7 @@ import {
   TableCell,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import type {UserType} from '../FlowTypes.js';
+import type {UserType} from '../../types/FlowTypes.js';
 
 type PropsType = {
   user: UserType,
@@ -33,7 +33,8 @@ type PropsType = {
 const groups = [
   {
     name: 'Hiking amateurs',
-    description: 'A group to plan hikings between members.'},
+    description: 'A group to plan hikings between members.',
+  },
   {
     name: 'Cooking advice',
     description: 'A group to exchange cooking recepies',
