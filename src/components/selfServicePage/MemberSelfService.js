@@ -17,7 +17,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import firebaseAuthenticator from '../Authenticator';
+import {useFirebase} from '../../firebaseFeatures';
 
 function createData(
     name: string,
@@ -69,6 +69,7 @@ function Row(props) {
 }
 
 function ManageAccountMenu() {
+  const signOutFromGoogle = useFirebase().signOutFromGoogle;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -102,7 +103,7 @@ function ManageAccountMenu() {
         >
           <MenuItem onClick={handleClose}>Profile information</MenuItem>
           <MenuItem onClick={handleClose}>Leave community</MenuItem>
-          <MenuItem onClick={firebaseAuthenticator.logOut}>Log out</MenuItem>
+          <MenuItem onClick={signOutFromGoogle}>Log out</MenuItem>
         </Menu>
       </Grid>
   );
