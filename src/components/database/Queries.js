@@ -63,7 +63,8 @@ function newUserObject(count: number, user: PendingType): UserType {
   }: UserType);
 }
 /**
-  * fieldQuery returns a number of documents ordered by a field,
+  * fieldQuery is an internal function that returns a number of documents
+  * ordered by a field,
   * @param {string} collection specifies the collection in which we query
   * @param {string} orderField the field we order by
   * @param {any} start first document in the order chosen
@@ -72,7 +73,7 @@ function newUserObject(count: number, user: PendingType): UserType {
   * created from the documents
   */
 async function fieldQuery(collection: string, orderField: string, start: any,
-    limit: number): Promise<Array<UserType | PendingType | ActionType>> {
+    limit: number): Promise<any> {
   const collectionRef = database.collection(collection);
 
   try {
@@ -82,16 +83,48 @@ async function fieldQuery(collection: string, orderField: string, start: any,
         .limit(limit)
         .get();
 
-    return data.docs
-        .map((doc: any): any => doc.data())
-        .map((doc: any): UserType | PendingType | ActionType =>
-          sanitize(collection, doc));
+    return data;
   } catch (error) {
     console.log(error);
-    return [];
+    return {docs: []};
   }
 }
 
+async function getActiveMembers(start: number,
+    limit: number): Promise<Array<UserType>> {
+  const data = await fieldQuery('active-members', 'count', start, limit);
+  return data.docs
+      .map((doc: any): any => doc.data())
+      .map((doc: any): UserType | PendingType | ActionType =>
+        sanitize('active-members', doc));
+}
+
+async function getPendingMembers(start: number,
+    limit: number): Promise<Array<PendingType>> {
+  const data = await fieldQuery('pending-members', 'count', start, limit);
+  return data.docs
+      .map((doc: any): any => doc.data())
+      .map((doc: any): UserType | PendingType | ActionType =>
+        sanitize('pending-members', doc));
+}
+
+async function getActions(start: number,
+    limit: number): Promise<Array<ActionType>> {
+  const data = await fieldQuery('actions', 'count', start, limit);
+  return data.docs
+      .map((doc: any): any => doc.data())
+      .map((doc: any): UserType | PendingType | ActionType =>
+        sanitize('actions', doc));
+}
+
+async function getSolvedActions(start: number,
+    limit: number): Promise<Array<ActionType>> {
+  const data = await fieldQuery('solved-actions', 'count', start, limit);
+  return data.docs
+      .map((doc: any): any => doc.data())
+      .map((doc: any): UserType | PendingType | ActionType =>
+        sanitize('actions', doc));
+}
 /**
   * findDocumentQuery returns documents that match some value of a field
   * @param {string} collection specifies the collection in which we query
@@ -265,7 +298,10 @@ async function moveSolvedAction(value: number) {
 }
 
 export {
-  fieldQuery,
+  getActions,
+  getActiveMembers,
+  getPendingMembers,
+  getSolvedActions,
   findDocumentQuery,
   deleteDocument,
   updateAdminNote,

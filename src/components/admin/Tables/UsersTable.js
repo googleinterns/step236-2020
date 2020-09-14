@@ -28,7 +28,7 @@ import {
 import UserInfo from '../Dialogs/UserInfo';
 import type {UserType} from '../FlowTypes.js';
 import {
-  fieldQuery,
+  getActiveMembers,
   deleteDocument,
   updateAdminNote,
 } from '../../database/Queries.js';
@@ -70,8 +70,7 @@ export default function UsersTable(): React.Node {
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('active-members', 'count',
-          start, rowsPerPage);
+      const newRows = await getActiveMembers(start, rowsPerPage);
       setRows(newRows);
     })();
   }, [page, rowsPerPage, selectedDelete]);

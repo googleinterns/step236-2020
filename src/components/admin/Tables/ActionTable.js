@@ -26,7 +26,11 @@ import {TablePaginationActions,
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
 import type {ActionType} from '../FlowTypes.js';
-import {fieldQuery, moveSolvedAction} from '../../database/Queries.js';
+import {
+  getActions,
+  getSolvedActions,
+  moveSolvedAction,
+} from '../../database/Queries.js';
 import ActionInfo from '../Dialogs/ActionInfo';
 
 export default function ActionTable(): React.Node {
@@ -41,11 +45,10 @@ export default function ActionTable(): React.Node {
       let newRows = [];
       if (tab === 0) {
         const start = page * rowsPerPage + 1;
-        newRows = await fieldQuery('actions', 'count', start, rowsPerPage);
+        newRows = await getActions(start, rowsPerPage);
       } else {
         const start = page * rowsPerPage + 1;
-        newRows = await fieldQuery('solved-actions', 'count',
-            start, rowsPerPage);
+        newRows = await getSolvedActions(start, rowsPerPage);
       }
       setRows(newRows);
     })();
