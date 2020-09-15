@@ -10,7 +10,7 @@ const readUserDataFromDB = (user) => {
 
 const firebaseAuthenticator = {
   isAdmin: async function(user: OAuthUserType): boolean {
-    const userData = readUserDataFromDB(user);
+    const userData = await readUserDataFromDB(user);
     return userData.length > 0 && userData[0].isAdmin;
   },
 
@@ -34,5 +34,3 @@ const firebaseAuthenticator = {
 };
 
 export default firebaseAuthenticator;
-
-//export function AuthUserContext = { }

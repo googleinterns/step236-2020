@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import styles from './admin.module.css';
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
-import {useFirebase} from '../../firebaseFeatures';
+import {signOutFromGoogle} from '../../firebaseFeatures';
 
 const theme = createMuiTheme({
   palette: {
@@ -20,7 +20,6 @@ const theme = createMuiTheme({
 });
 
 export default function AdminTopBar(): React.Node {
-  const signOutFromGoogle = useFirebase().signOutFromGoogle;
 
   return (
     <ThemeProvider theme={theme}>

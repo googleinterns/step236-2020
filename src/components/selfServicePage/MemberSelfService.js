@@ -17,7 +17,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import {useFirebase} from '../../firebaseFeatures';
+import {signOutFromGoogle} from '../../firebaseFeatures';
 
 function createData(
     name: string,
@@ -69,7 +69,6 @@ function Row(props) {
 }
 
 function ManageAccountMenu() {
-  const signOutFromGoogle = useFirebase().signOutFromGoogle;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 

@@ -2,7 +2,7 @@
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import StartingPage from './components/StartingPage';
 import {BrowserRouter as Router} from 'react-router-dom';
 
@@ -22,9 +22,10 @@ const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: 'select_account'});
 const database = firebase.firestore();
 
+export {firebase, database};
+
 const useFirebase = () => {
   const [authUser, setAuthUser] = useState(undefined);
-
   useEffect(() => {
     const unsubscribe = firebase.auth()
         .onAuthStateChanged((user) => setAuthUser(user));
@@ -33,28 +34,31 @@ const useFirebase = () => {
     };
   }, []);
 
-  const signInWithGoogle = useCallback(
-      () => firebase.auth().signInWithPopup(provider), []);
-  const signOutFromGoogle = useCallback(() => firebase.auth().signOut(), []);
-  return {signInWithGoogle, authUser, signOutFromGoogle};
+  return authUser;
 };
 
-export {firebase, database, useFirebase};
-
-const MyUserContext = React.createContext(undefined);
-
-export function useAuthUser() {
-  return useContext(MyUserContext);
+export function signOutFromGoogle() {
+  firebase.auth().signOut();
 }
 
-export function UserContext({children}) {
-  const authUser = useFirebase().authUser;
+export function signInWithGoogle() {
+  firebase.auth().signInWithPopup(provider);
+}
+
+const AuthUserContext = React.createContext<any>(undefined);
+
+export function useAuthUser() {
+  return useContext(AuthUserContext);
+}
+
+export function UserContext({children}: any) {
+  const authUser = useFirebase();
 
   if (authUser === undefined) {
     return (<h1>Loading...</h1>);
   } else if (authUser === null) {
     return (<Router><StartingPage/></Router>);
   }
-  return <MyUserContext.Provider
-      value={authUser}>{children}</MyUserContext.Provider>;
+  return <AuthUserContext.Provider
+      value={authUser}>{children}</AuthUserContext.Provider>;
 }

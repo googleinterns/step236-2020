@@ -4,11 +4,10 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import {useStyles} from './LayoutStyles';
 import {Link} from 'react-router-dom';
-import {useFirebase} from '../firebaseFeatures';
+import {signInWithGoogle} from '../firebaseFeatures';
 
 export default function StartingPage() {
   const classes = useStyles();
-  const signInWithGoogle = useFirebase().signInWithGoogle;
 
   return (
       <Paper className={classes.paper}>

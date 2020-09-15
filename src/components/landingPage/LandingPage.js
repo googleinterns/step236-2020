@@ -5,11 +5,13 @@ import Button from '@material-ui/core/Button';
 import {Link} from 'react-router-dom';
 import {useStyles} from '../LayoutStyles';
 import firebaseAuthenticator from '../Authenticator';
-import {useAuthUser, useFirebase} from '../../firebaseFeatures';
+import {
+  signOutFromGoogle,
+  useAuthUser,
+} from '../../firebaseFeatures';
 
 export default function LandingPage() {
   const classes = useStyles();
-  const signOutFromGoogle = useFirebase().signOutFromGoogle;
   const authUser = useAuthUser();
   const [landingPageContent, setlandingPageContent] = useState(null);
 
