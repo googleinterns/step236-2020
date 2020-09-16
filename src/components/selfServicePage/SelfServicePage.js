@@ -9,6 +9,7 @@ import MemberSelfService from './MemberSelfService';
 import {Link} from 'react-router-dom';
 import InviterSelfService from './InviterSelfService';
 import {useAuthUser} from '../../firebaseFeatures';
+import LoadingPlaceholder from '../LoadingPlaceholder';
 
 export default function SelfServicePage() {
   const classes = useStyles();
@@ -28,7 +29,7 @@ export default function SelfServicePage() {
   });
 
   if (isInviter === null) {
-    return <h1>Loading...</h1>;
+    return <LoadingPlaceholder/>;
   }
 
   return (

@@ -13,6 +13,7 @@ import firebaseAuthenticator from './components/Authenticator';
 import StartingPage from './components/StartingPage';
 import SelfServicePage from './components/selfServicePage/SelfServicePage';
 import {useAuthUser, UserContext} from './firebaseFeatures';
+import LoadingPlaceholder from './components/LoadingPlaceholder';
 
 function PrivateRoute({authFunction, component, redirectPath}) {
   const [authorisationStatus, setAutorisationStatus] = useState(null);
@@ -30,7 +31,7 @@ function PrivateRoute({authFunction, component, redirectPath}) {
   });
 
   if (authorisationStatus === null) {
-    return <h1>Loading...</h1>;
+    return <LoadingPlaceholder/>;
   }
 
   if (authorisationStatus) {

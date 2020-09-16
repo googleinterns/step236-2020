@@ -29,6 +29,7 @@ export const useStyles = makeStyles((theme) => ({
 
   gridItem: {
     padding: '2.5px 5px 2.5px 5px',
+    color: '#1d3557',
   },
 
   paper: {

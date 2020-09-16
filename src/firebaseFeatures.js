@@ -5,6 +5,7 @@ import 'firebase/auth';
 import React, {useContext, useEffect, useState} from 'react';
 import StartingPage from './components/StartingPage';
 import {BrowserRouter as Router} from 'react-router-dom';
+import LoadingPlaceholder from './components/LoadingPlaceholder';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyByClHaWsJw2jVjIlTQ2FIzaeI6hs0Y7tk',
@@ -56,7 +57,7 @@ export function UserContext({children}: any) {
   const authUser = useFirebase();
 
   if (authUser === undefined) {
-    return (<h1>Loading...</h1>);
+    return (<LoadingPlaceholder/>);
   } else if (authUser === null) {
     return (<Router><StartingPage/></Router>);
   }

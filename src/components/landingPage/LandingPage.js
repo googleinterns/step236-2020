@@ -9,6 +9,7 @@ import {
   signOutFromGoogle,
   useAuthUser,
 } from '../../firebaseFeatures';
+import LoadingPlaceholder from '../LoadingPlaceholder';
 
 export default function LandingPage() {
   const classes = useStyles();
@@ -31,7 +32,7 @@ export default function LandingPage() {
   });
 
   if (landingPageContent === null) {
-    return <h1>Loading...</h1>;
+    return <LoadingPlaceholder/>;
   }
 
   return (
