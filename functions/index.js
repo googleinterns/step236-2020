@@ -17,12 +17,15 @@ const SCOPES = [
   'https://www.googleapis.com/auth/gmail.send',
 ];
 
+// TODO: Change https request listener to firestore listener.
 exports.sendMail = functions.https.onRequest((request, response) => {
   const recipient = request.query.recipient;
   // TODO: Respond with more meaningful response.
   response.send('Hello from Firebase!');
   fs.readFile('credentials.json', (err, content) => {
-    if (err) return console.log('Error loading client secret file:', err);
+    if (err) {
+      return console.log('Error loading client secret file:', err);
+    }
     authorize(JSON.parse(content), (auth) => {
       sendMessage(auth, recipient);
     });
@@ -72,9 +75,9 @@ function makeBody(to, from, subject, message) {
     'Content-Type: text/plain; charset="UTF-8"\n',
     'MIME-Version: 1.0\n',
     'Content-Transfer-Encoding: 7bit\n',
-    'to: ', to, '\n',
+    'To: ', to, '\n',
     'from: ', from, '\n',
-    'subject: ', subject, '\n\n',
+    'Subject: ', subject, '\n\n',
     message,
   ].join('');
 
