@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, {useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import {useStyles} from '../LayoutStyles';
@@ -17,6 +17,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import {signOutFromGoogle} from '../../firebaseFeatures';
 
 function createData(
     name: string,
@@ -33,7 +34,7 @@ function createData(
 function Row(props) {
   const classes = useStyles();
   const {row} = props;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
       <React.Fragment>
@@ -80,7 +81,11 @@ function ManageAccountMenu() {
   };
 
   return (
-      <div>
+      <Grid
+          container
+          direction="column"
+          justify="flex-start"
+          alignItems="stretch">
         <Button
             aria-controls="simple-menu"
             aria-haspopup="true"
@@ -97,9 +102,9 @@ function ManageAccountMenu() {
         >
           <MenuItem onClick={handleClose}>Profile information</MenuItem>
           <MenuItem onClick={handleClose}>Leave community</MenuItem>
-          <MenuItem onClick={handleClose}>Log out</MenuItem>
+          <MenuItem onClick={signOutFromGoogle}>Log out</MenuItem>
         </Menu>
-      </div>
+      </Grid>
   );
 }
 
@@ -113,42 +118,33 @@ const rows = [
 ];
 
 export default function MemberSelfService() {
-  const classes = useStyles();
 
   return (
-      <Grid container
-            direction="row">
-        <Grid item xs={10}>
-          <Grid
-              container
-              direction="column"
-              justify="flex-start"
-              alignItems="stretch"
-              className={classes.gridContainer}>
-            <Grid
-                item
-                className={classes.gridItem}>
-              <TableContainer>
-                <Table stickyHeader aria-label="collapsible table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell/>
-                      <TableCell>Group name</TableCell>
-                      <TableCell align="right">Membership status</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row) => (
-                        <Row key={row.name} row={row}/>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-          </Grid>
-        </Grid>
+      <Grid
+          container
+          direction="column"
+          justify="flex-start"
+          alignItems="stretch">
         <Grid item>
           <ManageAccountMenu/>
+        </Grid>
+        <Grid item>
+          <TableContainer>
+            <Table stickyHeader aria-label="collapsible table">
+              <TableHead>
+                <TableRow>
+                  <TableCell/>
+                  <TableCell>Group name</TableCell>
+                  <TableCell align="right">Membership status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                    <Row key={row.name} row={row}/>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
       </Grid>
   );

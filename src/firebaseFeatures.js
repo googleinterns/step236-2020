@@ -2,6 +2,9 @@
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import React, {useContext, useEffect, useState} from 'react';
+import StartingPage from './components/StartingPage';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyByClHaWsJw2jVjIlTQ2FIzaeI6hs0Y7tk',
@@ -15,13 +18,48 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
-
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: 'select_account'});
-const signInWithGoogle = (): void => auth.signInWithPopup(provider);
-
 const database = firebase.firestore();
 const fieldValue = firebase.firestore.FieldValue;
 const timestamp = firebase.Timestamp;
-export {firebase, auth, signInWithGoogle, database, fieldValue, timestamp};
+export {firebase, database, fieldValue, timestamp};
+
+const useFirebase = () => {
+  const [authUser, setAuthUser] = useState(undefined);
+  useEffect(() => {
+    const unsubscribe = firebase.auth()
+        .onAuthStateChanged((user) => setAuthUser(user));
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  return authUser;
+};
+
+export function signOutFromGoogle() {
+  firebase.auth().signOut();
+}
+
+export function signInWithGoogle() {
+  firebase.auth().signInWithPopup(provider);
+}
+
+const AuthUserContext = React.createContext<any>(undefined);
+
+export function useAuthUser() {
+  return useContext(AuthUserContext);
+}
+
+export function UserContext({children}: any) {
+  const authUser = useFirebase();
+
+  if (authUser === undefined) {
+    return (<h1>Loading...</h1>);
+  } else if (authUser === null) {
+    return (<Router><StartingPage/></Router>);
+  }
+  return <AuthUserContext.Provider
+      value={authUser}>{children}</AuthUserContext.Provider>;
+}

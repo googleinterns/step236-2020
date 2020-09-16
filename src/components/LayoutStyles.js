@@ -15,6 +15,14 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
 
+  buttonSecondary: {
+    background: '#e63946',
+    color: '#ffffff',
+    '&:hover': {
+      background: '#a31420',
+    },
+  },
+
   gridContainer: {
     padding: '2.5px 0 2.5px 0',
   },
@@ -25,7 +33,7 @@ export const useStyles = makeStyles((theme) => ({
 
   paper: {
     width: '80%',
-    minWidth: 200,
+    minWidth: 300,
     margin: '10% 10% 0 10%',
     padding: '10px',
   },

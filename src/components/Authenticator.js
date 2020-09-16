@@ -1,30 +1,34 @@
-import Cookies from 'js-cookie';
+// @flow
+import {findUserByEmailQuery} from './database/Queries';
+import type {OAuthUserType} from './types/FlowTypes';
 
-const mockAuth = {
-  isAdmin: function() {
-    const adminCookie = Cookies.get('admin');
-    return (adminCookie !== undefined);
+const readUserDataFromDB = (user) => {
+  if (user === null) {
+    return Promise.resolve(null);
+  }
+  return findUserByEmailQuery(user.email);
+};
+
+const firebaseAuthenticator = {
+  isAdmin: async function(user: OAuthUserType): Promise<boolean> {
+    const userData = await readUserDataFromDB(user);
+    return userData !== null && userData.isAdmin;
   },
 
-  isUser: function() {
-    const userCookie = Cookies.get('user');
-    return (userCookie !== undefined);
+  isInviter: async function(user: OAuthUserType): Promise<boolean> {
+    return user && /@google.com\s*$/.test(user.email);
   },
 
-  isInviter: function() {
-    const inviterCookie = Cookies.get('inviter');
-    return (inviterCookie !== undefined);
-  },
-
-  logIn: function() {
-    Cookies.set('user', 'user');
-  },
-
-  logOut: function() {
-    Cookies.remove('user');
+  isUser: async function(user: OAuthUserType): Promise<boolean> {
+    // This is a special case for an inviter. They are not supposed to be
+    // stored in database.
+    const isInviter = await this.isInviter(user);
+    if (isInviter) {
+      return true;
+    }
+    const userData = await readUserDataFromDB(user);
+    return userData !== null;
   },
 };
 
-// TODO: Add firebase authentication.
-
-export default mockAuth;
+export default firebaseAuthenticator;

@@ -48,25 +48,33 @@ function PendingRequestsTable() {
                       {row.name}
                     </TableCell>
                     <TableCell align="left">{row.surname}</TableCell>
-                    <TableCell align="right">
-                      <Button className={classes.button}
-                              onClick={() => {
-                                console.log(
-                                    'User has been deleted from pending requests list.');
-                                setList(list.filter(
-                                    item => (item.key !== row.key)));
-                              }}>
-                        Delete
-                      </Button>
-                      <Button className={classes.button}
-                              onClick={() => {
-                                console.log(
-                                    'User has been accepted to the community.');
-                                setList(list.filter(
-                                    item => (item.key !== row.key)));
-                              }}>
-                        Accept
-                      </Button>
+                    <TableCell>
+                      <Grid container
+                            direction="row"
+                            justify="flex-end">
+                        <Grid item className={classes.gridItem}>
+                          <Button className={classes.buttonSecondary}
+                                  onClick={() => {
+                                    console.log(
+                                        'User has been deleted from pending requests list.');
+                                    setList(list.filter(
+                                        item => (item.key !== row.key)));
+                                  }}>
+                            Delete
+                          </Button>
+                        </Grid>
+                        <Grid item className={classes.gridItem}>
+                          <Button className={classes.button}
+                                  onClick={() => {
+                                    console.log(
+                                        'User has been accepted to the community.');
+                                    setList(list.filter(
+                                        item => (item.key !== row.key)));
+                                  }}>
+                            Accept
+                          </Button>
+                        </Grid>
+                      </Grid>
                     </TableCell>
                   </TableRow>
               ))}
@@ -85,8 +93,7 @@ export default function InviterSelfService() {
           container
           direction="column"
           justify="flex-start"
-          alignItems="stretch"
-          className={classes.gridContainer}>
+          alignItems="stretch">
         <InviterForm/>
         <Grid
             item
