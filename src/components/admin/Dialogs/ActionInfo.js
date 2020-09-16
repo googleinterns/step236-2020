@@ -9,16 +9,22 @@ import {
   DialogActions,
   DialogTitle,
 } from '@material-ui/core';
-import type {ActionType} from '../FlowTypes.js';
+import type {ActionType} from '../../types/FlowTypes.js';
 
 type PropsType = {
   action: ActionType,
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  onConfirm: (ActionType) => Promise<any>,
+  tab: 'active' | 'solved'
 };
 
 const ActionInfo = (props: PropsType): React.Node => {
-  const {action, open, onClose} = props;
+  const {action, open, onClose, onConfirm, tab} = props;
+
+  const handleConfirm = () => {
+    onConfirm(action);
+  };
 
   return (
     <Dialog
@@ -33,13 +39,17 @@ const ActionInfo = (props: PropsType): React.Node => {
           {action.message}
         </DialogContentText>
       </DialogContent>
-      <DialogActions>
-        <Typography variant='h6'>
-          Do you want to mark this action as resolved?
-        </Typography>
-        <Button onClick={onClose}>No</Button>
-        <Button onClick={onClose}>Yes</Button>
-      </DialogActions>
+      {tab === 'active' ?
+        <DialogActions>
+          <Typography variant='h6'>
+            Do you want to mark this action as resolved?
+          </Typography>
+          <Button onClick={onClose}>No</Button>
+          <Button onClick={handleConfirm}>Yes</Button>
+        </DialogActions> :
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>}
     </Dialog>
   );
 };

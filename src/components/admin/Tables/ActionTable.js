@@ -12,6 +12,12 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import IconButton from '@material-ui/core/IconButton';
 
+import {
+  AppBar,
+  Tabs,
+  Tab,
+} from '@material-ui/core';
+
 import styles from '../admin.module.css';
 import {TablePaginationActions,
   computeEmptyRows,
@@ -19,8 +25,12 @@ import {TablePaginationActions,
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
-import type {ActionType} from '../FlowTypes.js';
-import {fieldQuery} from '../../database/Queries.js';
+import type {ActionType} from '../../types/FlowTypes.js';
+import {
+  getActions,
+  getSolvedActions,
+  moveSolvedAction,
+} from '../../database/Queries.js';
 import ActionInfo from '../Dialogs/ActionInfo';
 
 export default function ActionTable(): React.Node {
@@ -28,15 +38,21 @@ export default function ActionTable(): React.Node {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRow, setSelectedRow] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
+  const [tab, setTab] = React.useState('active');
 
   React.useEffect(() => {
     (async () => {
+      let newRows = [];
       const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('actions', 'count',
-          start, rowsPerPage);
+      if (tab === 'active') {
+        newRows = await getActions(start, rowsPerPage);
+      } else {
+        const start = page * rowsPerPage + 1;
+        newRows = await getSolvedActions(start, rowsPerPage);
+      }
       setRows(newRows);
     })();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, tab]);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);
@@ -55,6 +71,21 @@ export default function ActionTable(): React.Node {
     setSelectedRow(-1);
   };
 
+  const handleTabChange = (event: SyntheticEvent<>,
+      newValue: 'active' | 'solved') => {
+    setTab(newValue);
+  };
+
+  const handleSolveAction = async (action: ActionType) => {
+    try {
+      await moveSolvedAction(action.count);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      window.location.reload();
+    }
+  };
+
   return (
     <Paper>
       <Toolbar className={styles.titleActionBar} variant='dense'>
@@ -62,6 +93,12 @@ export default function ActionTable(): React.Node {
           Immediate action required
         </Typography>
       </Toolbar>
+      <AppBar position='relative' color='inherit'>
+        <Tabs value={tab} onChange={handleTabChange}>
+          <Tab label='active' id={'tab-active'} value='active' />
+          <Tab label='solved' id={'tab-solved'} value='solved' />
+        </Tabs>
+      </AppBar>
       <TableContainer>
         <Table aria-label='Immediate actions' size='small'>
           <TableHead>
@@ -76,7 +113,7 @@ export default function ActionTable(): React.Node {
             {computeRows(page, rows, rowsPerPage)
                 .map((row: ActionType): React.Node => (
                   <TableRow key={row.count}>
-                    <TableCell>{row.date.toString()}</TableCell>
+                    <TableCell>{row.date.toDate().toLocaleString()}</TableCell>
                     <TableCell>{row.message}</TableCell>
                     <TableCell>
                       <IconButton
@@ -88,7 +125,9 @@ export default function ActionTable(): React.Node {
                     <ActionInfo
                       action={row}
                       open={selectedRow === row.count}
-                      onClose={handleCloseModal} >
+                      onClose={handleCloseModal}
+                      onConfirm={handleSolveAction}
+                      tab={tab} >
                     </ActionInfo>
                   </TableRow>
                 ))}

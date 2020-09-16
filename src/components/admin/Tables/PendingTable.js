@@ -20,8 +20,9 @@ import {TablePaginationActions,
   computeRows} from '../TablePaginationActions';
 
 import PendingInfo from '../Dialogs/PendingInfo';
-import {fieldQuery} from '../../database/Queries.js';
-import type {PendingType} from '../FlowTypes.js';
+import {getPendingMembers} from '../../database/Queries.js';
+import type {PendingType} from '../../types/FlowTypes.js';
+import {movePendingUser} from '../../database/Queries.js';
 
 export default function PendingTable(): React.Node {
   const [page, setPage] = React.useState(0);
@@ -32,8 +33,7 @@ export default function PendingTable(): React.Node {
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('pending-members', 'count',
-          start, rowsPerPage);
+      const newRows = await getPendingMembers(start, rowsPerPage);
       setRows(newRows);
     })();
   }, [page, rowsPerPage]);
@@ -53,6 +53,16 @@ export default function PendingTable(): React.Node {
 
   const handleCloseDialog = () => {
     setSelectedPending(-1);
+  };
+
+  const handleConfirmDialog = async (user: PendingType) => {
+    try {
+      await movePendingUser('email', user.email);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      window.location.reload();
+    }
   };
 
   return (
@@ -85,7 +95,8 @@ export default function PendingTable(): React.Node {
                     <PendingInfo
                       user={row}
                       open={row.count === selectedPending}
-                      onClose={handleCloseDialog} />
+                      onClose={handleCloseDialog}
+                      onConfirm={handleConfirmDialog} />
                   </TableRow>
                 ))}
 
