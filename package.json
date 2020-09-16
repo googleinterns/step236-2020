@@ -13,6 +13,7 @@
     "date-fns": "^2.15.0",
     "firebase": "^7.19.1",
     "googleapis": "^39.2.0",
+    "firebase-admin": "^9.1.1",
     "js-cookie": "^2.2.1",
     "material-table": "^1.69.0",
     "react": "^16.13.1",
