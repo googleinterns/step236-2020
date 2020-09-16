@@ -20,12 +20,18 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteDialog from '../Dialogs/DeleteDialog';
 
-import {TablePaginationActions,
+import {
+  TablePaginationActions,
   computeEmptyRows,
-  computeRows} from '../TablePaginationActions';
+  computeRows,
+} from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
-import type {UserType} from '../FlowTypes.js';
-import {fieldQuery} from '../../database/Queries.js';
+import type {UserType} from '../../types/FlowTypes.js';
+import {
+  getActiveMembers,
+  deleteUser,
+  updateAdminNote,
+} from '../../database/Queries.js';
 
 function EnhancedToolbar(): React.Node {
   const handleOnSubmit = (): void => console.log('User has pressed search.');
@@ -64,11 +70,10 @@ export default function UsersTable(): React.Node {
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
-      const newRows = await fieldQuery('active-members', 'count',
-          start, rowsPerPage);
+      const newRows = await getActiveMembers(start, rowsPerPage);
       setRows(newRows);
     })();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, selectedDelete]);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);
@@ -93,6 +98,25 @@ export default function UsersTable(): React.Node {
 
   const handleCloseDialog = () => {
     setSelectedDelete(-1);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteUser('count', selectedDelete);
+      setSelectedDelete(-1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const saveNote = async (user: UserType, note: string) => {
+    try {
+      await updateAdminNote('email', user.email, note);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      window.location.reload();
+    }
   };
 
   return (
@@ -133,11 +157,13 @@ export default function UsersTable(): React.Node {
                     <DeleteDialog
                       user={row}
                       open={selectedDelete === row.count}
-                      onClose={handleCloseDialog} />
+                      onClose={handleCloseDialog}
+                      onConfirm={handleConfirmDelete} />
                     <UserInfo
                       user={row}
                       open={selectedRow === row.count}
-                      onClose={handleCloseModal} >
+                      onClose={handleCloseModal}
+                      saveNote={saveNote}>
                     </UserInfo>
                   </TableRow>
                 ))}

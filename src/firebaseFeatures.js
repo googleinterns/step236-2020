@@ -21,8 +21,9 @@ firebase.initializeApp(firebaseConfig);
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: 'select_account'});
 const database = firebase.firestore();
-
-export {firebase, database};
+const fieldValue = firebase.firestore.FieldValue;
+const timestamp = firebase.Timestamp;
+export {firebase, database, fieldValue, timestamp};
 
 const useFirebase = () => {
   const [authUser, setAuthUser] = useState(undefined);

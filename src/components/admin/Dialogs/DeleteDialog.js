@@ -12,11 +12,12 @@ import {
 type PropsType = {
   user: any,
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  onConfirm: () => Promise<any>
 };
 
 const DeleteDialog = (props: PropsType): React.Node => {
-  const {user, open, onClose} = props;
+  const {user, open, onClose, onConfirm} = props;
 
   return (
     <Dialog
@@ -35,7 +36,7 @@ const DeleteDialog = (props: PropsType): React.Node => {
         <Button onClick={onClose}>
           Cancel
         </Button>
-        <Button onClick={onClose}>
+        <Button onClick={onConfirm}>
           Delete
         </Button>
       </DialogActions>
