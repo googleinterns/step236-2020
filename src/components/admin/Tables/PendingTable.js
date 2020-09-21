@@ -19,7 +19,7 @@ import {TablePaginationActions,
   computeEmptyRows} from '../TablePaginationActions';
 
 import PendingInfo from '../Dialogs/PendingInfo';
-import {getPendingMembers} from '../../database/Queries.js';
+import {getPendingMembers, getCounter} from '../../database/Queries.js';
 import type {PendingType} from '../../types/FlowTypes.js';
 import {movePendingUser} from '../../database/Queries.js';
 
@@ -28,12 +28,15 @@ export default function PendingTable(): React.Node {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedPending, setSelectedPending] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
+  const [counter, setCounter] = React.useState(0);
 
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
+      const counter = await getCounter('pendingMembers');
       const newRows = await getPendingMembers(start, rowsPerPage);
       setRows(newRows);
+      setCounter(counter);
     })();
   }, [page, rowsPerPage]);
 
@@ -111,7 +114,7 @@ export default function PendingTable(): React.Node {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, {label: 'All', value: -1}]}
-                count={rows.length}
+                count={counter}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 SelectProps={{
