@@ -16,8 +16,7 @@ import {Typography} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 
 import {TablePaginationActions,
-  computeEmptyRows,
-  computeRows} from '../TablePaginationActions';
+  computeEmptyRows} from '../TablePaginationActions';
 
 import PendingInfo from '../Dialogs/PendingInfo';
 import {getPendingMembers} from '../../database/Queries.js';
@@ -81,7 +80,7 @@ export default function PendingTable(): React.Node {
             </TableRow>
           </TableHead>
           <TableBody>
-            {computeRows(page, rows, rowsPerPage)
+            {rows
                 .map((row: PendingType): React.Node => (
                   <TableRow key={row.count}>
                     <TableCell>{row.email}</TableCell>

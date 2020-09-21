@@ -23,7 +23,6 @@ import DeleteDialog from '../Dialogs/DeleteDialog';
 import {
   TablePaginationActions,
   computeEmptyRows,
-  computeRows,
 } from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
 import type {UserType} from '../../types/FlowTypes.js';
@@ -134,7 +133,7 @@ export default function UsersTable(): React.Node {
           </TableHead>
 
           <TableBody>
-            {computeRows(page, rows, rowsPerPage)
+            {rows
                 .map((row: UserType): React.Node => (
                   <TableRow
                     key={row.count} >

@@ -297,6 +297,7 @@ async function findUserByEmailQuery(userEmail: string): Promise<any> {
 export {
   getActions,
   getActiveMembers,
+  getCounter,
   getPendingMembers,
   getSolvedActions,
   findDocumentQuery,
