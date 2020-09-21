@@ -23,12 +23,12 @@ import DeleteDialog from '../Dialogs/DeleteDialog';
 import {
   TablePaginationActions,
   computeEmptyRows,
-  computeRows,
 } from '../TablePaginationActions';
 import UserInfo from '../Dialogs/UserInfo';
 import type {UserType} from '../../types/FlowTypes.js';
 import {
   getActiveMembers,
+  getCounter,
   deleteUser,
   updateAdminNote,
 } from '../../database/Queries.js';
@@ -66,11 +66,14 @@ export default function UsersTable(): React.Node {
   const [selectedRow, setSelectedRow] = React.useState(-1);
   const [selectedDelete, setSelectedDelete] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
+  const [counter, setCounter] = React.useState(0);
 
   React.useEffect(() => {
     (async () => {
       const start = page * rowsPerPage + 1;
+      const counter = await getCounter('activeMembers');
       const newRows = await getActiveMembers(start, rowsPerPage);
+      setCounter(counter);
       setRows(newRows);
     })();
   }, [page, rowsPerPage, selectedDelete]);
@@ -134,7 +137,7 @@ export default function UsersTable(): React.Node {
           </TableHead>
 
           <TableBody>
-            {computeRows(page, rows, rowsPerPage)
+            {rows
                 .map((row: UserType): React.Node => (
                   <TableRow
                     key={row.count} >
@@ -179,7 +182,7 @@ export default function UsersTable(): React.Node {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 50]}
-                count={rows.length}
+                count={counter}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 SelectProps={{

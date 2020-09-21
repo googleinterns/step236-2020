@@ -20,8 +20,7 @@ import {
 
 import styles from '../admin.module.css';
 import {TablePaginationActions,
-  computeEmptyRows,
-  computeRows} from '../TablePaginationActions';
+  computeEmptyRows} from '../TablePaginationActions';
 
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {Typography} from '@material-ui/core';
@@ -29,6 +28,7 @@ import type {ActionType} from '../../types/FlowTypes.js';
 import {
   getActions,
   getSolvedActions,
+  getCounter,
   moveSolvedAction,
 } from '../../database/Queries.js';
 import ActionInfo from '../Dialogs/ActionInfo';
@@ -39,18 +39,23 @@ export default function ActionTable(): React.Node {
   const [selectedRow, setSelectedRow] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
   const [tab, setTab] = React.useState('active');
+  const [counter, setCounter] = React.useState(0);
 
   React.useEffect(() => {
     (async () => {
       let newRows = [];
+      let newCounter = 0;
       const start = page * rowsPerPage + 1;
       if (tab === 'active') {
-        newRows = await getActions(start, rowsPerPage);
+        newCounter = await getCounter('actions');
+        newRows = await getActions(start, Math.min(newCounter, rowsPerPage));
       } else {
-        const start = page * rowsPerPage + 1;
-        newRows = await getSolvedActions(start, rowsPerPage);
+        newCounter = await getCounter('solvedActions');
+        newRows = await getSolvedActions(start,
+            Math.min(newCounter, rowsPerPage));
       }
       setRows(newRows);
+      setCounter(newCounter);
     })();
   }, [page, rowsPerPage, tab]);
 
@@ -110,27 +115,26 @@ export default function ActionTable(): React.Node {
           </TableHead>
 
           <TableBody>
-            {computeRows(page, rows, rowsPerPage)
-                .map((row: ActionType): React.Node => (
-                  <TableRow key={row.count}>
-                    <TableCell>{row.date.toDate().toLocaleString()}</TableCell>
-                    <TableCell>{row.message}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={(): void =>
-                          handleSelectedRow(row.count)}>
-                        <MoreHorizIcon />
-                      </IconButton>
-                    </TableCell>
-                    <ActionInfo
-                      action={row}
-                      open={selectedRow === row.count}
-                      onClose={handleCloseModal}
-                      onConfirm={handleSolveAction}
-                      tab={tab} >
-                    </ActionInfo>
-                  </TableRow>
-                ))}
+            {rows.map((row: ActionType): React.Node => (
+              <TableRow key={row.count}>
+                <TableCell>{row.date.toDate().toLocaleString()}</TableCell>
+                <TableCell>{row.message}</TableCell>
+                <TableCell>
+                  <IconButton
+                    onClick={(): void =>
+                      handleSelectedRow(row.count)}>
+                    <MoreHorizIcon />
+                  </IconButton>
+                </TableCell>
+                <ActionInfo
+                  action={row}
+                  open={selectedRow === row.count}
+                  onClose={handleCloseModal}
+                  onConfirm={handleSolveAction}
+                  tab={tab} >
+                </ActionInfo>
+              </TableRow>
+            ))}
 
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
@@ -143,8 +147,8 @@ export default function ActionTable(): React.Node {
           <TableFooter className={styles.footer}>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, {label: 'All', value: -1}]}
-                count={rows.length}
+                rowsPerPageOptions={[5, 10, 25]}
+                count={counter}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 SelectProps={{

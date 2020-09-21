@@ -65,16 +65,7 @@ function TablePaginationActions(props: PropsType): React.Node {
 
 function computeEmptyRows(rowsPerPage: number,
     page: number, rows: Array<any>): number {
-  return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  return rowsPerPage - Math.min(rowsPerPage, rows.length);
 }
 
-
-function computeRows(page: number,
-    rows: Array<any>, rowsPerPage: number): Array<any> {
-  if (rowsPerPage > 0) {
-    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }
-  return rows;
-}
-
-export {TablePaginationActions, computeEmptyRows, computeRows};
+export {TablePaginationActions, computeEmptyRows};
