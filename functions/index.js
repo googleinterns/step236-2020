@@ -1,5 +1,9 @@
 const functions = require('firebase-functions');
 
+// Modules used for communications with Google APIs
+const gmailEmailSender = require('./gmailEmailSender');
+const googleGroupsManager = require('./googleGroupsManager');
+
 // gMail API constants.
 const fs = require('fs');
 const readline = require('readline');
@@ -15,6 +19,10 @@ const SCOPES = [
   'https://www.googleapis.com/auth/gmail.modify',
   'https://www.googleapis.com/auth/gmail.compose',
   'https://www.googleapis.com/auth/gmail.send',
+  'https://www.googleapis.com/auth/admin.directory.group',
+  'https://www.googleapis.com/auth/admin.directory.user',
+  'https://www.googleapis.com/auth/admin.directory.group.member',
+  'https://www.googleapis.com/auth/admin.directory.user.alias'
 ];
 
 // TODO: Change https request listener to firestore listener.
@@ -22,15 +30,24 @@ exports.sendMail = functions.https.onRequest((request, response) => {
   const recipient = request.query.recipient;
   // TODO: Respond with more meaningful response.
   response.send('Hello from Firebase!');
+  checkCredentials('credentials.json', (auth) => gmailEmailSender.sendMessage(auth, recipient, google));
+});
+
+exports.listUsers = functions.https.onRequest((request, response) => {
+  response.send('Listed the users!');
+  checkCredentials('credentials.json', (auth) => googleGroupsManager.listUsers(auth, google));
+});
+
+function checkCredentials(path, callback) {
   fs.readFile('credentials.json', (err, content) => {
     if (err) {
       return console.log('Error loading client secret file:', err);
     }
     authorize(JSON.parse(content), (auth) => {
-      sendMessage(auth, recipient);
+      callback(auth);
     });
   });
-});
+}
 
 function authorize(credentials, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
@@ -67,41 +84,5 @@ function getNewToken(oAuth2Client, callback) {
       });
       callback(oAuth2Client);
     });
-  });
-}
-
-function makeBody(to, from, subject, message) {
-  const str = [
-    'Content-Type: text/plain; charset="UTF-8"\n',
-    'MIME-Version: 1.0\n',
-    'Content-Transfer-Encoding: 7bit\n',
-    'To: ', to, '\n',
-    'from: ', from, '\n',
-    'Subject: ', subject, '\n\n',
-    message,
-  ].join('');
-
-  const encodedMail = new Buffer.from(str).toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_');
-  return encodedMail;
-}
-
-function sendMessage(auth, recipient) {
-  const raw = makeBody(recipient, 'kluczek@identity-sre.com',
-      'Welcome to the community!', 'Welcome, welcome!');
-  const gmail = google.gmail({version: 'v1', auth});
-  gmail.users.messages.send({
-    auth: auth,
-    userId: 'me',
-    resource: {
-      raw: raw,
-    },
-  }, function(err, response) {
-    fs.writeFile('sendEmailResponse.json', JSON.stringify(response), (err) => {
-      if (err) return console.error(err);
-      console.log('Response stored to sendEmailResponse.json');
-    });
-    return (err || response);
   });
 }
