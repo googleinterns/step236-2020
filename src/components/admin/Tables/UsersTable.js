@@ -14,17 +14,14 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import styles from '../admin.module.css';
 import {Typography} from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteDialog from '../Dialogs/DeleteDialog';
+//import {SearchDialog} from '../Dialogs/SearchDialog';
+import {UserRow} from '../UserRow';
 
 import {
   TablePaginationActions,
   computeEmptyRows,
 } from '../TablePaginationActions';
-import UserInfo from '../Dialogs/UserInfo';
 import type {UserType} from '../../types/FlowTypes.js';
 import {
   getActiveMembers,
@@ -44,7 +41,7 @@ function EnhancedToolbar(): React.Node {
       <form onSubmit={handleOnSubmit}>
         <TextField
           id='outlined-margin-dense'
-          placeholder='Search users...'
+          placeholder='Search users by email...'
           margin='dense'
           variant='outlined'
           InputProps={{
@@ -67,6 +64,7 @@ export default function UsersTable(): React.Node {
   const [selectedDelete, setSelectedDelete] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
   const [counter, setCounter] = React.useState(0);
+  //const [search, setSearch] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
@@ -137,39 +135,18 @@ export default function UsersTable(): React.Node {
           </TableHead>
 
           <TableBody>
-            {rows
-                .map((row: UserType): React.Node => (
-                  <TableRow
-                    key={row.count} >
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={(): void =>
-                          handleSelectedRow(row.count)}>
-                        <InfoOutlinedIcon/>
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={(event: any): void =>
-                          handleOpenDialog(row.count)}>
-                        <DeleteIcon/>
-                      </IconButton>
-                    </TableCell>
-                    <DeleteDialog
-                      user={row}
-                      open={selectedDelete === row.count}
-                      onClose={handleCloseDialog}
-                      onConfirm={handleConfirmDelete} />
-                    <UserInfo
-                      user={row}
-                      open={selectedRow === row.count}
-                      onClose={handleCloseModal}
-                      saveNote={saveNote}>
-                    </UserInfo>
-                  </TableRow>
-                ))}
+            {rows.map((row: UserType): React.Node => (
+              <UserRow
+                key={row.count}
+                row={row}
+                open={selectedRow === row.count}
+                openDelete={selectedDelete === row.count}
+                handleRow={handleSelectedRow}
+                handleOpenDialog={handleOpenDialog}
+                handleConfirmDelete={handleConfirmDelete}
+                handleCloseDialog={handleCloseDialog}
+                saveNote={saveNote}
+                handleCloseModal={handleCloseModal} />))}
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
                     computeEmptyRows(rowsPerPage, page, rows)}}>
