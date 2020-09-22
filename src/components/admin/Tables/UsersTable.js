@@ -15,7 +15,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import styles from '../admin.module.css';
 import {Typography} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-//import {SearchDialog} from '../Dialogs/SearchDialog';
+import {SearchDialog} from '../Dialogs/SearchDialog';
 import {UserRow} from '../UserRow';
 
 import {
@@ -28,10 +28,46 @@ import {
   getCounter,
   deleteUser,
   updateAdminNote,
+  searchByEmail,
 } from '../../database/Queries.js';
 
 function EnhancedToolbar(): React.Node {
-  const handleOnSubmit = (): void => console.log('User has pressed search.');
+  const [search, setSearch] = React.useState(false);
+  const [rows, setRows] = React.useState([]);
+  const [text, setText] = React.useState('');
+  const [final, setFinal] = React.useState('');
+
+  React.useEffect(() => {
+    (async () => {
+      if (final !== '' && final !== null) {
+        const newRows = await searchByEmail(final);
+        setRows(newRows);
+      }
+    })();
+  }, [final]);
+
+  const handleOnSearchClose = () => {
+    setSearch(false);
+  };
+
+  const handleOnSearchOpen = () => {
+    setSearch(true);
+  };
+
+  const handleChange = (event: SyntheticEvent<>) => {
+    setText(event.target.value);
+  };
+
+  const handleOnSubmit = (event: SyntheticEvent<>) => {
+    event.preventDefault();
+    console.log('User has pressed search.');
+    const searchText = text.split(/\s+/).join(' ');
+    if (searchText === '' || searchText === null) {
+      return;
+    }
+    setFinal(searchText);
+    handleOnSearchOpen();
+  };
 
   return (
     <Toolbar variant='dense' className={styles.titleUsersBar}>
@@ -44,6 +80,8 @@ function EnhancedToolbar(): React.Node {
           placeholder='Search users by email...'
           margin='dense'
           variant='outlined'
+          value={text}
+          onChange={handleChange}
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
@@ -53,6 +91,10 @@ function EnhancedToolbar(): React.Node {
           }}
         />
       </form>
+      <SearchDialog
+        open={search}
+        onClose={(): void => handleOnSearchClose()}
+        rows={rows} />
     </Toolbar>
   );
 }
@@ -64,7 +106,6 @@ export default function UsersTable(): React.Node {
   const [selectedDelete, setSelectedDelete] = React.useState(-1);
   const [rows, setRows] = React.useState([]);
   const [counter, setCounter] = React.useState(0);
-  //const [search, setSearch] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
@@ -122,7 +163,7 @@ export default function UsersTable(): React.Node {
 
   return (
     <Paper>
-      <EnhancedToolbar />
+      <EnhancedToolbar/>
       <TableContainer>
         <Table aria-label='Active members' size='small'>
           <TableHead>

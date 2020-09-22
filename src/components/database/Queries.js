@@ -294,6 +294,26 @@ async function findUserByEmailQuery(userEmail: string): Promise<any> {
   }
 }
 
+async function searchByEmail(email: string): Promise<any> {
+  try {
+    const usersRef = database.collection('active-members');
+    const snapshot = await usersRef
+        .where('email', '>=', email)
+        .where('email', '<', email + '\uf8ff')
+        .get();
+
+    const results = snapshot.docs
+        .map((doc: any): any => doc.data())
+        .map((doc: any): UserType | PendingType | ActionType =>
+          sanitize('active-members', doc));
+
+    return results;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
 export {
   getActions,
   getActiveMembers,
@@ -306,4 +326,5 @@ export {
   updateAdminNote,
   movePendingUser,
   moveSolvedAction,
+  searchByEmail,
 };
