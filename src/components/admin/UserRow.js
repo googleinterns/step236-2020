@@ -3,7 +3,6 @@ import * as React from 'react';
 import DeleteDialog from './Dialogs/DeleteDialog';
 import DeleteIcon from '@material-ui/icons/Delete';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-// @flow
 import UserInfo from './Dialogs/UserInfo';
 import {TableRow, TableCell} from '@material-ui/core';
 import {IconButton} from '@material-ui/core';
