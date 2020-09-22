@@ -4,20 +4,14 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import styles from '../admin.module.css';
-import {Typography} from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import {SearchDialog} from '../Dialogs/SearchDialog';
 import {UserRow} from '../UserRow';
-
+import SearchToolbar from '../SearchToolbar';
 import {
   TablePaginationActions,
   computeEmptyRows,
@@ -28,76 +22,7 @@ import {
   getCounter,
   deleteUser,
   updateAdminNote,
-  searchByEmail,
 } from '../../database/Queries.js';
-
-function EnhancedToolbar(): React.Node {
-  const [search, setSearch] = React.useState(false);
-  const [rows, setRows] = React.useState([]);
-  const [text, setText] = React.useState('');
-  const [final, setFinal] = React.useState('');
-
-  React.useEffect(() => {
-    (async () => {
-      if (final !== '' && final !== null) {
-        const newRows = await searchByEmail(final);
-        setRows(newRows);
-      }
-    })();
-  }, [final]);
-
-  const handleOnSearchClose = () => {
-    setSearch(false);
-  };
-
-  const handleOnSearchOpen = () => {
-    setSearch(true);
-  };
-
-  const handleChange = (event: SyntheticEvent<>) => {
-    setText(event.target.value);
-  };
-
-  const handleOnSubmit = (event: SyntheticEvent<>) => {
-    event.preventDefault();
-    console.log('User has pressed search.');
-    const searchText = text.split(/\s+/).join(' ');
-    if (searchText === '' || searchText === null) {
-      return;
-    }
-    setFinal(searchText);
-    handleOnSearchOpen();
-  };
-
-  return (
-    <Toolbar variant='dense' className={styles.titleUsersBar}>
-      <Typography variant='h6' className={styles.titleUsersText}>
-        Active members
-      </Typography>
-      <form onSubmit={handleOnSubmit}>
-        <TextField
-          id='outlined-margin-dense'
-          placeholder='Search users by email...'
-          margin='dense'
-          variant='outlined'
-          value={text}
-          onChange={handleChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </form>
-      <SearchDialog
-        open={search}
-        onClose={(): void => handleOnSearchClose()}
-        rows={rows} />
-    </Toolbar>
-  );
-}
 
 export default function UsersTable(): React.Node {
   const [page, setPage] = React.useState(0);
@@ -163,7 +88,7 @@ export default function UsersTable(): React.Node {
 
   return (
     <Paper>
-      <EnhancedToolbar/>
+      <SearchToolbar />
       <TableContainer>
         <Table aria-label='Active members' size='small'>
           <TableHead>
