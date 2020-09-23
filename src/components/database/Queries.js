@@ -242,6 +242,33 @@ async function movePendingUser(field: 'email' | 'count',
   }
 }
 
+async function confirmPendingUser(field: 'email' | 'count', value: string) {
+  try {
+    await database.runTransaction(async (transaction: any) => {
+      const pendingRef = database.collection('pending-members');
+
+      const snapshot = await pendingRef
+          .where(field, '==', value)
+          .get();
+
+      const documentRef = getDocumentRef(snapshot)[0];
+      const userData = snapshot.docs
+          .map((doc: any): any => doc.data())
+          .map((doc: any): UserType | PendingType | ActionType =>
+            sanitize('pending-members', doc))[0];
+
+      if (userData.name === null || userData.name === '') {
+        userData.isVerified = true;
+        transaction.set(documentRef, userData);
+      } else {
+        await movePendingUser('email', userData.email);
+      }
+    });
+  } catch (error) {
+    console.log('Confirm unsuccessful:\n' + error);
+  }
+}
+
 /**
   * a function that moves an action from active to solved
   * @param {number} value the index of the action
@@ -342,6 +369,7 @@ async function searchByEmail(email: string): Promise<any> {
 }
 
 export {
+  confirmPendingUser,
   getActions,
   getActiveMembers,
   getCounter,
