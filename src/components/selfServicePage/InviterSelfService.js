@@ -10,20 +10,24 @@ import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import InviterForm from './InviterForm';
 import {useStyles} from '../LayoutStyles';
-
-function createData(name: string, surname: string, key: number): any {
-  return {name, surname, key};
-}
+import {retrievePendingUsers, deletePendingUser} from '../database/Queries';
+import {firebase} from '../../firebaseFeatures';
 
 function PendingRequestsTable(): React.Node {
   const classes = useStyles();
 
-  const defaultList = [
-    createData('John', 'Doe', 1),
-    createData('Foo', 'Bar', 2),
-  ];
+  const [rows, setRows] = React.useState([]);
 
-  const [list, setList] = React.useState(defaultList);
+  React.useEffect(() => {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const partnerEmail = user.email;
+      (async () => {
+        const newRows = await retrievePendingUsers(partnerEmail);
+        setRows(newRows);
+      })();
+    }
+  });
 
   return (
     <Grid container
@@ -35,30 +39,28 @@ function PendingRequestsTable(): React.Node {
               <TableCell component={'th'} scope={'row'}>
                 Name
               </TableCell>
-              <TableCell align="left">Surname</TableCell>
+              <TableCell align="left">Email</TableCell>
               <TableCell align="right">
                 Possible actions
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {list.map((row: any): React.Node => (
-              <TableRow key={row.key} hover>
+            {rows.map((row: any): React.Node => (
+              <TableRow key={row.count} hover>
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
-                <TableCell align="left">{row.surname}</TableCell>
+                <TableCell align="left">{row.email}</TableCell>
                 <TableCell>
                   <Grid container
                     direction="row"
                     justify="flex-end">
                     <Grid item className={classes.gridItem}>
                       <Button className={classes.buttonSecondary}
-                        onClick={() => {
-                          console.log(`User has been deleted from
-                              pending requests list.`);
-                          setList(list.filter((item: any): boolean =>
-                            (item.key !== row.key)));
+                        onClick={async () => {
+                          await deletePendingUser('email', row.email);
+                          window.location.reload();
                         }}>
                         Delete
                       </Button>
@@ -68,8 +70,8 @@ function PendingRequestsTable(): React.Node {
                         onClick={() => {
                           console.log(`User has been accepted to the
                             community.`);
-                          setList(list.filter((item: any): boolean =>
-                            (item.key !== row.key)));
+                          //setList(list.filter((item: any): boolean =>
+                          //  (item.key !== row.key)));
                         }}>
                           Accept
                       </Button>

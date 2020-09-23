@@ -116,23 +116,33 @@ async function findDocumentQuery(collection: string, field: string,
   }
 }
 
+async function retrievePendingUsers(partnerEmail: string): Promise<any> {
+  const users = await findDocumentQuery('pending-members', 'partnerEmail',
+      partnerEmail);
+  return users;
+}
+
 /**
-  * deleteUser deletes a user from active memberships
+  * deleteUser deletes a user from a specified collection
+  * @param {'active-members' | 'pending-members'} collection the collection
   * @param {'email' | 'count'} field specifies the search criteria for the doc
   * @param {string | number} value specifies the value of the field
  */
-async function deleteUser(field: 'email' | 'count',
-    value: string | number) {
+async function deleteUser(collection: 'active-members' | 'pending-members',
+    field: 'email' | 'count', value: string | number) {
   try {
     await database.runTransaction(async (transaction: any) => {
-      const collectionRef = database.collection('active-members');
+      const collectionRef = database.collection(collection);
       const snapshot = await collectionRef
           .where(field, '==', value)
           .get();
       const refs = getDocumentRef(snapshot);
 
       await transaction.delete(refs[0]);
-      await decrementCounter('activeMembers', transaction);
+
+      const counterCollection = (collection === 'active-members') ?
+        'activeMembers' : 'pendingMembers';
+      await decrementCounter(counterCollection, transaction);
     });
   } catch (error) {
     console.log(error);
@@ -140,6 +150,23 @@ async function deleteUser(field: 'email' | 'count',
   }
 }
 
+async function deleteActiveUser(field: 'email' | 'count',
+    value: string | number) {
+  try {
+    await deleteUser('active-members', field, value);
+  } catch (error) {
+    console.log('Delete unsuccesful');
+  }
+}
+
+async function deletePendingUser(field: 'email' | 'count',
+    value: string | number) {
+  try {
+    await deleteUser('pending-members', field, value);
+  } catch (error) {
+    console.log('Delete unsuccessful');
+  }
+}
 /**
   * updateAdminNote allows admins to add notes to active users
   * @param {'email' | 'count'} field specifies the field to search for
@@ -322,9 +349,11 @@ export {
   getSolvedActions,
   findDocumentQuery,
   findUserByEmailQuery,
-  deleteUser,
+  deleteActiveUser,
+  deletePendingUser,
   updateAdminNote,
   movePendingUser,
   moveSolvedAction,
   searchByEmail,
+  retrievePendingUsers,
 };
