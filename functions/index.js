@@ -9,6 +9,7 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 const TOKEN_PATH = 'token.json';
+const DOMAIN = 'identity-sre.com';
 
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
@@ -34,10 +35,15 @@ exports.sendMail = functions.https.onRequest((request, response) => {
       });
 });
 
+/**
+ * Cloud function for retrieving all users in gSuite of DOMAIN
+ * @type {HttpsFunction} (request, response) used for communication with end-user
+ * @return {JSON} found list of users
+ */
 exports.listUsers = functions.https.onRequest((request, response) => {
   return checkCredentials('credentials.json',
       (auth) => {
-        googleGroupsManager.listUsers(auth, google, 'identity-sre.com')
+        googleGroupsManager.listUsers(auth, google, DOMAIN)
             .then((output) => {
               response.json(output);
               return output;
