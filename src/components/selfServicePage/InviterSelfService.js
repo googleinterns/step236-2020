@@ -10,7 +10,11 @@ import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import InviterForm from './InviterForm';
 import {useStyles} from '../LayoutStyles';
-import {retrievePendingUsers, deletePendingUser} from '../database/Queries';
+import {
+  retrievePendingUsers,
+  confirmPendingUser,
+  deletePendingUser,
+} from '../database/Queries';
 import {firebase} from '../../firebaseFeatures';
 
 function PendingRequestsTable(): React.Node {
@@ -66,12 +70,13 @@ function PendingRequestsTable(): React.Node {
                       </Button>
                     </Grid>
                     <Grid item className={classes.gridItem}>
-                      <Button className={classes.button}
-                        onClick={() => {
+                      <Button
+                        disabled={row.isVerified}
+                        className={classes.button}
+                        onClick={async () => {
+                          await confirmPendingUser('email', row.email);
                           console.log(`User has been accepted to the
                             community.`);
-                          //setList(list.filter((item: any): boolean =>
-                          //  (item.key !== row.key)));
                         }}>
                           Accept
                       </Button>
