@@ -28,14 +28,14 @@ const SCOPES = [
 // TODO: Change https request listener to firestore listener.
 exports.sendMail = functions.https.onRequest((request, response) => {
   const recipient = request.query.recipient;
-  checkCredentials('credentials.json',
+  return checkCredentials('credentials.json',
       (auth) => {
         response.json(gmailEmailSender.sendMessage(auth, recipient, google));
       });
 });
 
 exports.listUsers = functions.https.onRequest((request, response) => {
-  checkCredentials('credentials.json',
+  return checkCredentials('credentials.json',
       (auth) => {
         googleGroupsManager.listUsers(auth, google, 'identity-sre.com')
             .then((output) => {
@@ -56,8 +56,8 @@ function checkCredentials(path, callback) {
     if (err) {
       return console.log('Error loading client secret file:', err);
     }
-    authorize(JSON.parse(content), (auth) => {
-      callback(auth);
+    return authorize(JSON.parse(content), (auth) => {
+      return callback(auth);
     });
   });
 }

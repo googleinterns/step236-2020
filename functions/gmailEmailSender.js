@@ -27,10 +27,11 @@ exports.sendMessage = (auth, recipient, googleService) => {
     resource: {
       raw: raw,
     },
-  }, function(err, response) {
+  }, (err, response) => {
     fs.writeFile('sendEmailResponse.json', JSON.stringify(response), (err) => {
       if (err) return console.error(err);
       console.log('Response stored to sendEmailResponse.json');
+      return null;
     });
     return (err || response);
   });
