@@ -22,20 +22,33 @@ const SCOPES = [
   'https://www.googleapis.com/auth/admin.directory.group',
   'https://www.googleapis.com/auth/admin.directory.user',
   'https://www.googleapis.com/auth/admin.directory.group.member',
-  'https://www.googleapis.com/auth/admin.directory.user.alias'
+  'https://www.googleapis.com/auth/admin.directory.user.alias',
 ];
 
 // TODO: Change https request listener to firestore listener.
 exports.sendMail = functions.https.onRequest((request, response) => {
   const recipient = request.query.recipient;
-  // TODO: Respond with more meaningful response.
-  response.send('Hello from Firebase!');
-  checkCredentials('credentials.json', (auth) => gmailEmailSender.sendMessage(auth, recipient, google));
+  checkCredentials('credentials.json',
+      (auth) => {
+        response.json(gmailEmailSender.sendMessage(auth, recipient, google));
+      });
 });
 
 exports.listUsers = functions.https.onRequest((request, response) => {
-  response.send('Listed the users!');
-  checkCredentials('credentials.json', (auth) => googleGroupsManager.listUsers(auth, google));
+  checkCredentials('credentials.json',
+      (auth) => {
+        googleGroupsManager.listUsers(auth, google, 'identity-sre.com')
+            .then((output) => {
+              response.json(output);
+              return output;
+            })
+            .catch((error) => {
+              response.status(403);
+              response.json(error);
+              return error;
+        });
+      },
+  );
 });
 
 function checkCredentials(path, callback) {
