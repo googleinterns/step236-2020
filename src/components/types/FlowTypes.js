@@ -17,6 +17,8 @@ export type UserType = {
 
 export type PendingType = {
   count: number,
+  name: string,
+  isVerified: boolean,
   email: string,
   partnerEmail: string,
   date: any
@@ -45,6 +47,8 @@ export function sanitize(collection: string,
     case 'pending-members':
       return ({
         count: user.count,
+        name: user.name,
+        isVerified: user.isVerified,
         email: user.email,
         date: user.date,
         partnerEmail: user.partnerEmail,

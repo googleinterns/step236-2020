@@ -19,7 +19,7 @@ function newUserObject(count: number, user: PendingType): UserType {
     email: user.email,
     isAdmin: false,
     joinDate: fieldValue.serverTimestamp(),
-    name: '',
+    name: user.name,
     needsAttention: false,
     partnerEmail: user.partnerEmail,
     count: count,
