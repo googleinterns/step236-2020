@@ -13,9 +13,7 @@ exports.listUsers = async (auth, googleService, domain) => {
     customer: 'my_customer',
     orderBy: 'email',
   }).then(
-      (response) => {
-        return response.data.users;
-      },
+      (response) => response.data.users,
       (error) => {
         console.error(`API returned with error code: ${error}`);
         return null;
