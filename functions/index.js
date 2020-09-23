@@ -62,9 +62,7 @@ function checkCredentials(path, callback) {
     if (err) {
       return console.log('Error loading client secret file:', err);
     }
-    return authorize(JSON.parse(content), (auth) => {
-      return callback(auth);
-    });
+    return authorize(JSON.parse(content), (auth) => callback(auth));
   });
 }
 
