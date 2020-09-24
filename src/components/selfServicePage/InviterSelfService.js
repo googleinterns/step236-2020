@@ -15,17 +15,16 @@ import {
   confirmPendingUser,
   deletePendingUser,
 } from '../database/Queries';
-import {firebase} from '../../firebaseFeatures';
+import {useAuthUser} from '../../firebaseFeatures';
 
 function PendingRequestsTable(): React.Node {
   const classes = useStyles();
-
+  const authUser = useAuthUser();
   const [rows, setRows] = React.useState([]);
 
   React.useEffect(() => {
-    const user = firebase.auth().currentUser;
-    if (user) {
-      const partnerEmail = user.email;
+    if (authUser) {
+      const partnerEmail = authUser.email;
       (async () => {
         const newRows = await retrievePendingUsers(partnerEmail);
         setRows(newRows);
