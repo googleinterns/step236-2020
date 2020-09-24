@@ -39,7 +39,7 @@ export default function SearchToolbar(): React.Node {
   const handleOnSubmit = (event: SyntheticEvent<>) => {
     event.preventDefault();
     const searchText = text.split(/\s+/).join(' ');
-    if (searchText === '' || searchText === null) {
+    if (searchText === null || searchText === '') {
       return;
     }
     setFinal(searchText);
