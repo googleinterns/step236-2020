@@ -17,7 +17,7 @@ export default function SearchToolbar(): React.Node {
 
   React.useEffect(() => {
     (async () => {
-      if (final !== '' && final !== null) {
+      if (final !== null && final !== '') {
         const newRows = await searchByEmail(final);
         setRows(newRows);
       }
