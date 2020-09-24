@@ -4,27 +4,18 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import styles from '../admin.module.css';
-import {Typography} from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
-import SearchIcon from '@material-ui/icons/Search';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteDialog from '../Dialogs/DeleteDialog';
-
+import {UserRow} from '../UserRow';
+import SearchToolbar from '../SearchToolbar';
 import {
   TablePaginationActions,
   computeEmptyRows,
 } from '../TablePaginationActions';
-import UserInfo from '../Dialogs/UserInfo';
 import type {UserType} from '../../types/FlowTypes.js';
 import {
   getActiveMembers,
@@ -32,33 +23,6 @@ import {
   deleteUser,
   updateAdminNote,
 } from '../../database/Queries.js';
-
-function EnhancedToolbar(): React.Node {
-  const handleOnSubmit = (): void => console.log('User has pressed search.');
-
-  return (
-    <Toolbar variant='dense' className={styles.titleUsersBar}>
-      <Typography variant='h6' className={styles.titleUsersText}>
-        Active members
-      </Typography>
-      <form onSubmit={handleOnSubmit}>
-        <TextField
-          id='outlined-margin-dense'
-          placeholder='Search users...'
-          margin='dense'
-          variant='outlined'
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </form>
-    </Toolbar>
-  );
-}
 
 export default function UsersTable(): React.Node {
   const [page, setPage] = React.useState(0);
@@ -124,7 +88,7 @@ export default function UsersTable(): React.Node {
 
   return (
     <Paper>
-      <EnhancedToolbar />
+      <SearchToolbar />
       <TableContainer>
         <Table aria-label='Active members' size='small'>
           <TableHead>
@@ -137,39 +101,18 @@ export default function UsersTable(): React.Node {
           </TableHead>
 
           <TableBody>
-            {rows
-                .map((row: UserType): React.Node => (
-                  <TableRow
-                    key={row.count} >
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={(): void =>
-                          handleSelectedRow(row.count)}>
-                        <InfoOutlinedIcon/>
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={(event: any): void =>
-                          handleOpenDialog(row.count)}>
-                        <DeleteIcon/>
-                      </IconButton>
-                    </TableCell>
-                    <DeleteDialog
-                      user={row}
-                      open={selectedDelete === row.count}
-                      onClose={handleCloseDialog}
-                      onConfirm={handleConfirmDelete} />
-                    <UserInfo
-                      user={row}
-                      open={selectedRow === row.count}
-                      onClose={handleCloseModal}
-                      saveNote={saveNote}>
-                    </UserInfo>
-                  </TableRow>
-                ))}
+            {rows.map((row: UserType): React.Node => (
+              <UserRow
+                key={row.count}
+                row={row}
+                open={selectedRow === row.count}
+                openDelete={selectedDelete === row.count}
+                handleRow={handleSelectedRow}
+                handleOpenDialog={handleOpenDialog}
+                handleConfirmDelete={handleConfirmDelete}
+                handleCloseDialog={handleCloseDialog}
+                saveNote={saveNote}
+                handleCloseModal={handleCloseModal} />))}
             {computeEmptyRows(rowsPerPage, page, rows) > 0 && (
               <TableRow style={{height: 42.4 *
                     computeEmptyRows(rowsPerPage, page, rows)}}>
