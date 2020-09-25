@@ -63,7 +63,7 @@ function RoutesList() {
                 console.log(form);
                 console.log(member);
                 await addUser(form, member);
-                //window.location.replace('/');
+                window.location.replace('/');
               }
             }/>
           </Route>
@@ -96,7 +96,7 @@ function RoutesList() {
               path="/restricted-area"
               key="/restricted-area"
               authFunction={() => firebaseAuthenticator.isUser(authUser)}
-              component={<h1>Restricted area (redirect?)</h1>}
+              component={<h1>Restricted area</h1>}
               redirectPath={'/'}
           />
         </Switch>
