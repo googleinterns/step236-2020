@@ -28,7 +28,7 @@ const SCOPES = [
 ];
 
 exports.triggerSpooglerMail = functions.firestore
-    .document('pending-members/{doc-id}')
+    .document('pending-members/{docId}')
     .onWrite((change, context) => {
   if (context.params.isVerified) {
     return checkCredentials('credentials.json',
