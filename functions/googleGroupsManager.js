@@ -37,30 +37,3 @@ exports.listGroups = async (auth, googleService, domain) => {
       }
   );
 }
-
-exports.createGroup = async (auth, googleService, groupEmail, groupDescription, groupName) => {
-  const service = googleService.admin({version: DIRECTORY_API_VERSION, auth});
-  return service.groups.insert({
-    "resource": {
-      "email": groupEmail,
-      "name": groupName,
-      "description": groupDescription
-    }
-  }).then(
-      (response) => response.result,
-      (error) => {
-        console.error(`API returned with error code: ${error}`);
-        return error;
-      }
-  );
-}
-
-exports.deleteGroup = async (auth, googleService, groupEmail) => {
-  const service = googleService.admin({version: DIRECTORY_API_VERSION, auth});
-  return service.groups.delete({
-    "groupKey": groupEmail
-  }).then(
-      (response) => response.result,
-      (error) => error
-  );
-}
