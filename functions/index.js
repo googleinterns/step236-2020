@@ -27,8 +27,8 @@ const SCOPES = [
   'https://www.googleapis.com/auth/admin.directory.user.alias',
 ];
 
-exports.sendMail = functions.firestore
-    .document('pending-users/{doc-id}')
+exports.triggerSpooglerMail = functions.firestore
+    .document('pending-members/{doc-id}')
     .onWrite((change, context) => {
   if (context.params.isVerified) {
     return checkCredentials('credentials.json',
