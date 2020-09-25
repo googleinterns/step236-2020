@@ -34,7 +34,7 @@ To access your account functionalities programatically, you have to obtain a fil
 with your credentials. The easiest way (if you are using personal Google account)
 to do it is going here:
 https://developers.google.com/gmail/api/quickstart/js and clicking a button
-"Allow gMail API". The process will start and browser will automatically
+"Enable the Gmail API". The process will start and browser will automatically
 download a **credentials.json** file.
 The first time you invoke one of your cloud functions, you will be guided
 on setting up the APIs -- in this app case, you will be prompted
