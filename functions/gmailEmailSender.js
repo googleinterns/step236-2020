@@ -6,7 +6,7 @@ function makeBody(to, from, subject, message) {
     'MIME-Version: 1.0\n',
     'Content-Transfer-Encoding: 7bit\n',
     'To: ', to, '\n',
-    'from: ', from, '\n',
+    'From: ', from, '\n',
     'Subject: ', subject, '\n\n',
     message,
   ].join('');
@@ -17,9 +17,9 @@ function makeBody(to, from, subject, message) {
   return encodedMail;
 }
 
-exports.sendMessage = (auth, recipient, googleService) => {
+exports.sendMessage = (auth, recipient, content, googleService) => {
   const raw = makeBody(recipient, 'kluczek@identity-sre.com',
-      'Welcome to the community!', 'Welcome, welcome!');
+      'Hello from Scriba!', content);
   const gmail = googleService.gmail({version: 'v1', auth});
   gmail.users.messages.send({
     auth: auth,

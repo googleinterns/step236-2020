@@ -8,6 +8,7 @@ const googleGroupsManager = require('./googleGroupsManager');
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
+const emailContent = require('./email-content.json');
 const TOKEN_PATH = 'token.json';
 const DOMAIN = 'identity-sre.com';
 
@@ -26,13 +27,20 @@ const SCOPES = [
   'https://www.googleapis.com/auth/admin.directory.user.alias',
 ];
 
-// TODO: Change https request listener to firestore listener.
-exports.sendMail = functions.https.onRequest((request, response) => {
-  const recipient = request.query.recipient;
-  return checkCredentials('credentials.json',
-      (auth) => {
-        response.json(gmailEmailSender.sendMessage(auth, recipient, google));
-      });
+exports.sendMail = functions.firestore
+    .document('pending-users')
+    .onWrite( (change, context) => {
+  if (context.params.isVerified) {
+    return checkCredentials('credentials.json',
+        (auth) => {
+          gmailEmailSender.sendMessage(auth, context.params.email, emailContent.spoogler, google);
+        });
+  } else {
+    return checkCredentials('credentials.json',
+        (auth) => {
+          gmailEmailSender.sendMessage(auth, context.params.partnerEmail, emailContent.googler, google);
+        });
+  }
 });
 
 /**

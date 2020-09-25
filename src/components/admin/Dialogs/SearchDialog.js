@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import {UserRow} from '../UserRow';
-import {deleteUser, updateAdminNote} from '../../database/Queries';
+import {deleteActiveUser, updateAdminNote} from '../../database/Queries';
 import type {UserType} from '../../types/FlowTypes.js';
 import {
   Button,
@@ -50,7 +50,7 @@ export const SearchDialog = (props: PropType): React.Node => {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteUser('count', selectedDelete);
+      await deleteActiveUser('count', selectedDelete);
       setSelectedDelete(-1);
     } catch (error) {
       console.log(error);
