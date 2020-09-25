@@ -37,7 +37,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 # Firebase setup
 
-For this project, you need an existing firebase project and a domain with gSuite for business.
+For this project, you need an existing Firebase project and a domain with G Suite.
 
 Install the Firebase CLI.
 
