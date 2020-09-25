@@ -28,6 +28,7 @@ firebase emulators:start
 For Google APIs cloud functions such as gMail message sending and gSuite
 groups management, you need to have an active Google account and a domain with gSuite
 for business. Your account **has to be a superuser** on a gSuite platform you are accessing with cloud functions.
+Please fill the domain name and account email address in **config.json** file.
 
 To access your account functionalities programatically, you have to obtain a file
 with your credentials. The easiest way to do it is going here:

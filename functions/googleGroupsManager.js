@@ -1,4 +1,6 @@
-const DIRECTORY_API_VERSION = 'directory_v1';
+const CONFIG = require('./config.json');
+
+const DIRECTORY_API_VERSION = CONFIG.DIRECTORY_API_VERSION;
 
 /**
  function that retrieves all users from the domain's gSuite

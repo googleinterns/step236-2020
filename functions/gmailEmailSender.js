@@ -1,4 +1,5 @@
 const fs = require('fs');
+const CONFIG = require('./config.json');
 
 function makeBody(to, from, subject, message) {
   const str = [
@@ -18,7 +19,7 @@ function makeBody(to, from, subject, message) {
 }
 
 exports.sendMessage = (auth, recipient, googleService) => {
-  const raw = makeBody(recipient, 'kluczek@identity-sre.com',
+  const raw = makeBody(recipient, CONFIG.ADMIN_MAIL,
       'Welcome to the community!', 'Welcome, welcome!');
   const gmail = googleService.gmail({version: 'v1', auth});
   gmail.users.messages.send({

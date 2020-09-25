@@ -1,11 +1,12 @@
 const authenticator = require('./authenticator')
 const googleGroupsManager = require('./googleGroupsManager');
+const CONFIG = require('./config.json');
 
 // gMail API constants
 const {google} = require('googleapis');
-const DOMAIN = 'identity-sre.com';
-const CREDENTIALS_PATH = 'credentials.json';
-const DIRECTORY_API_VERSION = 'directory_v1';
+const DOMAIN = CONFIG.DOMAIN;
+const CREDENTIALS_PATH = CONFIG.CREDENTIALS_PATH;
+const DIRECTORY_API_VERSION = CONFIG.DIRECTORY_API_VERSION;
 
 // Testing constants
 const JEST_GROUP_EMAIL = `jest-test@${DOMAIN}`;

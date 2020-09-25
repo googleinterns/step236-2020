@@ -1,13 +1,15 @@
 const functions = require('firebase-functions');
 const authenticator = require('./authenticator');
+const CONFIG = require('./config.json');
+
 // Modules used for communications with Google APIs
 const gmailEmailSender = require('./gmailEmailSender');
 const googleGroupsManager = require('./googleGroupsManager');
 
 // gMail API constants.
 const {google} = require('googleapis');
-const DOMAIN = 'identity-sre.com';
-const CREDENTIALS_PATH = 'credentials.json';
+const DOMAIN = CONFIG.DOMAIN;
+const CREDENTIALS_PATH = CONFIG.CREDENTIALS_PATH;
 
 // TODO: Change https request listener to firestore listener.
 exports.sendMail = functions.https.onRequest((request, response) => {
