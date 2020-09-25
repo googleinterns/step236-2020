@@ -1,0 +1,56 @@
+diff --git a/functions/gmailEmailSender.js b/functions/gmailEmailSender.js
+index 17beff0..a4a0a68 100644
+--- a/functions/gmailEmailSender.js
++++ b/functions/gmailEmailSender.js
+@@ -17,9 +17,9 @@ function makeBody(to, from, subject, message) {
+   return encodedMail;
+ }
+ 
+-exports.sendMessage = (auth, recipient, googleService) => {
++exports.sendMessage = (auth, recipient, content, googleService) => {
+   const raw = makeBody(recipient, 'kluczek@identity-sre.com',
+-      'Welcome to the community!', 'Welcome, welcome!');
++      'Hello from Scriba!', content);
+   const gmail = googleService.gmail({version: 'v1', auth});
+   gmail.users.messages.send({
+     auth: auth,
+diff --git a/functions/index.js b/functions/index.js
+index 0f08fc2..bddab0a 100644
+--- a/functions/index.js
++++ b/functions/index.js
+@@ -8,6 +8,7 @@ const googleGroupsManager = require('./googleGroupsManager');
+ const fs = require('fs');
+ const readline = require('readline');
+ const {google} = require('googleapis');
++const emailContent = require('./email-content.json');
+ const TOKEN_PATH = 'token.json';
+ const DOMAIN = 'identity-sre.com';
+ 
+@@ -26,13 +27,20 @@ const SCOPES = [
+   'https://www.googleapis.com/auth/admin.directory.user.alias',
+ ];
+ 
+-// TODO: Change https request listener to firestore listener.
+-exports.sendMail = functions.https.onRequest((request, response) => {
+-  const recipient = request.query.recipient;
+-  return checkCredentials('credentials.json',
+-      (auth) => {
+-        response.json(gmailEmailSender.sendMessage(auth, recipient, google));
+-      });
++exports.sendMail = functions.firestore
++    .document('pending-users')
++    .onWrite( (change, context) => {
++  if (context.params.isVerified) {
++    return checkCredentials('credentials.json',
++        (auth) => {
++          gmailEmailSender.sendMessage(auth, context.params.email, emailContent.spoogler, google);
++        });
++  } else {
++    return checkCredentials('credentials.json',
++        (auth) => {
++          gmailEmailSender.sendMessage(auth, context.params.partnersEmail, emailContent.googler, google);
++        });
++  }
+ });
+ 
+ /**
