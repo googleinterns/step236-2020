@@ -29,7 +29,7 @@ const SCOPES = [
 
 exports.sendMail = functions.firestore
     .document('pending-users')
-    .onWrite( (change, context) => {
+    .onWrite((change, context) => {
   if (context.params.isVerified) {
     return checkCredentials('credentials.json',
         (auth) => {
