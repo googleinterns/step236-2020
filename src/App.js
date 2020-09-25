@@ -60,8 +60,6 @@ function RoutesList() {
           <Route path="/form">
             <InviteeForm propagateNewInviteeForm={
               async (form, member) => {
-                console.log(form);
-                console.log(member);
                 await addUser(form, member);
                 window.location.replace('/');
               }
@@ -96,7 +94,7 @@ function RoutesList() {
               path="/restricted-area"
               key="/restricted-area"
               authFunction={() => firebaseAuthenticator.isUser(authUser)}
-              component={<h1>Restricted area</h1>}
+              component={<h1>Restricted area (redirect?)</h1>}
               redirectPath={'/'}
           />
         </Switch>
