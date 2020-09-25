@@ -3,7 +3,7 @@ import {database, fieldValue} from '../../firebaseFeatures.js';
 import type {UserType, PendingType, ActionType} from '../types/FlowTypes.js';
 import {sanitize} from '../types/FlowTypes.js';
 
-function actionObject(count: number, user: UserType,
+function actionObject(count: number, user: any,
     message: string): ActionType {
   const actionMessage = `[${message}]: ${user.email}`;
   return ({
@@ -368,7 +368,6 @@ async function searchByEmail(email: string): Promise<any> {
 }
 
 async function addInvitedUser(partnerEmail: string, email: string) {
-  console.log(email);
   try {
     database.runTransaction(async (transaction) => {
       const pending = await database
@@ -408,10 +407,14 @@ async function addInvitedUser(partnerEmail: string, email: string) {
 async function addUser(form: any, member: any) { //TODO: add function to send emails
   try {
     database.runTransaction(async (transaction) => {
-      const data = await fieldQuery('pending-members', 'email', member.email, 1);
-      const userDoc = data.docs[0];
+      const pending = await database
+          .collection('pending-members')
+          .where('email', '==', member.email)
+          .get();
       
-      if (userDoc == null) {
+      const userDoc = pending.docs[0];
+      
+      if (pending == null || userDoc == null) {
         console.log(`not found in the database, trying to add...`);
         const count = await getCounter('pendingMembers');
         // add them to the pending members
@@ -427,6 +430,11 @@ async function addUser(form: any, member: any) { //TODO: add function to send em
         const newPendingRef = database.collection('pending-members').doc();
         transaction.set(newPendingRef, user);
         await incrementCounter('pendingMembers', transaction);
+
+        if (/@noogler.google.com\s*$/.test(user.partnerEmail)) {
+          console.log('Is noogler');
+          await addNooglerAction(user.email, user.partnerEmail, transaction);
+        }
       } else {
         //add them to active members
 
@@ -445,13 +453,27 @@ async function addUser(form: any, member: any) { //TODO: add function to send em
           await incrementCounter('activeMembers', transaction);
           await decrementCounter('pendingMembers', transaction);
         } else {
-          //TO DO: handle duplicated requests
+          console.log('Please wait for your googler to approve you.');
         }
       }
-    });  
+    });
   } catch(error) {
     console.log(error);
   }
+}
+
+
+async function addNooglerAction(email: string, partner: string, transaction: any) {
+  const actionRef = database.collection('actions').doc();
+  const count = await getCounter('actions');
+  const action = {
+    date: fieldValue.serverTimestamp(),
+    count: count + 1,
+    message: `[NOOGLER CHECK]: Please check ${email} and approve their partner ${partner}`,
+  };
+
+  transaction.set(actionRef, action);
+  await incrementCounter('actions', transaction);
 }
 
 export {

@@ -61,7 +61,7 @@ function RoutesList() {
             <InviteeForm propagateNewInviteeForm={
               async (form, member) => {
                 await addUser(form, member);
-                window.location.replace('/');
+                //window.location.replace('/');
               }
             }/>
           </Route>

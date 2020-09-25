@@ -44,6 +44,11 @@ export default function InviteeForm(props: PropsType) {
   const generatePartnersTextField = (dataType: string, dataLabel: string) => {
     return (
         <PartnerDataTextField
+            handleSubmit={() => {
+              console.log('Im submitting');
+              props.propagateNewInviteeForm(partnerState, member);
+            }}
+            id={dataLabel + '-id'}
             propagateData={changePartnerState(dataType)}
             label={dataLabel}/>
     );
@@ -72,9 +77,12 @@ export default function InviteeForm(props: PropsType) {
             {partnerState['isGoogler'] ?
                 generatePartnersTextField('email',
                     'Your partner\'s @google address') :
-                <InviteeFormDatePicker
-                    label={'When is your partner going to join Google?'}
-                    propagateNewData={changePartnerState('startDate')}/>}
+                <div>
+                  {generatePartnersTextField('email', 'Your partner\'s @noogler.google.com address')}
+                  <InviteeFormDatePicker
+                      label={'When is your partner going to join Google?'}
+                      propagateNewData={changePartnerState('startDate')}/>
+                </div>}
           </Grid>
           <Grid item>
             <Button

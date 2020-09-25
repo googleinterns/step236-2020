@@ -14,6 +14,7 @@ export default function InviterForm(props: any) {
             alignItems='center'>
         <Grid item xs={9}>
           <InviteeDataTextField
+              handleSubmit={props.sendInvite}
               propagateData={(data) => props.setEmailAddress(data)}
               label={'Your invitee email address'}/>
         </Grid>
