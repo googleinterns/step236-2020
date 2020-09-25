@@ -367,6 +367,44 @@ async function searchByEmail(email: string): Promise<any> {
   }
 }
 
+async function addInvitedUser(partnerEmail: string, email: string) {
+  console.log(email);
+  try {
+    database.runTransaction(async (transaction) => {
+      const pending = await database
+          .collection('pending-members')
+          .where('email', '==', email)
+          .get();
+      
+      const active = await database
+          .collection('active-members')
+          .where('email', '==', email)
+          .get();
+      if (pending.docs.length > 0 || active.docs.length > 0) {
+        console.log(`User already registered`);
+        return;
+      }
+
+      console.log('I am here');
+      const count = await getCounter('pendingMembers');
+      const newPendingUser = {
+        name: '',
+        email: email,
+        partnerEmail: partnerEmail,
+        date: fieldValue.serverTimestamp(),
+        isVerified: true,
+        count: count + 1,
+      };
+
+      const newPendingRef = database.collection('pending-members').doc();
+      transaction.set(newPendingRef, newPendingUser);
+      await incrementCounter('pendingMembers', transaction);
+    });
+  } catch(error) {
+    console.log(error);
+  }
+}
+
 async function addUser(form: any, member: any) { //TODO: add function to send emails
   try {
     database.runTransaction(async (transaction) => {
@@ -433,4 +471,5 @@ export {
   searchByEmail,
   retrievePendingUsers,
   addUser,
+  addInvitedUser,
 };

@@ -14,6 +14,7 @@ import {
   retrievePendingUsers,
   confirmPendingUser,
   deletePendingUser,
+  addInvitedUser,
 } from '../database/Queries';
 import {useAuthUser} from '../../firebaseFeatures';
 
@@ -93,6 +94,18 @@ function PendingRequestsTable(): React.Node {
 
 export default function InviterSelfService(): React.Node {
   const classes = useStyles();
+  const [email, setEmail] = React.useState("");
+  const authUser = useAuthUser();
+
+  const handleSendInvite = async () => {
+    try {  
+      if (authUser) {
+        await addInvitedUser(authUser.email, email);
+      }
+    } catch (error) {
+      console.log('Could not send invite. Maybe user has already been invited.');
+    }
+  };
 
   return (
     <Grid
@@ -100,7 +113,9 @@ export default function InviterSelfService(): React.Node {
       direction="column"
       justify="flex-start"
       alignItems="stretch">
-      <InviterForm/>
+      <InviterForm
+        sendInvite={handleSendInvite}
+        setEmailAddress={(newEmail) => setEmail(newEmail)}/>
       <Grid
         item
         className={classes.gridItem}>
