@@ -1,0 +1,6 @@
+{
+    "DOMAIN": "identity-sre.com",
+    "DIRECTORY_API_VERSION": "directory_v1",
+    "CREDENTIALS_PATH": "credentials.json",
+    "ADMIN_MAIL": "kluczek@identity-sre.com"
+}

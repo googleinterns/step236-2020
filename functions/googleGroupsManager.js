@@ -1,4 +1,6 @@
-const DIRECTORY_API_VERSION = 'directory_v1';
+const CONFIG = require('./config.json');
+
+const DIRECTORY_API_VERSION = CONFIG.DIRECTORY_API_VERSION;
 
 /**
  function that retrieves all users from the domain's gSuite
@@ -16,6 +18,21 @@ exports.listUsers = async (auth, googleService, domain) => {
     orderBy: 'email',
   }).then(
       (response) => response.data.users,
+      (error) => {
+        console.error(`API returned with error code: ${error}`);
+        return null;
+      }
+  );
+}
+
+exports.listGroups = async (auth, googleService, domain) => {
+  const service = googleService.admin({version: DIRECTORY_API_VERSION, auth});
+  return service.groups.list({
+    domain: domain,
+    customer: 'my_customer',
+    orderBy: 'email',
+  }).then(
+      (response) => response.data.groups,
       (error) => {
         console.error(`API returned with error code: ${error}`);
         return null;
