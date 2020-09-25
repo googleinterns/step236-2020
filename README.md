@@ -51,7 +51,7 @@ Use it when you want to access the firebase for the first time. Later, you will 
 
 ### `firebase init`
 
-Initialise new project on Firebase. Currently, firebase features that this project uses are: hosting, firestore and cloud functions.
+Initialise new project on Firebase. Currently, Firebase features that this project uses are: Hosting, Firestore and Cloud Functions.
 Don't overwrite any configuration files when prompted by firebase init. We already configured these files for you.
 
 ### `firebase deploy`
