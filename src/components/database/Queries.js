@@ -97,8 +97,7 @@ async function getSolvedActions(start: number,
   * created from the documents
  */
 async function findDocumentQuery(collection: string, field: string,
-    value: string | number | boolean): Promise<Array<UserType | ActionType |
-    PendingType>> {
+    value: string | number | boolean): Promise<any> {
   const collectionRef = database.collection(collection);
 
   try {
@@ -368,6 +367,55 @@ async function searchByEmail(email: string): Promise<any> {
   }
 }
 
+async function addUser(form: any, member: any) { //TODO: add function to send emails
+  try {
+    database.runTransaction(async (transaction) => {
+      const data = await fieldQuery('pending-members', 'email', member.email, 1);
+      const userDoc = data.docs[0];
+      
+      if (userDoc == null) {
+        console.log(`not found in the database, trying to add...`);
+        const count = await getCounter('pendingMembers');
+        // add them to the pending members
+        const user = {
+          name: form.name,
+          email: member.email,
+          partnerEmail: form.email,
+          isVerified: false,
+          count: count + 1,
+          date: fieldValue.serverTimestamp(),
+        };
+
+        const newPendingRef = database.collection('pending-members').doc();
+        transaction.set(newPendingRef, user);
+        await incrementCounter('pendingMembers', transaction);
+      } else {
+        //add them to active members
+
+        const user = userDoc.data();
+        
+        if (user.isVerified) {
+          const ref = userDoc.ref;
+          user.name = form.name;
+          user.partnerEmail = form.email;
+          const count = await getCounter('activeMembers');
+          const newUser = newUserObject(count + 1, user);
+
+          const newActiveRef = database.collection('active-members').doc();
+          transaction.set(newActiveRef, newUser);
+          transaction.delete(ref);
+          await incrementCounter('activeMembers', transaction);
+          await decrementCounter('pendingMembers', transaction);
+        } else {
+          //TO DO: handle duplicated requests
+        }
+      }
+    });  
+  } catch(error) {
+    console.log(error);
+  }
+}
+
 export {
   confirmPendingUser,
   getActions,
@@ -384,4 +432,5 @@ export {
   moveSolvedAction,
   searchByEmail,
   retrievePendingUsers,
+  addUser,
 };

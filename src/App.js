@@ -14,10 +14,10 @@ import StartingPage from './components/StartingPage';
 import SelfServicePage from './components/selfServicePage/SelfServicePage';
 import {useAuthUser, UserContext} from './firebaseFeatures';
 import LoadingPlaceholder from './components/LoadingPlaceholder';
+import {addUser} from './components/database/Queries';
 
 function PrivateRoute({authFunction, component, redirectPath}) {
   const [authorisationStatus, setAutorisationStatus] = useState(null);
-
   useEffect(() => {
     let cancelled = false;
     authFunction().then((newValue) => {
@@ -59,9 +59,11 @@ function RoutesList() {
 
           <Route path="/form">
             <InviteeForm propagateNewInviteeForm={
-              (form) => {
+              async (form, member) => {
                 console.log(form);
-                window.location.replace('/');
+                console.log(member);
+                await addUser(form, member);
+                //window.location.replace('/');
               }
             }/>
           </Route>
