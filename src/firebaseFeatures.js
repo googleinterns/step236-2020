@@ -15,29 +15,30 @@
  */
 
 // @flow
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import  firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
 import React, {useContext, useEffect, useState} from 'react';
 import StartingPage from './components/StartingPage';
 import {BrowserRouter as Router} from 'react-router-dom';
 import LoadingPlaceholder from './components/LoadingPlaceholder';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyByClHaWsJw2jVjIlTQ2FIzaeI6hs0Y7tk',
-  authDomain: 'scriba-1d195.firebaseapp.com',
-  databaseURL: 'https://scriba-1d195.firebaseio.com',
-  projectId: 'scriba-1d195',
-  storageBucket: 'scriba-1d195.appspot.com',
-  messagingSenderId: '627308594363',
-  appId: '1:627308594363:web:f4f6a12dc387f8e196559e',
+  apiKey: process.env.REACT_APP_apiKey,
+  authDomain: process.env.REACT_APP_authDomain,
+  databaseURL: process.env.REACT_APP_databaseURL,
+  projectId: process.env.REACT_APP_projectId,
+  storageBucket: process.env.REACT_APP_storageBucket,
+  messagingSenderId: process.env.REACT_APP_messagingSenderId,
+  appId: process.env.REACT_APP_appId,
 };
 
-firebase.initializeApp(firebaseConfig);
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: 'select_account'});
-const database = firebase.firestore();
+const database = firebaseApp.firestore();
+const auth = firebaseApp.auth();
 const fieldValue = firebase.firestore.FieldValue;
 const timestamp = firebase.Timestamp;
 export {firebase, database, fieldValue, timestamp};
@@ -45,7 +46,7 @@ export {firebase, database, fieldValue, timestamp};
 const useFirebase = () => {
   const [authUser, setAuthUser] = useState(undefined);
   useEffect(() => {
-    const unsubscribe = firebase.auth()
+    const unsubscribe = auth
         .onAuthStateChanged((user) => setAuthUser(user));
     return () => {
       unsubscribe();
@@ -56,11 +57,11 @@ const useFirebase = () => {
 };
 
 export function signOutFromGoogle() {
-  firebase.auth().signOut();
+  auth.signOut();
 }
 
 export function signInWithGoogle() {
-  firebase.auth().signInWithPopup(provider);
+  auth.signInWithPopup(provider);
 }
 
 const AuthUserContext = React.createContext<any>(undefined);
