@@ -1,4 +1,21 @@
+/**
+ * Copyright 2020 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 const fs = require('fs');
+const CONFIG = require('./config.json');
 
 function makeBody(to, from, subject, message) {
   const str = [
@@ -17,9 +34,9 @@ function makeBody(to, from, subject, message) {
   return encodedMail;
 }
 
-exports.sendMessage = (auth, recipient, content, googleService) => {
-  const raw = makeBody(recipient, 'kluczek@identity-sre.com',
-      'Hello from Scriba!', content);
+exports.sendMessage = (auth, recipient, googleService) => {
+  const raw = makeBody(recipient, CONFIG.ADMIN_MAIL,
+      'Welcome to the community!', 'Welcome, welcome!');
   const gmail = googleService.gmail({version: 'v1', auth});
   gmail.users.messages.send({
     auth: auth,

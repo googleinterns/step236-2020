@@ -1,5 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ## Available Scripts
 
 In the project directory, you can run:
@@ -39,45 +37,23 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 # Firebase setup
 
+For this project, you need an existing Firebase project and a domain with G Suite.
+
+Install the Firebase CLI.
+
+```bash
+npm install -g firebase-tools
+```
+
 ### `firebase login`
 
 Use it when you want to access the firebase for the first time. Later, you will be logged in automatically. Log in with an account assiociated with the project you are developing.
 
 ### `firebase init`
 
-Initialise new Github project on firebase. If you are using react, remember to change directory from `public` (default) to `build` in this step.
-If you forget to change directory -- don't worry, you'll be able to change it in `firebase.json` file.
+Initialise new project on Firebase. Currently, Firebase features that this project uses are: Hosting, Firestore and Cloud Functions.
+Don't overwrite any configuration files when prompted by `firebase init`. We already configured these files for you.
 
 ### `firebase deploy`
 
 Use it to deploy your project. Remember to log in, init and build the project before deploying.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify

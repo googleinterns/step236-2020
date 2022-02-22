@@ -1,12 +1,28 @@
+/**
+ * Copyright 2020 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 const functions = require('firebase-functions');
+const authenticator = require('./authenticator');
+const CONFIG = require('./config.json');
 
 // Modules used for communications with Google APIs
 const gmailEmailSender = require('./gmailEmailSender');
 const googleGroupsManager = require('./googleGroupsManager');
 
 // gMail API constants.
-const fs = require('fs');
-const readline = require('readline');
 const {google} = require('googleapis');
 const emailContent = require('./email-content.json');
 const TOKEN_PATH = 'token.json';
@@ -49,7 +65,7 @@ exports.triggerSpooglerMail = functions.firestore
  * @return {JSON} found list of users
  */
 exports.listUsers = functions.https.onRequest((request, response) => {
-  return checkCredentials('credentials.json',
+  return authenticator.checkCredentials(CREDENTIALS_PATH,
       (auth) => {
         googleGroupsManager.listUsers(auth, google, DOMAIN)
             .then((output) => {
@@ -65,49 +81,24 @@ exports.listUsers = functions.https.onRequest((request, response) => {
   );
 });
 
-function checkCredentials(path, callback) {
-  fs.readFile('credentials.json', (err, content) => {
-    if (err) {
-      return console.log('Error loading client secret file:', err);
-    }
-    return authorize(JSON.parse(content), (auth) => callback(auth));
-  });
-}
-
-function authorize(credentials, callback) {
-  const {client_secret, client_id, redirect_uris} = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
-
-  // Check if the token is already stored.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getNewToken(oAuth2Client, callback);
-    oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
-  });
-}
-
-function getNewToken(oAuth2Client, callback) {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
-  console.log('Authorize this app by visiting this url:', authUrl);
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  rl.question('Enter the code from that page here: ', (code) => {
-    rl.close();
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error retrieving access token', err);
-      oAuth2Client.setCredentials(token);
-      // Store the token to disk for later program executions.
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
-      });
-      callback(oAuth2Client);
-    });
-  });
-}
+/**
+ * Cloud function for retrieving all groups in gSuite of DOMAIN
+ * @type {HttpsFunction} (request, response) used for communication with end-user
+ * @return {JSON} found list of groups
+ */
+exports.listGroups = functions.https.onRequest((request, response) => {
+  return authenticator.checkCredentials(CREDENTIALS_PATH,
+      (auth) => {
+        googleGroupsManager.listGroups(auth, google, DOMAIN)
+            .then((output) => {
+              response.json(output);
+              return output;
+            })
+            .catch((error) => {
+              response.status(403);
+              response.json(error);
+              return error;
+            });
+      },
+  );
+});
