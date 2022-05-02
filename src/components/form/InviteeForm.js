@@ -23,6 +23,7 @@ import PartnerDataTextField from './InviteeDataTextField';
 import InviterSelect from './InviterSelect';
 import InviteeFormDatePicker from './InviteeFormDatePicker';
 import {useStyles} from '../LayoutStyles';
+import {useAuthUser} from '../../firebaseFeatures';
 
 type PropsType = {
   propagateNewInviteeForm: any
@@ -30,13 +31,22 @@ type PropsType = {
 
 export default function InviteeForm(props: PropsType) {
   const classes = useStyles();
-
+  const authUser = useAuthUser();
+  const [member, setMember] = useState({});
   const [partnerState, setPartnerState] = useState({
     name: '',
     email: '',
     isGoogler: false,
     startDate: new Date(),
   });
+
+  React.useEffect(() => {
+    if (authUser) {
+      const memberEmail = authUser.email;
+      console.log(authUser);
+      setMember({email: memberEmail});
+    }
+  }, [authUser]);
 
   const changePartnerState = (key: string) => {
     return (newValue: any) => {
@@ -45,11 +55,16 @@ export default function InviteeForm(props: PropsType) {
       }
       setPartnerState({...partnerState, [key]: newValue});
     };
-  };
+  };  
 
   const generatePartnersTextField = (dataType: string, dataLabel: string) => {
     return (
         <PartnerDataTextField
+            handleSubmit={() => {
+              console.log('Im submitting');
+              props.propagateNewInviteeForm(partnerState, member);
+            }}
+            id={dataLabel + '-id'}
             propagateData={changePartnerState(dataType)}
             label={dataLabel}/>
     );
@@ -72,22 +87,25 @@ export default function InviteeForm(props: PropsType) {
             />
           </Grid>
           <Grid item>
-            {generatePartnersTextField('name', 'Your partner\'s full name')}
+            {generatePartnersTextField('name', 'Your full name')}
           </Grid>
           <Grid item>
             {partnerState['isGoogler'] ?
                 generatePartnersTextField('email',
                     'Your partner\'s @google address') :
-                <InviteeFormDatePicker
-                    label={'When is your partner going to join Google?'}
-                    propagateNewData={changePartnerState('startDate')}/>}
+                <div>
+                  {generatePartnersTextField('email', 'Your partner\'s @noogler.google.com address')}
+                  <InviteeFormDatePicker
+                      label={'When is your partner going to join Google?'}
+                      propagateNewData={changePartnerState('startDate')}/>
+                </div>}
           </Grid>
           <Grid item>
             <Button
                 fullWidth
                 margin="normal"
                 onClick={() => {
-                  props.propagateNewInviteeForm(partnerState);
+                  props.propagateNewInviteeForm(partnerState, member);
                 }}
                 variant="outlined"
                 className={classes.button}>

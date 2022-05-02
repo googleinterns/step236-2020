@@ -24,16 +24,39 @@ const googleGroupsManager = require('./googleGroupsManager');
 
 // gMail API constants.
 const {google} = require('googleapis');
-const DOMAIN = CONFIG.DOMAIN;
-const CREDENTIALS_PATH = CONFIG.CREDENTIALS_PATH;
+const emailContent = require('./email-content.json');
+const TOKEN_PATH = 'token.json';
+const DOMAIN = 'identity-sre.com';
 
-// TODO: Change https request listener to firestore listener.
-exports.sendMail = functions.https.onRequest((request, response) => {
-  const recipient = request.query.recipient;
-  return authenticator.checkCredentials(CREDENTIALS_PATH,
-      (auth) => {
-        response.json(gmailEmailSender.sendMessage(auth, recipient, google));
-      });
+// The file token.json stores the user's access and refresh tokens, and is
+// created automatically when the authorization flow completes for the first
+// time.
+// If modifying the scopes below, delete token.json.
+const SCOPES = [
+  'https://mail.google.com/',
+  'https://www.googleapis.com/auth/gmail.modify',
+  'https://www.googleapis.com/auth/gmail.compose',
+  'https://www.googleapis.com/auth/gmail.send',
+  'https://www.googleapis.com/auth/admin.directory.group',
+  'https://www.googleapis.com/auth/admin.directory.user',
+  'https://www.googleapis.com/auth/admin.directory.group.member',
+  'https://www.googleapis.com/auth/admin.directory.user.alias',
+];
+
+exports.triggerSpooglerMail = functions.firestore
+    .document('pending-members/{docId}')
+    .onWrite((change, context) => {
+  if (context.params.isVerified) {
+    return checkCredentials('credentials.json',
+        (auth) => {
+          gmailEmailSender.sendMessage(auth, context.params.email, emailContent.spoogler, google);
+        });
+  } else {
+    return checkCredentials('credentials.json',
+        (auth) => {
+          gmailEmailSender.sendMessage(auth, context.params.partnerEmail, emailContent.googler, google);
+        });
+  }
 });
 
 /**

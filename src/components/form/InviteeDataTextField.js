@@ -53,7 +53,8 @@ const useStyles = makeStyles(() => ({
 
 type PropsType = {
   propagateData: any,
-  label: string
+  label: string,
+  handleSubmit: any,
 }
 
 export default function InviteeDataTextField(props: PropsType) {
@@ -66,9 +67,16 @@ export default function InviteeDataTextField(props: PropsType) {
   };
 
   return (
-      <form className={classes.container} noValidate autoComplete="off">
+      <form 
+        onSubmit={(event) => {
+          event.preventDefault();
+          props.handleSubmit();
+        }}
+        className={classes.container} 
+        noValidate 
+        autoComplete="off">
         <TextField
-            id="standard-name"
+            id={props.label + "-id"}
             label={props.label}
             className={classes.textField}
             onChange={handleChange}

@@ -19,7 +19,7 @@ import {database, fieldValue} from '../../firebaseFeatures.js';
 import type {UserType, PendingType, ActionType} from '../types/FlowTypes.js';
 import {sanitize} from '../types/FlowTypes.js';
 
-function actionObject(count: number, user: UserType,
+function actionObject(count: number, user: any,
     message: string): ActionType {
   const actionMessage = `[${message}]: ${user.email}`;
   return ({
@@ -35,7 +35,7 @@ function newUserObject(count: number, user: PendingType): UserType {
     email: user.email,
     isAdmin: false,
     joinDate: fieldValue.serverTimestamp(),
-    name: '',
+    name: user.name,
     needsAttention: false,
     partnerEmail: user.partnerEmail,
     count: count,
@@ -113,8 +113,7 @@ async function getSolvedActions(start: number,
   * created from the documents
  */
 async function findDocumentQuery(collection: string, field: string,
-    value: string | number | boolean): Promise<Array<UserType | ActionType |
-    PendingType>> {
+    value: string | number | boolean): Promise<any> {
   const collectionRef = database.collection(collection);
 
   try {
@@ -132,23 +131,33 @@ async function findDocumentQuery(collection: string, field: string,
   }
 }
 
+async function retrievePendingUsers(partnerEmail: string): Promise<any> {
+  const users = await findDocumentQuery('pending-members', 'partnerEmail',
+      partnerEmail);
+  return users;
+}
+
 /**
-  * deleteUser deletes a user from active memberships
+  * deleteUser deletes a user from a specified collection
+  * @param {'active-members' | 'pending-members'} collection the collection
   * @param {'email' | 'count'} field specifies the search criteria for the doc
   * @param {string | number} value specifies the value of the field
  */
-async function deleteUser(field: 'email' | 'count',
-    value: string | number) {
+async function deleteUser(collection: 'active-members' | 'pending-members',
+    field: 'email' | 'count', value: string | number) {
   try {
     await database.runTransaction(async (transaction: any) => {
-      const collectionRef = database.collection('active-members');
+      const collectionRef = database.collection(collection);
       const snapshot = await collectionRef
           .where(field, '==', value)
           .get();
       const refs = getDocumentRef(snapshot);
 
       await transaction.delete(refs[0]);
-      await decrementCounter('activeMembers', transaction);
+
+      const counterCollection = (collection === 'active-members') ?
+        'activeMembers' : 'pendingMembers';
+      await decrementCounter(counterCollection, transaction);
     });
   } catch (error) {
     console.log(error);
@@ -156,6 +165,23 @@ async function deleteUser(field: 'email' | 'count',
   }
 }
 
+async function deleteActiveUser(field: 'email' | 'count',
+    value: string | number) {
+  try {
+    await deleteUser('active-members', field, value);
+  } catch (error) {
+    console.log('Delete unsuccesful');
+  }
+}
+
+async function deletePendingUser(field: 'email' | 'count',
+    value: string | number) {
+  try {
+    await deleteUser('pending-members', field, value);
+  } catch (error) {
+    console.log('Delete unsuccessful');
+  }
+}
 /**
   * updateAdminNote allows admins to add notes to active users
   * @param {'email' | 'count'} field specifies the field to search for
@@ -228,6 +254,33 @@ async function movePendingUser(field: 'email' | 'count',
   } catch (error) {
     console.log(error);
     throw new Error(error);
+  }
+}
+
+async function confirmPendingUser(field: 'email' | 'count', value: string) {
+  try {
+    await database.runTransaction(async (transaction: any) => {
+      const pendingRef = database.collection('pending-members');
+
+      const snapshot = await pendingRef
+          .where(field, '==', value)
+          .get();
+
+      const documentRef = getDocumentRef(snapshot)[0];
+      const userData = snapshot.docs
+          .map((doc: any): any => doc.data())
+          .map((doc: any): UserType | PendingType | ActionType =>
+            sanitize('pending-members', doc))[0];
+
+      if (userData.name === null || userData.name === '') {
+        userData.isVerified = true;
+        transaction.set(documentRef, userData);
+      } else {
+        await movePendingUser('email', userData.email);
+      }
+    });
+  } catch (error) {
+    console.log('Confirm unsuccessful:\n' + error);
   }
 }
 
@@ -330,7 +383,117 @@ async function searchByEmail(email: string): Promise<any> {
   }
 }
 
+async function addInvitedUser(partnerEmail: string, email: string) {
+  try {
+    database.runTransaction(async (transaction) => {
+      const pending = await database
+          .collection('pending-members')
+          .where('email', '==', email)
+          .get();
+      
+      const active = await database
+          .collection('active-members')
+          .where('email', '==', email)
+          .get();
+      if (pending.docs.length > 0 || active.docs.length > 0) {
+        console.log(`User already registered`);
+        return;
+      }
+
+      console.log('I am here');
+      const count = await getCounter('pendingMembers');
+      const newPendingUser = {
+        name: '',
+        email: email,
+        partnerEmail: partnerEmail,
+        date: fieldValue.serverTimestamp(),
+        isVerified: true,
+        count: count + 1,
+      };
+
+      const newPendingRef = database.collection('pending-members').doc();
+      transaction.set(newPendingRef, newPendingUser);
+      await incrementCounter('pendingMembers', transaction);
+    });
+  } catch(error) {
+    console.log(error);
+  }
+}
+
+async function addUser(form: any, member: any) { //TODO: add function to send emails
+  try {
+    database.runTransaction(async (transaction) => {
+      const pending = await database
+          .collection('pending-members')
+          .where('email', '==', member.email)
+          .get();
+      
+      const userDoc = pending.docs[0];
+      
+      if (pending == null || userDoc == null) {
+        console.log(`not found in the database, trying to add...`);
+        const count = await getCounter('pendingMembers');
+        // add them to the pending members
+        const user = {
+          name: form.name,
+          email: member.email,
+          partnerEmail: form.email,
+          isVerified: false,
+          count: count + 1,
+          date: fieldValue.serverTimestamp(),
+        };
+
+        const newPendingRef = database.collection('pending-members').doc();
+        transaction.set(newPendingRef, user);
+        await incrementCounter('pendingMembers', transaction);
+
+        if (/@noogler.google.com\s*$/.test(user.partnerEmail)) {
+          console.log('Is noogler');
+          await addNooglerAction(user.email, user.partnerEmail, transaction);
+        }
+      } else {
+        //add them to active members
+
+        const user = userDoc.data();
+        
+        if (user.isVerified) {
+          const ref = userDoc.ref;
+          user.name = form.name;
+          user.partnerEmail = form.email;
+          const count = await getCounter('activeMembers');
+          const newUser = newUserObject(count + 1, user);
+
+          const newActiveRef = database.collection('active-members').doc();
+          transaction.set(newActiveRef, newUser);
+          transaction.delete(ref);
+          await incrementCounter('activeMembers', transaction);
+          await decrementCounter('pendingMembers', transaction);
+        } else {
+          console.log('Please wait for your googler to approve you.');
+        }
+      }
+    });
+  } catch(error) {
+    console.log(error);
+  }
+}
+
+
+async function addNooglerAction(email: string, partner: string, transaction: any) {
+  const actionRef = database.collection('actions').doc();
+  const count = await getCounter('actions');
+  const action = {
+    date: fieldValue.serverTimestamp(),
+    count: count + 1,
+    message: `[NOOGLER CHECK]: Please check ${email} and approve their partner ${partner}`,
+  };
+
+  transaction.set(actionRef, action);
+  await incrementCounter('actions', transaction);
+}
+
 export {
+  confirmPendingUser,
   getActions,
   getActiveMembers,
   getCounter,
@@ -338,9 +501,13 @@ export {
   getSolvedActions,
   findDocumentQuery,
   findUserByEmailQuery,
-  deleteUser,
+  deleteActiveUser,
+  deletePendingUser,
   updateAdminNote,
   movePendingUser,
   moveSolvedAction,
   searchByEmail,
+  retrievePendingUsers,
+  addUser,
+  addInvitedUser,
 };

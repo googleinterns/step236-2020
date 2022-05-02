@@ -23,7 +23,7 @@ function makeBody(to, from, subject, message) {
     'MIME-Version: 1.0\n',
     'Content-Transfer-Encoding: 7bit\n',
     'To: ', to, '\n',
-    'from: ', from, '\n',
+    'From: ', from, '\n',
     'Subject: ', subject, '\n\n',
     message,
   ].join('');
