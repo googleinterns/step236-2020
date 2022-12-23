@@ -12,7 +12,7 @@
     "@testing-library/user-event": "^7.2.1",
     "date-fns": "^2.15.0",
     "firebase": "^7.19.1",
-    "firebase-admin": "^9.1.1",
+    "firebase-admin": "^11.4.1",
     "googleapis": "^39.2.0",
     "js-cookie": "^2.2.1",
     "material-table": "^1.69.0",
